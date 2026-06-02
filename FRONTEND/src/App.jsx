@@ -1,10 +1,11 @@
-import React from 'react'
+import { BrowserRouter } from 'react-router-dom'
+import Dashboard from './pages/LabStaff/Dashboard'
 
-const App = () => {
+function App() {
   return (
-    <div className="flex items-center justify-center h-screen">
-      hufbdfjvbv f
-    </div>
+    <BrowserRouter>
+      <Dashboard />
+    </BrowserRouter>
   )
 }
 
