@@ -1,9 +1,10 @@
 import React from 'react'
+import Login from './pages/Auth/Login'
 
 const App = () => {
   return (
-    <div className="flex items-center justify-center h-screen">
-      hufbdfjvbv f
+    <div>
+      <Login />
     </div>
   )
 }
