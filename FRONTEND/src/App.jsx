@@ -1,12 +1,7 @@
-import { BrowserRouter } from 'react-router-dom'
-import Dashboard from './pages/LabStaff/Dashboard'
+import AppRoutes from "./routes/AppRoutes";
 
 function App() {
-  return (
-    <BrowserRouter>
-      <Dashboard />
-    </BrowserRouter>
-  )
+  return <AppRoutes />;
 }
 
-export default App
+export default App;
