@@ -1,12 +1,16 @@
-import React from 'react'
-import Login from './pages/Auth/Login'
+import { Routes, Route } from "react-router-dom";
 
-const App = () => {
+import RegisterProjectTeam from "./pages/TeamLeader/RegisterProjectTeam";
+
+function App() {
   return (
-    <div>
-      <Login />
-    </div>
-  )
+    <Routes>
+      <Route
+        path="/Team-Management"
+        element={<RegisterProjectTeam />}
+      />
+    </Routes>
+  );
 }
 
-export default App
+export default App;
