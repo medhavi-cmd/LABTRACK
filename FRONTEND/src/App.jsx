@@ -1,11 +1,7 @@
-import React from 'react'
+import ProjectApprovals from "./pages/Faculty/ProjectApprovals";
 
-const App = () => {
-  return (
-    <div className="flex items-center justify-center h-screen">
-      hufbdfjvbv f
-    </div>
-  )
+function App() {
+  return <ProjectApprovals />;
 }
 
-export default App
+export default App;
