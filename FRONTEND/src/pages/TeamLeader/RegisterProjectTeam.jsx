@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import {
   FolderPlus,
   Info,
@@ -33,6 +34,7 @@ export default function RegisterProjectTeam() {
       description,
     });
   };
+  const navigate = useNavigate();
 
   return (
     <GroupLeaderLayout>
@@ -178,7 +180,19 @@ export default function RegisterProjectTeam() {
               </button>
               <Button
                 variant="primary"
-                onClick={handleFormSubmit}
+                onClick={() =>
+                  navigate("/Team-Management/Add-Members", {
+                    state: {
+                      projectData: {
+                        projectName,
+                        department,
+                        year,
+                        section,
+                        description,
+                      },
+                    },
+                  })
+                }
                 className="w-auto px-6 h-10 flex items-center gap-2 text-xs font-bold uppercase tracking-wider bg-[#22d3ee] text-[#00363e] rounded-md hover:bg-[#8aebff] shadow-lg transition-all"
               >
                 Continue to Team Members <ArrowRight size={14} />

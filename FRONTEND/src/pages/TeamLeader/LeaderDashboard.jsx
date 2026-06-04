@@ -1,4 +1,4 @@
-import DashboardLayout from "../../layouts/DashboardLayout";
+import DashboardLayout from "../../components/layout/DashboardLayout";
 import { leaderNavItems } from "../../config/sidebarConfig";
 
 function LeaderDashboard() {

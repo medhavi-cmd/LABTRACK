@@ -12,35 +12,50 @@ import {
 } from "lucide-react";
 
 export const SIDEBAR_CONFIG = {
+//   Dashboard
+// Team Management
+// Component Inventory
+// Issue History
+// New Requests
+
+// ----------------
+//  Settings
+// Logout
+
   groupLeader: [
     {
       label: "Dashboard",
-      path: "/group-leader/dashboard",
+      path: "/Student/Dashboard",
       icon: LayoutDashboard,
     },
     {
       label: "Team Management",
-      path: "/group-leader/team-management",
+      path: "/Student/Team-Management",
       icon: Users,
     },
     {
-      label: "Project Tracking",
-      path: "/group-leader/projects",
-      icon: FolderKanban,
-    },
-    {
-      label: "Inventory Management",
-      path: "/group-leader/inventory",
+      label: "Component Inventory",
+      path: "/Student/Component-Inventory",
       icon: Package,
     },
     {
+      label: "Issue History",
+      path: "/Student/Issue-History",
+      icon: FolderKanban,
+    },
+    {
+      label: "New Requests",
+      path: "/Student/New-Requests",
+      icon: ClipboardList,
+    },
+    {
       label: "Project Gallery",
-      path: "/group-leader/gallery",
+      path: "/Student/gallery",
       icon: Images,
     },
     {
       label: "Settings",
-      path: "/group-leader/settings",
+      path: "/Student/settings",
       icon: Settings,
     },
   ],

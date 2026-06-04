@@ -2,7 +2,7 @@ import { Bell, Search, UserCircle } from "lucide-react";
 
 export default function Topbar() {
   return (
-    <header className="h-20 bg-[#060e20] border-b border-[#222a3d] px-8 flex items-center justify-between">
+    <header className="h-20 bg-[#060e20] border-b border-[#222a3d] px-8 flex items-center justify-between sticky top-0 z-30">
       <div>
         <h2 className="text-lg font-semibold text-white">
           Group Leader Workspace

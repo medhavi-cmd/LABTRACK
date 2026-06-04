@@ -33,6 +33,23 @@ export const StepIndicator = ({ currentStep = 1 }) => {
           Team Members
         </span>
       </div>
+
+      {/* Divider */}
+      <div className="w-12 h-[1px] bg-[#3c494c]" />
+
+      {/* Step 3 */}
+      <div className="flex items-center gap-2.5">
+        <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-colors ${
+          currentStep >= 3 ? 'bg-[#22d3ee] text-[#00363e]' : 'border border-[#3c494c] text-[#859397]'
+        }`}>
+          3
+        </div>
+        <span className={`text-sm font-semibold tracking-wide ${
+          currentStep >= 3 ? 'text-[#dae2fd]' : 'text-[#859397]'
+        }`}>
+          Review Project Details
+        </span>
+      </div>
     </div>
   );
 };
