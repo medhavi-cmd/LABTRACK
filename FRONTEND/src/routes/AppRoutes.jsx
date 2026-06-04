@@ -4,6 +4,7 @@ import LabStaffLayout from "../layouts/LabStaffLayout";
 
 import Dashboard from "../pages/LabStaff/Dashboard";
 import InventoryManagement from "../pages/LabStaff/InventoryManagement";
+import ComponentRequests from "../pages/LabStaff/ComponentRequests";
 
 const AppRoutes = () => {
   return (
@@ -14,17 +15,15 @@ const AppRoutes = () => {
       />
 
       <Route path="/lab-staff" element={<LabStaffLayout />}>
-        <Route
-          path="dashboard"
-          element={<Dashboard />}
-        />
 
-        <Route
-          path="inventory"
-          element={<InventoryManagement />}
-        />
+        <Route path="dashboard" element={<Dashboard />} />
+
+        <Route path="inventory" element={<InventoryManagement />} />
+
+        <Route path="requests" element={<ComponentRequests />} />
+
       </Route>
-    </Routes>
+</Routes>
   );
 };
 
