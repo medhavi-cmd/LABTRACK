@@ -28,4 +28,5 @@ function DataTable({ columns, data }) {
   );
 }
 
+
 export default DataTable;

@@ -1,5 +1,5 @@
 import DashboardLayout from "../../components/layout/DashboardLayout";
-import SectionHeader from "../../components/ui/sectionheader";
+import SectionHeader from "../../components/ui/SectionHeader";
 import DataTable from "../../components/ui/DataTable";
 import ActionButton from "../../components/ui/ActionButton.jsx";
 
