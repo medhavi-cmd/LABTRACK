@@ -54,14 +54,15 @@ function Events() {
                     <p className="text-white font-semibold">{day}</p>
 
                     {event && (
-                      <div className="mt-3 rounded-lg bg-cyan-500/20 p-2">
-                        <p className="text-cyan-300 text-xs font-semibold">
-                          {event.title}
-                        </p>
-                        <p className="text-slate-400 text-xs mt-1">
-                          {event.venue}
-                        </p>
-                      </div>
+                   <div className="mt-3 rounded-lg bg-cyan-500/20 p-2 overflow-hidden">
+  <p className="text-cyan-300 text-[11px] font-semibold leading-tight break-words">
+    {event.title}
+  </p>
+
+  <p className="text-slate-400 text-[11px] mt-1 leading-tight break-words">
+    {event.venue}
+  </p>
+</div>
                     )}
                   </div>
                 );
