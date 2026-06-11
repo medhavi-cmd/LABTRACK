@@ -1,14 +1,5 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import {
-  FlaskConical,
-  GraduationCap,
-  Presentation,
-  Microscope,
-  Mail,
-  Lock,
-  ArrowRight,
-} from "lucide-react";
 import bgImage from "../../assets/login-bg.jpg";
 
 // Component Imports
