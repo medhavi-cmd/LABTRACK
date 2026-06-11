@@ -1,20 +1,22 @@
-import { useState } from "react";
 import { Outlet } from "react-router-dom";
 
-import Sidebar from "../components/LabStaff/Sidebar";
-import TopNavbar from "../components/LabStaff/TopNavbar";
+import Sidebar from "../components/layout/Sidebar";
+import Topbar from "../components/layout/Topbar";
+import { SIDEBAR_CONFIG } from "../config/sidebarConfig";
 
 const LabStaffLayout = () => {
-  const [isOpen, setIsOpen] = useState(true);
-
   return (
     <div className="flex min-h-screen bg-[#020817]">
-      <Sidebar isOpen={isOpen} setIsOpen={setIsOpen} />
+      <Sidebar
+        items={SIDEBAR_CONFIG.labStaff}
+        title="LABTRACK"
+        subtitle="Lab Staff Module"
+      />
 
-      <div className="flex-1 lg:ml-64">
-        <TopNavbar />
+      <div className="flex-1 flex flex-col">
+        <Topbar />
 
-        <main className="p-6">
+        <main className="flex-1 p-8 overflow-y-auto">
           <Outlet />
         </main>
       </div>

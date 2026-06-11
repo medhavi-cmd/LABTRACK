@@ -12,15 +12,7 @@ import {
 } from "lucide-react";
 
 export const SIDEBAR_CONFIG = {
-//   Dashboard
-// Team Management
-// Component Inventory
-// Issue History
-// New Requests
-
-// ----------------
-//  Settings
-// Logout
+ 
 
   groupLeader: [
     {
@@ -60,64 +52,89 @@ export const SIDEBAR_CONFIG = {
     },
   ],
 
-faculty: [
-  {
-    label: "Dashboard",
-    path: "/faculty/dashboard",
-    icon: LayoutDashboard,
-  },
-  {
-    label: "Project Approvals",
-    path: "/faculty/project-approvals",
-    icon: ClipboardList,
-  },
-  {
-    label: "Component Requests",
-    path: "/faculty/component-requests",
-    icon: Package,
-  },
-  {
-    label: "Events",
-    path: "/faculty/events",
-    icon: FolderKanban,
-  },
-  {
-    label: "Notifications",
-    path: "/faculty/notifications",
-    icon: ClipboardList,
-  },
-  {
-    label: "Gallery Approvals",
-    path: "/faculty/gallery-approvals",
-    icon: Images,
-  },
-  {
-    label: "Student Progress",
-    path: "/faculty/student-progress",
-    icon: Users,
-  },
-],
+  faculty: [
+    {
+      label: "Dashboard",
+      path: "/faculty/dashboard",
+      icon: LayoutDashboard,
+    },
+    {
+      label: "Project Approvals",
+      path: "/faculty/project-approvals",
+      icon: ClipboardList,
+    },
+    {
+      label: "Component Requests",
+      path: "/faculty/component-requests",
+      icon: Package,
+    },
+    {
+      label: "Events",
+      path: "/faculty/events",
+      icon: FolderKanban,
+    },
+    {
+      label: "Notifications",
+      path: "/faculty/notifications",
+      icon: ClipboardList,
+    },
+    {
+      label: "Gallery Approvals",
+      path: "/faculty/gallery-approvals",
+      icon: Images,
+    },
+    {
+      label: "Student Progress",
+      path: "/faculty/student-progress",
+      icon: Users,
+    },
+  ],
 
   labStaff: [
     {
       label: "Dashboard",
-      path: "/staff/dashboard",
       icon: LayoutDashboard,
+      path: "/lab-staff/dashboard"
     },
     {
-      label: "Inventory",
-      path: "/staff/inventory",
+      label: "Inventory Management",
       icon: Package,
+      path: "/lab-staff/inventory"
     },
     {
-      label: "Equipment",
-      path: "/staff/equipment",
-      icon: FlaskConical,
+      label: "Component Requests",
+      icon: ClipboardList,
+      path: "/lab-staff/requests"
+    },
+    {
+      label: "Issued Components",
+      icon: FolderKanban,
+      path: "/lab-staff/issued"
+    },
+    {
+      label: "Return Management",
+      icon: Users,
+      path: "/lab-staff/returns"
+    },
+    {
+      label: "Damage Reports",
+      icon: Images,
+      path: "/lab-staff/damage"
+    },
+    {
+      label: "Component Demand",
+      icon: FolderKanban,
+      path: "/lab-staff/demand"
+    },
+    {
+      label: "Notifications",
+      icon: ClipboardList,
+      path: "/lab-staff/notifications"
     },
     {
       label: "Settings",
-      path: "/staff/settings",
       icon: Settings,
+      path: "/lab-staff/settings"
     },
   ],
 };

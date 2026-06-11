@@ -7,6 +7,8 @@ import { Button } from "../../components/ui/Button";
 import { Input } from "../../components/ui/Input";
 import { RoleSelector } from "../../components/ui/RoleSelector";
 
+import { GraduationCap, Presentation, Microscope, Mail, Lock, FlaskConical } from "lucide-react";
+
 
 export default function LoginPage() {
   const [accessRole, setAccessRole] = useState("student");
