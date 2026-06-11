@@ -1,5 +1,3 @@
-// src/components/layout/Sidebar.jsx
-
 import { NavLink, useNavigate } from "react-router-dom";
 import { LogOut } from "lucide-react";
 
@@ -34,7 +32,7 @@ export default function Sidebar({
                 className={({ isActive }) =>
                   `flex items-center gap-3 px-4 py-3 rounded-lg text-sm transition ${
                     isActive
-                      ? "bg-cyan-500/10 border-l-4 border-cyan-400 text-cyan-300"
+                      ? "bg-cyan-500/15 text-cyan-300 border-l-4 border-cyan-400 shadow-[0_0_20px_rgba(34,211,238,0.15)]"
                       : "text-[#bbc9cd] hover:bg-[#171f33]"
                   }`
                 }

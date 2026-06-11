@@ -60,33 +60,43 @@ export const SIDEBAR_CONFIG = {
     },
   ],
 
-  faculty: [
-    {
-      label: "Dashboard",
-      path: "/faculty/dashboard",
-      icon: LayoutDashboard,
-    },
-    {
-      label: "Research Groups",
-      path: "/faculty/groups",
-      icon: Users,
-    },
-    {
-      label: "Projects",
-      path: "/faculty/projects",
-      icon: ClipboardList,
-    },
-    {
-      label: "Labs",
-      path: "/faculty/labs",
-      icon: FlaskConical,
-    },
-    {
-      label: "Settings",
-      path: "/faculty/settings",
-      icon: Settings,
-    },
-  ],
+faculty: [
+  {
+    label: "Dashboard",
+    path: "/faculty/dashboard",
+    icon: LayoutDashboard,
+  },
+  {
+    label: "Project Approvals",
+    path: "/faculty/project-approvals",
+    icon: ClipboardList,
+  },
+  {
+    label: "Component Requests",
+    path: "/faculty/component-requests",
+    icon: Package,
+  },
+  {
+    label: "Events",
+    path: "/faculty/events",
+    icon: FolderKanban,
+  },
+  {
+    label: "Notifications",
+    path: "/faculty/notifications",
+    icon: ClipboardList,
+  },
+  {
+    label: "Gallery Approvals",
+    path: "/faculty/gallery-approvals",
+    icon: Images,
+  },
+  {
+    label: "Student Progress",
+    path: "/faculty/student-progress",
+    icon: Users,
+  },
+],
 
   labStaff: [
     {
