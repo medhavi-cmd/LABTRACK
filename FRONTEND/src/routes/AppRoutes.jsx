@@ -8,7 +8,9 @@ import ComponentRequests from "../pages/LabStaff/ComponentRequests";
 import IssuedComponents from "../pages/LabStaff/IssuedComponents";
 import ReturnManagement from "../pages/LabStaff/ReturnManagement";
 import DamageReports from "../pages/LabStaff/DamageReports";
-
+import ComponentDemand from "../pages/LabStaff/ComponentDemand";
+import Notifications from "../pages/LabStaff/Notifications";
+import Settings from "../pages/LabStaff/Settings";
 
 const AppRoutes = () => {
   return (
@@ -31,6 +33,13 @@ const AppRoutes = () => {
         <Route path="returns" element={<ReturnManagement />} />
 
         <Route path="damage" element={<DamageReports />} />
+
+        <Route path="demand" element={<ComponentDemand />} />
+
+        <Route path="notifications" element={<Notifications />} />
+
+        <Route path="settings" element={<Settings />} />
+
 
       </Route>
 </Routes>
