@@ -1,52 +1,46 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DashboardLayout from "../../components/layout/DashboardLayout";
 import SectionHeader from "../../components/ui/SectionHeader";
 import DataTable from "../../components/ui/DataTable";
 import ActionButton from "../../components/ui/ActionButton";
 import StatCard from "../../components/ui/StatCard";
+import {
+  getProjects,
+  updateProjectStatus,
+} from "../../services/projectService";
 
 function ProjectApprovals() {
-  const [projects, setProjects] = useState([
-    {
-      title: "Smart Attendance",
-      team: "Team Alpha",
-      guide: "Dr. Sharma",
-      domain: "IoT",
-      techStack: "React, Node.js, Arduino",
-      abstract: "A smart attendance system using IoT-based device authentication.",
-      status: "Pending",
-    },
-    {
-      title: "AI Lab Assistant",
-      team: "Team Beta",
-      guide: "Dr. Singh",
-      domain: "AI / ML",
-      techStack: "React, Python, TensorFlow",
-      abstract: "An AI assistant to help students with lab instructions and project queries.",
-      status: "Pending",
-    },
-    {
-      title: "Inventory Tracker",
-      team: "Team Gamma",
-      guide: "Dr. Verma",
-      domain: "Web Application",
-      techStack: "React, Node.js, PostgreSQL",
-      abstract: "A system to track lab inventory, issued components and return records.",
-      status: "Approved",
-    },
-  ]);
-
+  const [projects, setProjects] = useState([]);
   const [selectedProject, setSelectedProject] = useState(null);
 
-  const updateStatus = (projectToUpdate, newStatus) => {
-    const updatedProjects = projects.map((project) =>
-      project.title === projectToUpdate.title && project.team === projectToUpdate.team
-        ? { ...project, status: newStatus }
-        : project
-    );
+  useEffect(() => {
+    loadProjects();
+  }, []);
 
-    setProjects(updatedProjects);
-    setSelectedProject({ ...projectToUpdate, status: newStatus });
+  const loadProjects = async () => {
+    try {
+      const response = await getProjects();
+      setProjects(response.data);
+    } catch (error) {
+      console.error("Error fetching projects:", error);
+    }
+  };
+
+  const updateStatus = async (projectToUpdate, newStatus) => {
+    try {
+      await updateProjectStatus(projectToUpdate.id, newStatus);
+
+      const updatedProjects = projects.map((project) =>
+        project.id === projectToUpdate.id
+          ? { ...project, status: newStatus }
+          : project
+      );
+
+      setProjects(updatedProjects);
+      setSelectedProject({ ...projectToUpdate, status: newStatus });
+    } catch (error) {
+      console.error("Error updating project:", error);
+    }
   };
 
   const tableData = projects.map((project) => ({
@@ -67,10 +61,7 @@ function ProjectApprovals() {
     ),
     Guide: project.guide,
     Actions: (
-      <ActionButton
-        text="View"
-        onClick={() => setSelectedProject(project)}
-      />
+      <ActionButton text="View" onClick={() => setSelectedProject(project)} />
     ),
   }));
 
@@ -101,9 +92,7 @@ function ProjectApprovals() {
         {selectedProject && (
           <div className="rounded-2xl border border-cyan-500/20 bg-[#081122] p-6 space-y-5">
             <div>
-              <h2 className="text-2xl font-bold text-white">
-                Project Details
-              </h2>
+              <h2 className="text-2xl font-bold text-white">Project Details</h2>
               <p className="text-slate-400 mt-1">
                 Review submitted project before approval
               </p>
@@ -126,16 +115,6 @@ function ProjectApprovals() {
               </div>
 
               <div>
-                <p className="text-slate-400">Domain</p>
-                <p className="text-white font-medium">{selectedProject.domain}</p>
-              </div>
-
-              <div>
-                <p className="text-slate-400">Tech Stack</p>
-                <p className="text-cyan-300 font-medium">{selectedProject.techStack}</p>
-              </div>
-
-              <div>
                 <p className="text-slate-400">Status</p>
                 <p
                   className={`font-medium ${
@@ -148,11 +127,6 @@ function ProjectApprovals() {
                 >
                   {selectedProject.status}
                 </p>
-              </div>
-
-              <div className="md:col-span-2">
-                <p className="text-slate-400">Abstract</p>
-                <p className="text-white font-medium">{selectedProject.abstract}</p>
               </div>
             </div>
 
