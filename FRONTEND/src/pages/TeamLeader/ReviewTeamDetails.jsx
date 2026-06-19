@@ -172,7 +172,7 @@ export default function ReviewTeamDetails() {
               type="button"
               disabled={isSubmitting}
               onClick={() =>
-                navigate("/Team-Management/Add-Members", {
+                navigate("/student/team-management/add-members", {
                   state: { projectData, teamData },
                 })
               }

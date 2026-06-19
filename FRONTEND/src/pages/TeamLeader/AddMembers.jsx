@@ -96,7 +96,7 @@ export default function AddMembers() {
     }
 
     // Bundle everything together to dispatch down to Step 3 Review Screen
-    navigate("/Team-Management/Review-Team", {
+    navigate("/student/team-management/review-team-details", {
       state: {
         projectData,
         teamData: { leaderDetails, members }
@@ -302,16 +302,17 @@ export default function AddMembers() {
             <div className="flex items-center justify-between border-t border-[#222a3d] pt-6">
               <button
                 type="button"
-                onClick={() => navigate("/Team-Management", { state: { projectData } })}
+                onClick={() => navigate("/student/team-management/register", { state: { projectData } })}
                 className="flex items-center gap-2 text-sm font-semibold text-[#859397] hover:text-white transition-colors"
               >
                 <ArrowLeft size={16} /> Back to Project Details
               </button>
               <button
                 type="submit"
+                onClick={handleNextStep}
                 className="h-10 px-6 bg-[#22d3ee] text-[#00363e] rounded-md text-sm font-bold shadow-lg hover:bg-[#8aebff] transition-all"
               >
-                Review Registration
+                Review Registration 
               </button>
             </div>
 

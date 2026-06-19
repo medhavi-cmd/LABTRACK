@@ -11,7 +11,7 @@ export default function GroupLeaderLayout({
       <Sidebar
         items={SIDEBAR_CONFIG.groupLeader}
         title="LABTRACK"
-        subtitle="Group Leader Portal"
+        subtitle="Student Portal"
       />
 
       <div className="flex-1 flex flex-col">

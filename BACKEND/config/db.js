@@ -12,10 +12,10 @@ const pool = new Pool({
 const connectDB = async () => {
   try {
     const client = await pool.connect();
-    console.log("✅ Supabase PostgreSQL Connected");
+    console.log("Supabase PostgreSQL Connected");
     client.release();
   } catch (error) {
-    console.error("❌ Database Connection Error:", error);
+    console.error("Database Connection Error:", error);
     process.exit(1);
   }
 };

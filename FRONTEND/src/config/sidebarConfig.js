@@ -15,42 +15,42 @@ export const SIDEBAR_CONFIG = {
  
 
   groupLeader: [
-    {
-      label: "Dashboard",
-      path: "/Student/Dashboard",
-      icon: LayoutDashboard,
-    },
-    {
-      label: "Team Management",
-      path: "/Student/Team-Management",
-      icon: Users,
-    },
-    {
-      label: "Component Inventory",
-      path: "/Student/Component-Inventory",
-      icon: Package,
-    },
-    {
-      label: "Issue History",
-      path: "/Student/Issue-History",
-      icon: FolderKanban,
-    },
-    {
-      label: "New Requests",
-      path: "/Student/New-Requests",
-      icon: ClipboardList,
-    },
-    {
-      label: "Project Gallery",
-      path: "/Student/gallery",
-      icon: Images,
-    },
-    {
-      label: "Settings",
-      path: "/Student/settings",
-      icon: Settings,
-    },
-  ],
+  {
+    label: "Dashboard",
+    path: "/student/student-dashboard",
+    icon: LayoutDashboard,
+  },
+  {
+    label: "Team Management",
+    path: "/student/team-management/register",
+    icon: Users,
+  },
+  {
+    label: "Component Inventory",
+    path: "/student/component-inventory",
+    icon: Package,
+  },
+  {
+    label: "Issue History",
+    path: "/student/issue-history",
+    icon: FolderKanban,
+  },
+  {
+    label: "New Requests",
+    path: "/student/component-requests",
+    icon: ClipboardList,
+  },
+  {
+    label: "Project Gallery",
+    path: "/student/gallery",
+    icon: Images,
+  },
+  {
+    label: "Settings",
+    path: "/student/settings",
+    icon: Settings,
+  },
+],
 
   faculty: [
     {
