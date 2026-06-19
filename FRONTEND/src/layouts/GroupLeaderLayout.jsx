@@ -1,27 +1,26 @@
-import { Outlet } from "react-router-dom";
-
 import Sidebar from "../components/layout/Sidebar";
 import Topbar from "../components/layout/Topbar";
+
 import { SIDEBAR_CONFIG } from "../config/sidebarConfig";
 
-const LabStaffLayout = () => {
+export default function GroupLeaderLayout({
+  children,
+}) {
   return (
-    <div className="flex min-h-screen bg-[#020817]">
+    <div className="flex min-h-screen bg-[#0b1326]">
       <Sidebar
-        items={SIDEBAR_CONFIG.labStaff}
+        items={SIDEBAR_CONFIG.groupLeader}
         title="LABTRACK"
-        subtitle="Lab Staff Module"
+        subtitle="Group Leader Portal"
       />
 
       <div className="flex-1 flex flex-col">
         <Topbar />
 
         <main className="flex-1 p-8 overflow-y-auto">
-          <Outlet />
+          {children}
         </main>
       </div>
     </div>
   );
-};
-
-export default LabStaffLayout;
+}
