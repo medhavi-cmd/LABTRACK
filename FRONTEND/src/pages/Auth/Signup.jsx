@@ -1,77 +1,76 @@
 import React, { useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import bgImage from "../../assets/login-bg.jpg";
-import { Link, useNavigate } from "react-router-dom";
+import {
+  Link,
+  useNavigate
+} from "react-router-dom";
 
-import { loginUser } from "../../services/authService";
+import { signupUser }
+from "../../services/authService";
 
 // Component Imports
 import { Button } from "../../components/ui/Button";
 import { Input } from "../../components/ui/Input";
 import { RoleSelector } from "../../components/ui/RoleSelector";
-import { getProfile } from "../../services/studentService";
 
-import {
-  GraduationCap,
-  Presentation,
-  Microscope,
-  Mail,
-  Lock,
-  FlaskConical,
+import { 
+  GraduationCap, 
+  Presentation, 
+  Microscope, 
+  Mail, 
+  Lock, 
+  FlaskConical, 
+  User, 
+  Hash, 
   ArrowRight,
+  Briefcase
 } from "lucide-react";
 
-export default function LoginPage() {
+export default function SignupPage() {
   const [accessRole, setAccessRole] = useState("student");
+  const navigate = useNavigate();
+  // Registration Form States
+  const [name, setName] = useState("");
+  const [enrollmentNo, setEnrollmentNo] = useState("");
+  const [employeeId, setEmployeeId] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [rememberMe, setRememberMe] = useState(false);
-
-  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    try {
-      const response = await loginUser({
-        email,
-        password,
-      });
+  try {
+    const response = await signupUser({
+      role: accessRole,
+      name,
+      email,
+      password,
+      enrollmentNo,
+      employeeId,
+    });
 
-      localStorage.setItem("token", response.token);
+    localStorage.setItem(
+      "token",
+      response.token
+    );
 
-      localStorage.setItem("user", JSON.stringify(response.user));
+    alert("Registration Successful");
 
-      if (response.user.role === "student") {
-        try {
-          const profile = await getProfile(response.user.user_id);
+    navigate("/login");
 
-          if (profile && profile.student_id) {
-            navigate("/student/student-dashboard");
-          } else {
-            navigate("/student/complete-profile");
-          }
-        } catch (err) {
-          console.error("Profile fetch error:", err);
-
-          alert("Unable to fetch profile");
-        }
-      }
-       else if (response.user.role === "faculty") {
-        navigate("/faculty/dashboard");
-      } 
-      else if (response.user.role === "staff") {
-        navigate("/lab-staff/dashboard");
-      }
-    } catch (error) {
-      alert(error.response?.data?.message || "Login Failed");
-    }
-  };
+  } catch (error) {
+    alert(
+      error.response?.data?.message ||
+      "Registration Failed"
+    );
+  }
+};
 
   return (
     <div className="h-screen w-full flex bg-[#0b1326] text-[#dae2fd] font-sans antialiased selection:bg-[#22d3ee]/30 selection:text-[#22d3ee] overflow-hidden">
-      {/* LEFT SIDE */}
 
+      {/* LEFT SIDE — IDENTICAL TO LOGIN PAGE */}
       <div className="relative hidden lg:flex lg:w-1/2 flex-col justify-between p-12 overflow-hidden border-r border-[#3c494c]">
         <div
           className="absolute inset-0 pointer-events-none"
@@ -99,7 +98,7 @@ export default function LoginPage() {
           </span>
         </motion.div>
 
-        {/* tag line */}
+        {/* Tagline */}
         <div className="relative max-w-2xl mx-auto my-auto py-5 text-left flex flex-col items-start justify-center z-10">
           <motion.h1
             className="text-5xl font-bold text-[#dae2fd] tracking-tight leading-[1.2] mb-4 text-left"
@@ -119,29 +118,32 @@ export default function LoginPage() {
             control, and collaborative project tracking.
           </motion.p>
         </div>
-
+        
         <div className="h-10 w-full pointer-events-none" />
       </div>
 
-      {/* RIGHT SIDE */}
-      <div className="flex-1 lg:w-1/2 flex items-center justify-center p-6 sm:p-12 lg:p-16 relative bg-[radial-gradient(circle_at_top_right,rgba(99,102,241,0.05),transparent_50%)]">
+      {/* RIGHT SIDE — MATCHED TO LOGIN FOOTPRINT WITH DYNAMIC FIELDS */}
+      <div className="flex-1 lg:w-1/2 flex items-center justify-center p-6 sm:p-12 lg:p-16 relative bg-[radial-gradient(circle_at_top_right,rgba(99,102,241,0.05),transparent_50%)] overflow-y-auto">
         <motion.div
-          className="w-full max-w-[460px] bg-[#171f33] border border-[#3c494c] rounded-lg p-8 sm:p-10 shadow-2xl relative"
+          className="w-full max-w-[460px] bg-[#171f33] border border-[#3c494c] rounded-lg p-8 sm:p-10 shadow-2xl relative my-auto max-h-[95vh] overflow-y-auto"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: "easeOut" }}
+          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }} 
         >
-          <div className="mb-8">
+          <style>{`div::-webkit-scrollbar { display: none; }`}</style>
+
+          <div className="mb-6">
             <h2 className="text-[24px] font-semibold text-[#22d3ee] tracking-tight leading-[1.3] mb-1.5">
-              Welcome back
+              Create Account
             </h2>
             <p className="text-sm text-[#bbc9cd]">
-              Sign in to your LabTrack EME workspace
+              Get started with your LabTrack EME workspace
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <div className="flex flex-col gap-2 mb-6">
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="flex flex-col gap-2 mb-4">
               <span className="font-mono text-[12px] font-semibold uppercase tracking-wider text-[#bbc9cd]">
                 Access Role
               </span>
@@ -167,78 +169,119 @@ export default function LoginPage() {
               </div>
             </div>
 
-            <Input
-              label="Email Address"
-              id="email"
-              type="email"
-              placeholder="dr.smith@university.edu"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              icon={Mail}
-            />
-
-            <Input
-              label="Password"
-              id="password"
-              type="password"
-              placeholder="••••••••"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              icon={Lock}
-            />
-
-            <div className="flex items-center justify-between pt-1 pb-2">
-              <label className="flex items-center gap-2.5 cursor-pointer group select-none">
-                <input
-                  type="checkbox"
-                  checked={rememberMe}
-                  onChange={(e) => setRememberMe(e.target.checked)}
-                  className="sr-only"
-                />
-                <div
-                  className={`w-4 h-4 rounded border transition-all flex items-center justify-center ${
-                    rememberMe
-                      ? "bg-[#22d3ee] border-[#22d3ee]"
-                      : "border-[#3c494c] group-hover:border-[#859397] bg-[#0b1326]"
-                  }`}
+            {/* CONDITIONAL FIELD INJECTION MATRIX */}
+            <AnimatePresence mode="wait">
+              {accessRole === "student" ? (
+                <motion.div
+                  key="student-fields"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.2 }}
+                  className="space-y-4"
                 >
-                  {rememberMe && (
-                    <svg
-                      className="w-2.5 h-2.5 text-[#00363e]"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="3"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M4.5 12.75l6 6 9-13.5"
-                      />
-                    </svg>
-                  )}
-                </div>
-                <span className="text-sm text-[#bbc9cd] group-hover:text-[#dae2fd] transition-colors">
-                  Keep me logged in
-                </span>
-              </label>
+                  <Input
+                    label="Full Name"
+                    id="studentName"
+                    type="text"
+                    placeholder="John Doe"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    icon={User}
+                  />
 
-              <a
-                href="#forgot"
-                className="text-sm font-medium text-[#22d3ee] hover:text-[#8aebff] transition-colors"
-              >
-                Forgot password?
-              </a>
-            </div>
+                  <Input
+                    label="Enrollment Number"
+                    id="enrollmentNumber"
+                    type="number"
+                    placeholder="EME-2026-XXXX"
+                    value={enrollmentNo}
+                    onChange={(e) => setEnrollmentNo(e.target.value)}
+                    icon={Hash}
+                    className="font-mono"
+                  />
 
-            <Button variant="primary" type="submit" className="w-full mt-2">
-              Sign In
+                  <Input
+                    label="Email Address"
+                    id="studentEmail"
+                    type="email"
+                    placeholder="john.doe@university.edu"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    icon={Mail}
+                  />
+
+                  <Input
+                    label="Password"
+                    id="studentPassword"
+                    type="password"
+                    placeholder="••••••••"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    icon={Lock}
+                  />
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="staff-faculty-fields"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.2 }}
+                  className="space-y-4"
+                >
+                  <Input
+                    label="Official Full Name"
+                    id="staffName"
+                    type="text"
+                    placeholder="Dr. Morgan Smith"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    icon={User}
+                  />
+
+                  <Input
+                    label={accessRole === "faculty" ? "Faculty Registry ID" : "Staff Identification ID"}
+                    id="employeeId"
+                    type="number"
+                    placeholder="EMP-XXXXX"
+                    value={employeeId}
+                    onChange={(e) => setEmployeeId(e.target.value)}
+                    icon={Briefcase}
+                    className="font-mono"
+                  />
+
+                  <Input
+                    label="Email Address"
+                    id="staffEmail"
+                    type="email"
+                    placeholder="m.smith@university.edu"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    icon={Mail}
+                  />
+
+                  <Input
+                    label="Password"
+                    id="staffPassword"
+                    type="password"
+                    placeholder="••••••••"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    icon={Lock}
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            <Button variant="primary" type="submit" className="w-full pt-1">
+              Sign Up
             </Button>
 
-            {/* <div className="relative flex py-3 items-center">
+            {/* <div className="relative flex py-2 items-center">
               <div className="grow border-t border-[#3c494c]/60"></div>
               <span className="shrink mx-4 font-mono text-[11px] font-bold tracking-widest text-[#bbc9cd]/60 uppercase">
-                OR SSO LOGIN
+                OR SSO REGISTER
               </span>
               <div className="grow border-t border-[#3c494c]/60"></div>
             </div> */}
@@ -246,7 +289,7 @@ export default function LoginPage() {
             {/* <Button
               variant="sso"
               type="button"
-              onClick={() => console.log("Google login")}
+              onClick={() => console.log("Google Signup Node Initialized")}
             >
               <svg
                 className="w-4 h-4 mr-1"
@@ -270,31 +313,19 @@ export default function LoginPage() {
                   fill="#EA4335"
                 />
               </svg>
-              Sign in using Google
+              Sign up using Google
             </Button> */}
           </form>
 
-          {/* <div className="mt-8 text-center">
-            <p className="text-sm text-[#bbc9cd]">
-              Don't have an account?{" "}
-              <a
-                href="#request"
-                className="text-[#22d3ee] hover:text-[#8aebff] font-semibold inline-flex items-center gap-0.5 hover:underline transition-all"
-              >
-                Request access{" "}
-                <ArrowRight size={14} className="inline ml-0.5" />
-              </a>
-            </p>
-          </div> */}
-
           <div className="mt-6 text-center border-t border-[#3c494c]/40 pt-4">
             <p className="text-sm text-[#bbc9cd]">
-              Don't have an account?{" "}
+              Already have an account?{" "}
               <Link
-                to="/signup"
+                to="/login"
                 className="text-[#22d3ee] hover:text-[#8aebff] font-semibold inline-flex items-center gap-0.5 hover:underline transition-all"
               >
-                Sign Up <ArrowRight size={14} className="inline ml-0.5" />
+                Sign In{" "}
+                <ArrowRight size={14} className="inline ml-0.5" />
               </Link>
             </p>
           </div>

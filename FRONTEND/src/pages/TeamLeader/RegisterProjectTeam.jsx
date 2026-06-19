@@ -124,13 +124,21 @@ export default function RegisterProjectTeam() {
                     <label className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#bbc9cd]">
                       Year
                     </label>
-                    <input
-                      type="text"
-                      placeholder="e.g. 2026"
-                      value={year}
-                      onChange={(e) => setYear(e.target.value)}
-                      className="w-full h-11 bg-[#0b1326] border border-[#222a3d] text-[#dae2fd] placeholder-[#3c494c] text-sm rounded-md px-4 outline-none hover:border-[#3c494c] focus:border-[#22d3ee] transition-all"
-                    />
+                    <div className="relative w-full">
+                      <select
+                        value={year}
+                        onChange={(e) => setYear(e.target.value)}
+                        className="w-full h-11 bg-[#0b1326] border border-[#222a3d] text-[#dae2fd] text-sm rounded-md px-4 pr-10 outline-none appearance-none cursor-pointer hover:border-[#3c494c] transition-all"
+                      >
+                        <option>2023</option>
+                        <option>2024</option>
+                        <option>2025</option>
+                        <option>2026</option>
+                      </select>
+                      <div className="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-[#859397]">
+                        <ChevronDown size={16} />
+                      </div>
+                    </div>
                   </div>
 
                   {/* Section */}
@@ -138,14 +146,26 @@ export default function RegisterProjectTeam() {
                     <label className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#bbc9cd]">
                       Section
                     </label>
-                    <input
-                      type="text"
-                      placeholder="e.g. CSE IV"
-                      value={section}
-                      onChange={(e) => setSection(e.target.value)}
-                      className="w-full h-11 bg-[#0b1326] border border-[#222a3d] text-[#dae2fd] placeholder-[#3c494c] text-sm rounded-md px-4 outline-none hover:border-[#3c494c] focus:border-[#22d3ee] transition-all"
-                    />
+                    <div className="relative w-full">
+                      <select
+                        value={section}
+                        onChange={(e) => setSection(e.target.value)}
+                        className="w-full h-11 bg-[#0b1326] border border-[#222a3d] text-[#dae2fd] text-sm rounded-md px-4 pr-10 outline-none appearance-none cursor-pointer hover:border-[#3c494c] transition-all"
+                      >
+                        <option>CSE I</option>
+                        <option>CSE II</option>
+                        <option>CSE III</option>
+                        <option>CSE IV</option>
+                        <option>CSE V</option>
+                        <option>CSE VI</option>
+                        <option>CSE VII</option>
+                        <option>CSE VIII</option>
+                      </select>
+                      <div className="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-[#859397]">
+                        <ChevronDown size={16} />
+                      </div>
                   </div>
+                </div>
                 </div>
 
                 {/* Row 3: Description */}
@@ -181,7 +201,7 @@ export default function RegisterProjectTeam() {
               <Button
                 variant="primary"
                 onClick={() =>
-                  navigate("/Team-Management/Add-Members", {
+                  navigate("/student/team-management/add-members", {
                     state: {
                       projectData: {
                         projectName,

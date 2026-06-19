@@ -22,12 +22,16 @@ import FacultyNotifications from "../pages/Faculty/Notifications";
 import FacultyGalleryApprovals from "../pages/Faculty/GalleryApprovals";
 import FacultyStudentProgress from "../pages/Faculty/StudentProgress";
 
-import GroupLeaderDashboard from "../pages/TeamLeader/LeaderDashboard";
+import CompleteProfile from "../pages/TeamLeader/CompleteProfile";
+import StudentDashboard from "../pages/TeamLeader/StudentDashboard";
 import RegisterProjectTeam from "../pages/TeamLeader/RegisterProjectTeam";
 import AddMembers from "../pages/TeamLeader/AddMembers";
 import ReviewTeamDetails from "../pages/TeamLeader/ReviewTeamDetails";
+import Settings from "../pages/TeamLeader/Settings";
 
 import Login from "../pages/Auth/Login";
+import SignupPage from "../pages/Auth/Signup";
+import LeaderDashboard from "../pages/TeamLeader/StudentDashboard";
 
 const ComingSoon = ({ title, description }) => (
   <div className="min-h-[60vh] rounded-2xl border border-[#222a3d] bg-[#131b2e] p-8 text-[#dae2fd] shadow-2xl">
@@ -45,70 +49,102 @@ const ComingSoon = ({ title, description }) => (
 const AppRoutes = () => {
   return (
     <Routes>
-      <Route path="/" element={<Navigate to="/faculty/dashboard" replace />} />
-      <Route path="/login" element={<Login />} />
-
-      <Route path="/faculty/dashboard" element={<FacultyDashboard />} />
-      <Route path="/faculty/project-approvals" element={<FacultyProjectApprovals />} />
-      <Route path="/faculty/component-requests" element={<FacultyComponentRequests />} />
-      <Route path="/faculty/events" element={<FacultyEvents />} />
-      <Route path="/faculty/notifications" element={<FacultyNotifications />} />
-      <Route path="/faculty/gallery-approvals" element={<FacultyGalleryApprovals />} />
-      <Route path="/faculty/student-progress" element={<FacultyStudentProgress />} />
-
-      <Route path="/Student/Dashboard" element={<GroupLeaderDashboard />} />
-      <Route path="/Student/Team-Management" element={<RegisterProjectTeam />} />
-      <Route path="/Student/Team-Management/Add-Members" element={<AddMembers />} />
-      <Route path="/Student/Team-Management/Review-Team" element={<ReviewTeamDetails />} />
       <Route
-        path="/Student/Component-Inventory"
+      path="/"
+      element={<Navigate to="/login" replace />}
+      />
+
+
+      {/* GROUP LEADER */}
+
+      <Route
+      path="/student/complete-profile"
+      element={<CompleteProfile />}
+      />
+
+      <Route
+      path="/student/student-dashboard"
+      element={<StudentDashboard/>}
+      />
+      <Route
+        path="/student/team-management/register"
+        element={<RegisterProjectTeam />}
+      />
+      <Route
+        path="/student/team-management/add-members"
+        element={<AddMembers />}
+      />
+      <Route
+        path="/student/team-management/review-team-details"
+        element={<ReviewTeamDetails />}
+      />
+      <Route
+        path="/student/component-inventory"
         element={
           <ComingSoon
             title="Component Inventory"
-            description="The sidebar already points here, so this route is reserved for the Group Leader component inventory experience."
+            description="Browse available lab components, check stock levels, and view component details."
           />
         }
       />
       <Route
-        path="/Student/Issue-History"
+        path="/student/issue-history"
         element={
           <ComingSoon
             title="Issue History"
-            description="This page will show the full history of requested, issued, and returned components for a project team."
+            description="View all issued, returned, pending, and damaged component records for your team."
           />
         }
       />
       <Route
-        path="/Student/New-Requests"
+        path="/student/component-requests"
         element={
           <ComingSoon
             title="New Requests"
-            description="This sidebar entry is reserved for future request submission and tracking screens."
+            description="Create and track component requests for your project."
           />
         }
       />
       <Route
-        path="/Student/gallery"
+        path="/student/gallery"
         element={
           <ComingSoon
             title="Project Gallery"
-            description="This route is reserved for the project gallery view in the Group Leader module."
+            description="Showcase project milestones, photos, videos, and achievements."
           />
         }
+      />
+      <Route path="/student/settings" element={<Settings />} />
+
+
+      
+      {/* FACULTY */}
+      <Route path="/login" element={<Login />} />
+      <Route path="/signup" element={<SignupPage />} />
+      <Route path="/faculty/dashboard" element={<FacultyDashboard />} />
+      <Route
+        path="/faculty/project-approvals"
+        element={<FacultyProjectApprovals />}
       />
       <Route
-        path="/Student/settings"
-        element={
-          <ComingSoon
-            title="Settings"
-            description="This route is reserved for Group Leader account and preference settings."
-          />
-        }
+        path="/faculty/component-requests"
+        element={<FacultyComponentRequests />}
       />
-      <Route path="/Team-Management" element={<Navigate to="/Student/Team-Management" replace />} />
-      <Route path="/Team-Management/Add-Members" element={<AddMembers />} />
-      <Route path="/Team-Management/Review-Team" element={<ReviewTeamDetails />} />
+      <Route path="/faculty/events" element={<FacultyEvents />} />
+      <Route path="/faculty/notifications" element={<FacultyNotifications />} />
+      <Route
+        path="/faculty/gallery-approvals"
+        element={<FacultyGalleryApprovals />}
+      />
+      <Route
+        path="/faculty/student-progress"
+        element={<FacultyStudentProgress />}
+      />
 
+
+
+
+      {/* LABSTAFF */}
       <Route path="/lab-staff" element={<LabStaffLayout />}>
 
         <Route index element={<Navigate to="dashboard" replace />} />
@@ -123,8 +159,17 @@ const AppRoutes = () => {
 
         <Route path="settings" element={<Settings />} />
       </Route>
+
+      <Route
+        path="*"
+        element={
+          <div>
+            Page Not Found
+          </div>
+        }
+      />
     </Routes>
   );
-};
+}
 
 export default AppRoutes;
