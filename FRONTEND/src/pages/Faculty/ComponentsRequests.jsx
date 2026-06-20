@@ -1,53 +1,46 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DashboardLayout from "../../components/layout/DashboardLayout";
 import SectionHeader from "../../components/ui/SectionHeader";
 import DataTable from "../../components/ui/DataTable";
 import ActionButton from "../../components/ui/ActionButton";
 import StatCard from "../../components/ui/StatCard";
+import {
+  getComponentRequests,
+  updateComponentStatus,
+} from "../../services/componentService";
 
 function ComponentsRequests() {
-  const [requests, setRequests] = useState([
-    {
-      component: "Arduino Uno",
-      quantity: 5,
-      team: "Team Alpha",
-      requestedBy: "Rahul Kumar",
-      date: "07-06-2026",
-      purpose: "Attendance Device Prototype",
-      status: "Pending",
-    },
-    {
-      component: "Raspberry Pi",
-      quantity: 2,
-      team: "Team Beta",
-      requestedBy: "Aryan Mehta",
-      date: "07-06-2026",
-      purpose: "AI Processing Unit",
-      status: "Pending",
-    },
-    {
-      component: "Ultrasonic Sensor",
-      quantity: 10,
-      team: "Team Gamma",
-      requestedBy: "Aman Gupta",
-      date: "07-06-2026",
-      purpose: "Inventory Detection",
-      status: "Approved",
-    },
-  ]);
-
+  const [requests, setRequests] = useState([]);
   const [selectedRequest, setSelectedRequest] = useState(null);
 
-  const updateStatus = (requestToUpdate, newStatus) => {
-    const updatedRequests = requests.map((request) =>
-      request.component === requestToUpdate.component &&
-      request.team === requestToUpdate.team
-        ? { ...request, status: newStatus }
-        : request
-    );
+  useEffect(() => {
+    loadComponentRequests();
+  }, []);
 
-    setRequests(updatedRequests);
-    setSelectedRequest({ ...requestToUpdate, status: newStatus });
+  const loadComponentRequests = async () => {
+    try {
+      const response = await getComponentRequests();
+      setRequests(response.data);
+    } catch (error) {
+      console.error("Error fetching component requests:", error);
+    }
+  };
+
+  const updateStatus = async (requestToUpdate, newStatus) => {
+    try {
+      await updateComponentStatus(requestToUpdate.id, newStatus);
+
+      const updatedRequests = requests.map((request) =>
+        request.id === requestToUpdate.id
+          ? { ...request, status: newStatus }
+          : request
+      );
+
+      setRequests(updatedRequests);
+      setSelectedRequest({ ...requestToUpdate, status: newStatus });
+    } catch (error) {
+      console.error("Error updating component request:", error);
+    }
   };
 
   const tableData = requests.map((request) => ({
@@ -78,9 +71,17 @@ function ComponentsRequests() {
     ),
   }));
 
-  const pendingCount = requests.filter((request) => request.status === "Pending").length;
-  const approvedCount = requests.filter((request) => request.status === "Approved").length;
-  const rejectedCount = requests.filter((request) => request.status === "Rejected").length;
+  const pendingCount = requests.filter(
+    (request) => request.status === "Pending"
+  ).length;
+
+  const approvedCount = requests.filter(
+    (request) => request.status === "Approved"
+  ).length;
+
+  const rejectedCount = requests.filter(
+    (request) => request.status === "Rejected"
+  ).length;
 
   return (
     <DashboardLayout>
@@ -91,10 +92,26 @@ function ComponentsRequests() {
         />
 
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
-          <StatCard title="Total Requests" value={requests.length} change="All component requests" />
-          <StatCard title="Pending" value={pendingCount} change="Awaiting approval" />
-          <StatCard title="Approved" value={approvedCount} change="Issued components" />
-          <StatCard title="Rejected" value={rejectedCount} change="Not approved" />
+          <StatCard
+            title="Total Requests"
+            value={requests.length}
+            change="All component requests"
+          />
+          <StatCard
+            title="Pending"
+            value={pendingCount}
+            change="Awaiting approval"
+          />
+          <StatCard
+            title="Approved"
+            value={approvedCount}
+            change="Issued components"
+          />
+          <StatCard
+            title="Rejected"
+            value={rejectedCount}
+            change="Not approved"
+          />
         </div>
 
         <DataTable
