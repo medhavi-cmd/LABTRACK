@@ -1,7 +1,7 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import ComponentDemand from "../pages/LabStaff/ComponentDemand";
 import Notifications from "../pages/LabStaff/Notifications";
-import Settings from "../pages/LabStaff/Settings";
+
 
 import LabStaffLayout from "../layouts/LabStaffLayout";
 
@@ -27,7 +27,8 @@ import StudentDashboard from "../pages/TeamLeader/StudentDashboard";
 import RegisterProjectTeam from "../pages/TeamLeader/RegisterProjectTeam";
 import AddMembers from "../pages/TeamLeader/AddMembers";
 import ReviewTeamDetails from "../pages/TeamLeader/ReviewTeamDetails";
-import Settings from "../pages/TeamLeader/Settings";
+import LabStaffSettings from "../pages/LabStaff/Settings";
+import TeamLeaderSettings from "../pages/TeamLeader/Settings";
 
 import Login from "../pages/Auth/Login";
 import SignupPage from "../pages/Auth/Signup";
@@ -114,7 +115,7 @@ const AppRoutes = () => {
           />
         }
       />
-      <Route path="/student/settings" element={<Settings />} />
+      <Route path="/student/settings" element={<TeamLeaderSettings />} />
 
 
       
@@ -157,7 +158,7 @@ const AppRoutes = () => {
         <Route path="demand" element={<ComponentDemand />} />
         <Route path="notifications" element={<Notifications />} />
 
-        <Route path="settings" element={<Settings />} />
+        <Route path="settings" element={<LabStaffSettings />} />
       </Route>
 
       <Route
