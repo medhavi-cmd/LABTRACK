@@ -38,6 +38,13 @@ export default function LoginPage() {
         password,
       });
 
+      if (response.user.role !== accessRole) {
+        alert(
+          `This account belongs to ${response.user.role}. Please select the correct access role.`,
+        );
+        return;
+      }
+
       localStorage.setItem("token", response.token);
 
       localStorage.setItem("user", JSON.stringify(response.user));
@@ -56,11 +63,9 @@ export default function LoginPage() {
 
           alert("Unable to fetch profile");
         }
-      }
-       else if (response.user.role === "faculty") {
+      } else if (response.user.role === "faculty") {
         navigate("/faculty/dashboard");
-      } 
-      else if (response.user.role === "staff") {
+      } else if (response.user.role === "lab_staff") {
         navigate("/lab-staff/dashboard");
       }
     } catch (error) {
@@ -161,8 +166,8 @@ export default function LoginPage() {
                 <RoleSelector
                   label="Lab Staff"
                   icon={Microscope}
-                  active={accessRole === "staff"}
-                  onClick={() => setAccessRole("staff")}
+                  active={accessRole === "lab_staff"}
+                  onClick={() => setAccessRole("lab_staff")}
                 />
               </div>
             </div>
@@ -175,6 +180,7 @@ export default function LoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               icon={Mail}
+              required
             />
 
             <Input
@@ -185,6 +191,7 @@ export default function LoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               icon={Lock}
+              required
             />
 
             <div className="flex items-center justify-between pt-1 pb-2">

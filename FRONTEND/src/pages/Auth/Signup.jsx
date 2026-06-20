@@ -37,28 +37,55 @@ export default function SignupPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSubmit = async (e) => {
+ const handleSubmit = async (e) => {
   e.preventDefault();
+
+  if (!name.trim() || !email.trim() || !password.trim()) {
+    alert("Please fill all required fields");
+    return;
+  }
+
+  if (accessRole === "student") {
+    if (!enrollmentNo.trim()) {
+      alert("Enrollment number is required");
+      return;
+    }
+
+    if (!/^\d+$/.test(enrollmentNo)) {
+      alert("Enrollment number must contain numbers only");
+      return;
+    }
+  }
+
+  if (accessRole !== "student") {
+    if (!employeeId.trim()) {
+      alert("Employee ID is required");
+      return;
+    }
+
+    if (!/^\d+$/.test(employeeId)) {
+      alert("Employee ID must contain numbers only");
+      return;
+    }
+  }
 
   try {
     const response = await signupUser({
       role: accessRole,
-      name,
-      email,
+      name: name.trim(),
+      email: email.trim(),
       password,
-      enrollmentNo,
-      employeeId,
+      enrollmentNo:
+        accessRole === "student" ? enrollmentNo : null,
+      employeeId:
+        accessRole !== "student" ? employeeId : null,
     });
 
-    localStorage.setItem(
-      "token",
-      response.token
-    );
+    localStorage.setItem("token", response.token);
 
     alert("Registration Successful");
 
     navigate("/login");
-
   } catch (error) {
     alert(
       error.response?.data?.message ||
@@ -162,10 +189,10 @@ export default function SignupPage() {
                 />
                 <RoleSelector
                   label="Lab Staff"
-                  icon={Microscope}
-                  active={accessRole === "staff"}
-                  onClick={() => setAccessRole("staff")}
-                />
+                    icon={Microscope}
+                    active={accessRole === "lab_staff"}
+                    onClick={() => setAccessRole("lab_staff")}
+                  />
               </div>
             </div>
 
@@ -188,17 +215,22 @@ export default function SignupPage() {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     icon={User}
+                    required
                   />
 
                   <Input
                     label="Enrollment Number"
                     id="enrollmentNumber"
-                    type="number"
-                    placeholder="EME-2026-XXXX"
+                    type="text"
+                    inputMode="numeric"
+                    placeholder="Enter numeric enrollment number"
                     value={enrollmentNo}
-                    onChange={(e) => setEnrollmentNo(e.target.value)}
+                    onChange={(e) =>
+                      setEnrollmentNo(e.target.value.replace(/\D/g, ""))
+                    }
                     icon={Hash}
                     className="font-mono"
+                    required
                   />
 
                   <Input
@@ -209,6 +241,7 @@ export default function SignupPage() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     icon={Mail}
+                    required
                   />
 
                   <Input
@@ -219,6 +252,7 @@ export default function SignupPage() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     icon={Lock}
+                    required
                   />
                 </motion.div>
               ) : (
@@ -238,17 +272,23 @@ export default function SignupPage() {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     icon={User}
+                    required
                   />
 
                   <Input
-                    label={accessRole === "faculty" ? "Faculty Registry ID" : "Staff Identification ID"}
+                    label={
+                      accessRole === "faculty"
+                        ? "Faculty Registry ID"
+                        : "Staff Identification ID"
+                    }
                     id="employeeId"
-                    type="number"
-                    placeholder="EMP-XXXXX"
+                    type="text"
+                    placeholder="Enter employee ID"
                     value={employeeId}
                     onChange={(e) => setEmployeeId(e.target.value)}
                     icon={Briefcase}
                     className="font-mono"
+                    required
                   />
 
                   <Input
@@ -259,6 +299,7 @@ export default function SignupPage() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     icon={Mail}
+                    required
                   />
 
                   <Input
@@ -269,6 +310,7 @@ export default function SignupPage() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     icon={Lock}
+                    required
                   />
                 </motion.div>
               )}
