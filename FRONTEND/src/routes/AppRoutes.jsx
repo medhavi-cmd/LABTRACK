@@ -27,17 +27,19 @@ import Settings from "../pages/TeamLeader/Settings";
 
 import Login from "../pages/Auth/Login";
 import SignupPage from "../pages/Auth/Signup";
+import GroupLeaderLayout from "../layouts/GroupLeaderLayout";
 
 const ComingSoon = ({ title, description }) => (
-  <div className="min-h-[60vh] rounded-2xl border border-[#222a3d] bg-[#131b2e] p-8 text-[#dae2fd] shadow-2xl">
+  
+    <GroupLeaderLayout>
     <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[#859397]">
       Coming Soon
     </p>
     <h1 className="mt-3 text-3xl font-bold text-white">{title}</h1>
     <p className="mt-3 max-w-2xl text-sm leading-6 text-[#bbc9cd]">
       {description}
-    </p>
-  </div>
+    </p> 
+  </GroupLeaderLayout>
 );
 
 const AppRoutes = () => {
