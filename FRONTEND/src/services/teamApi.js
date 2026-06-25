@@ -35,3 +35,4 @@ export const registerTeam = (payload) =>
 export const getMyTeam = () => request("/team/my-team");
 
 export const getMyTeamStatus = () => request("/team/my-team-status");
+

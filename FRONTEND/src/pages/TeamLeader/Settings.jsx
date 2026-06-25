@@ -1,249 +1,221 @@
-import React, { useState } from "react";
-import { 
-  User, 
-  Mail, 
-  Shield, 
-  Settings as SettingsIcon, 
-  Cloud, 
-  HelpCircle, 
-  ExternalLink,
-  CheckCircle2
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  AlertCircle,
+  CalendarDays,
+  Hash,
+  Loader2,
+  LogOut,
+  Mail,
+  Phone,
+  School,
+  User,
 } from "lucide-react";
+
 import GroupLeaderLayout from "../../layouts/GroupLeaderLayout";
+import { getMyProfile } from "../../services/teamApi";
 
 export default function Settings() {
-  const [activeTab, setActiveTab] = useState("profile");
-  
-  // Local Form States for Student Group Leader
-  const [formData, setFormData] = useState({
-    fullName: "John Doe",
-    academicEmail: "john.doe@university.edu",
-    studentId: "EME-2023-0045",
-    department: "Mechanical Engineering"
-  });
+  const navigate = useNavigate();
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+  const [student, setStudent] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        setLoading(true);
+        setError("");
+
+        const response = await getMyProfile();
+
+        setStudent(response);
+      } catch (err) {
+        console.error("Failed to fetch profile:", err);
+
+        setError(err.message || "Unable to load profile details");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProfile();
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+
+    navigate("/login", { replace: true });
   };
 
-  const tabs = [
-    { id: "profile", label: "Profile Settings" },
-    { id: "team", label: "Team Preferences" },
-    { id: "security", label: "Security & 2FA" },
-    { id: "permissions", label: "Lab Permissions" },
+  const formatDate = (dateValue) => {
+    if (!dateValue) return "Not available";
+
+    const date = new Date(dateValue);
+
+    if (Number.isNaN(date.getTime())) {
+      return "Not available";
+    }
+
+    return date.toLocaleDateString("en-IN", {
+      day: "2-digit",
+      month: "long",
+      year: "numeric",
+    });
+  };
+
+  if (loading) {
+    return (
+      <GroupLeaderLayout>
+        <div className="flex min-h-[80vh] items-center justify-center text-[#dae2fd]">
+          <div className="flex items-center gap-3 text-[#bbc9cd]">
+            <Loader2 className="animate-spin text-[#22d3ee]" size={22} />
+            Loading profile settings...
+          </div>
+        </div>
+      </GroupLeaderLayout>
+    );
+  }
+
+  if (error || !student) {
+    return (
+      <GroupLeaderLayout>
+        <div className="p-5 text-[#dae2fd] sm:p-8">
+          <div className="max-w-3xl rounded-xl border border-red-500/30 bg-[#171f33] p-6">
+            <div className="mb-3 flex items-center gap-3">
+              <AlertCircle className="text-red-400" size={22} />
+
+              <h1 className="text-xl font-semibold text-white">
+                Unable to Load Settings
+              </h1>
+            </div>
+
+            <p className="text-[#bbc9cd]">
+              {error || "Student profile details could not be loaded."}
+            </p>
+          </div>
+        </div>
+      </GroupLeaderLayout>
+    );
+  }
+
+  const fullName = student.full_name || student.name || "Student";
+
+  const profileDetails = [
+    {
+      label: "Full Name",
+      value: fullName,
+      icon: User,
+    },
+    {
+      label: "Enrollment Number",
+      value: student.enrollment_no || "Not available",
+      icon: Hash,
+    },
+    {
+      label: "Academic Email",
+      value: student.email || "Not available",
+      icon: Mail,
+    },
+    {
+      label: "Phone Number",
+      value: student.phone_no || "Not available",
+      icon: Phone,
+    },
+    {
+      label: "Department",
+      value: student.department || student.branch || "Not available",
+      icon: School,
+    },
   ];
 
   return (
-    <GroupLeaderLayout >
-        <div className="min-h-screen bg-[#0b1326] text-white p-6 max-w-7xl mx-auto">
-      
-      {/* HEADER SECTION */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight text-slate-100">Account Settings</h1>
-        <p className="text-sm text-slate-400 mt-1">
-          Manage your student profile, team project defaults, and security credentials.
-        </p>
-      </div>
-
-      {/* HORIZONTAL NAVIGATION TABS */}
-      <div className="flex items-center gap-8 border-b border-slate-800/60 mb-8 overflow-x-auto scrollbar-none">
-        {tabs.map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
-            className={`pb-4 text-sm font-medium tracking-wide transition-all border-b-2 whitespace-nowrap ${
-              activeTab === tab.id
-                ? "border-cyan-400 text-cyan-400 font-semibold"
-                : "border-transparent text-slate-400 hover:text-slate-200"
-            }`}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
-
-      {/* MAIN TWO-COLUMN GRID */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
-        
-        {/* LEFT COLUMN: FORM DETAILS (Takes up 2/3 cols) */}
-        <div className="lg:col-span-2 flex flex-col gap-6">
-          <div className="bg-[#07111f] rounded-xl border border-cyan-900/10 p-6 shadow-xl">
-            
-            {/* Card Header Header */}
-            <div className="flex items-center gap-2.5 border-b border-slate-800/40 pb-4 mb-6">
-              <User size={18} className="text-cyan-400" />
-              <h2 className="text-base font-bold text-slate-200 tracking-wide">
-                Personal Information
-              </h2>
-            </div>
-
-            {/* Input Grid Field Layout */}
-            <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                
-                {/* Full Name Input */}
-                <div className="flex flex-col gap-2">
-                  <label className="text-xs font-mono uppercase tracking-widest text-slate-400 font-semibold">
-                    Full Name
-                  </label>
-                  <input
-                    type="text"
-                    name="fullName"
-                    value={formData.fullName}
-                    onChange={handleInputChange}
-                    className="w-full h-11 px-4 bg-[#111c30] border border-slate-800 rounded-lg text-slate-200 text-sm focus:outline-none focus:border-cyan-500/50 transition-colors"
-                  />
-                </div>
-
-                {/* Academic Email Input */}
-                <div className="flex flex-col gap-2">
-                  <label className="text-xs font-mono uppercase tracking-widest text-slate-400 font-semibold">
-                    Academic Email
-                  </label>
-                  <input
-                    type="email"
-                    name="academicEmail"
-                    value={formData.academicEmail}
-                    onChange={handleInputChange}
-                    className="w-full h-11 px-4 bg-[#111c30] border border-slate-800 rounded-lg text-slate-200 text-sm focus:outline-none focus:border-cyan-500/50 transition-colors"
-                  />
-                </div>
-
-                {/* Student ID Code Row Input */}
-                <div className="flex flex-col gap-2">
-                  <label className="text-xs font-mono uppercase tracking-widest text-slate-400 font-semibold">
-                    Student / Group Leader ID
-                  </label>
-                  <input
-                    type="text"
-                    name="studentId"
-                    disabled
-                    value={formData.studentId}
-                    className="w-full h-11 px-4 bg-[#111c30]/50 border border-slate-800/60 rounded-lg text-slate-500 text-sm cursor-not-allowed select-none"
-                  />
-                </div>
-
-                {/* Primary Department Selection Component */}
-                <div className="flex flex-col gap-2">
-                  <label className="text-xs font-mono uppercase tracking-widest text-slate-400 font-semibold">
-                    Primary Department
-                  </label>
-                  <select
-                    name="department"
-                    value={formData.department}
-                    onChange={handleInputChange}
-                    className="w-full h-11 px-4 bg-[#111c30] border border-slate-800 rounded-lg text-slate-200 text-sm focus:outline-none focus:border-cyan-500/50 transition-colors appearance-none cursor-pointer"
-                  >
-                    <option value="Mechanical Engineering">Mechanical Engineering</option>
-                    <option value="Electrical Engineering">Electrical Engineering</option>
-                    <option value="Computer Science">Computer Science & Bio-Informatics</option>
-                  </select>
-                </div>
-              </div>
-
-              {/* Form Action Controls */}
-              <div className="flex items-center justify-end gap-5 pt-4 border-t border-slate-800/40 mt-4">
-                <button
-                  type="button"
-                  className="text-xs font-bold uppercase tracking-wider text-slate-400 hover:text-slate-200 transition-colors"
-                >
-                  Discard Changes
-                </button>
-                <button
-                  type="submit"
-                  className="px-5 h-10 flex items-center justify-center text-xs font-bold uppercase tracking-wider bg-cyan-400 hover:bg-cyan-300 text-[#00363e] rounded-md shadow-lg transition-colors"
-                >
-                  Update Profile
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-
-        {/* RIGHT COLUMN: SIDE METRICS DRAWERS (Takes up 1/3 col) */}
-        <div className="flex flex-col gap-6">
-          
-          {/* USER CARD PROFILE PREVIEW */}
-          <div className="bg-[#07111f] rounded-xl border border-cyan-900/10 p-6 flex flex-col items-center text-center shadow-xl">
-            <div className="w-24 h-24 rounded-full border-2 border-cyan-500/30 overflow-hidden relative group mb-4">
-              {/* Static Avatar fallback with first letter */}
-              <div className="w-full h-full bg-slate-800 flex items-center justify-center text-2xl font-bold text-cyan-400">
-                {formData.fullName.charAt(0)}
-              </div>
-            </div>
-            
-            <h3 className="text-lg font-bold text-slate-200 tracking-wide">{formData.fullName}</h3>
-            <p className="text-xs font-medium text-cyan-400 tracking-wider font-mono uppercase mt-0.5">
-              Student Group Leader
+    <GroupLeaderLayout>
+      <div className="min-h-screen bg-[#0b1326] p-5 text-[#dae2fd] sm:p-8">
+        <div className="mx-auto max-w-6xl">
+          {/* Page Header */}
+          <div className="mb-8">
+            <p className="mb-2 font-mono text-xs uppercase tracking-[0.18em] text-[#22d3ee]">
+              Account Settings
             </p>
 
-            {/* Quick Micro Status Panel Indicators */}
-            <div className="w-full grid grid-cols-2 gap-4 border-t border-slate-800/40 pt-4 mt-5 text-left">
+            <h1 className="text-3xl font-bold text-white">Settings</h1>
+
+            <p className="mt-2 text-[#bbc9cd]">
+              View your account and registered profile information.
+            </p>
+          </div>
+
+          {/* Main Profile Card */}
+          <section className="overflow-hidden rounded-xl border border-[#3c494c] bg-[#171f33]">
+            {/* Card heading */}
+            <div className="flex items-center gap-4 border-b border-[#3c494c] px-5 py-5 sm:px-7">
+              <div className="rounded-lg border border-[#22d3ee]/20 bg-[#00363e]/40 p-3">
+                <User className="text-[#22d3ee]" size={22} />
+              </div>
+
               <div>
-                <span className="block text-[10px] uppercase font-mono tracking-wider text-slate-500 font-bold">
-                  Projects
-                </span>
-                <span className="text-sm font-semibold text-slate-200">2 Active</span>
-              </div>
-              <div className="border-l border-slate-800/40 pl-4">
-                <span className="block text-[10px] uppercase font-mono tracking-wider text-slate-500 font-bold">
-                  Trust Score
-                </span>
-                <span className="text-sm font-semibold text-emerald-400 flex items-center gap-1">
-                  98/100
-                </span>
+                <h2 className="text-xl font-semibold text-white">My Profile</h2>
+
+                <p className="mt-1 text-sm text-[#bbc9cd]">
+                  Your personal information as registered in the system.
+                </p>
               </div>
             </div>
-          </div>
 
-          {/* STORAGE METRIC WIDGET */}
-          <div className="bg-[#07111f] rounded-xl border border-cyan-900/10 p-6 shadow-xl">
-            <div className="flex items-center gap-2 mb-4">
-              <Cloud size={16} className="text-slate-400" />
-              <h4 className="text-xs font-bold font-mono tracking-widest uppercase text-slate-400">
-                Lab Cloud Usage
-              </h4>
-            </div>
-            
-            <div className="flex items-baseline justify-between mb-2">
-              <span className="text-3xl font-extrabold tracking-tight text-slate-100">84%</span>
-              <span className="text-xs text-slate-400 font-mono font-medium">4.2TB / 5TB</span>
+            {/* Details */}
+            <div className="px-5 sm:px-7">
+              {profileDetails.map((detail) => {
+                const Icon = detail.icon;
+
+                return (
+                  <div
+                    key={detail.label}
+                    className="grid grid-cols-1 gap-3 border-b border-[#3c494c] py-5 sm:grid-cols-2 sm:items-center"
+                  >
+                    <div className="flex items-center gap-3">
+                      <Icon className="text-[#22d3ee]" size={18} />
+
+                      <p className="font-medium text-[#bbc9cd]">
+                        {detail.label}
+                      </p>
+                    </div>
+
+                    <p className="break-all text-sm font-semibold text-white sm:text-right">
+                      {detail.value}
+                    </p>
+                  </div>
+                );
+              })}
             </div>
 
-            {/* Accent Storage Bar */}
-            <div className="w-full h-2 bg-slate-800 rounded-full overflow-hidden mb-3.5">
-              <div className="h-full bg-cyan-400 rounded-full" style={{ width: "84%" }}></div>
-            </div>
-
-            <p className="text-xs leading-relaxed text-slate-400">
-              Your team is reaching the tiered storage allocation limit for your active Capstone research datasets.
-            </p>
-          </div>
-
-          {/* HELP AND ESCALATION REDIRECT BUTTON */}
-          <div className="bg-[#07111f] rounded-xl border border-cyan-900/10 p-5 shadow-xl flex items-start gap-4">
-            <div className="p-2 bg-slate-800/60 rounded-lg text-cyan-400 shrink-0">
-              <HelpCircle size={18} />
-            </div>
-            <div className="space-y-1">
-              <h4 className="text-xs font-bold text-slate-200 tracking-wide">Need Help?</h4>
-              <p className="text-xs text-slate-400 leading-relaxed">
-                Contact the EME IT Helpdesk if you require project role or permission overrides.
-              </p>
-              <a 
-                href="#ticket" 
-                className="inline-flex items-center gap-1 text-xs font-semibold text-cyan-400 hover:text-cyan-300 transition-colors pt-1.5 group"
+            {/* Logout */}
+            <div className="px-5 py-6 sm:px-7">
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="flex w-full items-center justify-center gap-2 rounded-lg border border-red-400/40 bg-red-500/15 px-5 py-3.5 font-semibold text-red-300 transition hover:bg-red-500/25 hover:text-red-200"
               >
-                Open Support Ticket 
-                <ExternalLink size={11} className="transition-transform group-hover:translate-x-0.5" />
-              </a>
-            </div>
-          </div>
+                <LogOut size={18} />
+                Logout
+              </button>
 
+              <p className="mt-3 text-center text-xs text-[#859397]">
+                Securely logout from your account on this device.
+              </p>
+            </div>
+          </section>
+
+          {/* Read-only notice */}
+          <div className="mt-6 rounded-xl border border-[#1e4273] bg-[#11253e] p-4 text-sm text-[#bbc9cd]">
+            Your profile details are currently read-only. Contact the faculty
+            coordinator or lab administrator if any registered information needs
+            correction.
+          </div>
         </div>
       </div>
-    </div>
     </GroupLeaderLayout>
   );
 }
