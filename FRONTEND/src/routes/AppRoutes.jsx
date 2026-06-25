@@ -22,11 +22,11 @@ import StudentDashboard from "../pages/TeamLeader/StudentDashboard";
 import RegisterProjectTeam from "../pages/TeamLeader/RegisterProjectTeam";
 import AddMembers from "../pages/TeamLeader/AddMembers";
 import ReviewTeamDetails from "../pages/TeamLeader/ReviewTeamDetails";
+import TeamManagement from "../pages/TeamLeader/TeamManagement";
 import Settings from "../pages/TeamLeader/Settings";
 
 import Login from "../pages/Auth/Login";
 import SignupPage from "../pages/Auth/Signup";
-import LeaderDashboard from "../pages/TeamLeader/StudentDashboard";
 
 const ComingSoon = ({ title, description }) => (
   <div className="min-h-[60vh] rounded-2xl border border-[#222a3d] bg-[#131b2e] p-8 text-[#dae2fd] shadow-2xl">
@@ -52,13 +52,13 @@ const AppRoutes = () => {
       {/* GROUP LEADER */}
 
       <Route
-      path="/student/complete-profile"
-      element={<CompleteProfile />}
+        path="/student/complete-profile"
+        element={<CompleteProfile />}
       />
 
       <Route
-      path="/student/student-dashboard"
-      element={<StudentDashboard/>}
+        path="/student/student-dashboard"
+        element={<StudentDashboard />}
       />
       <Route
         path="/student/team-management/register"
@@ -71,6 +71,10 @@ const AppRoutes = () => {
       <Route
         path="/student/team-management/review-team-details"
         element={<ReviewTeamDetails />}
+      />
+      <Route
+        path="/student/team-management"
+        element={<TeamManagement />}
       />
       <Route
         path="/student/component-inventory"

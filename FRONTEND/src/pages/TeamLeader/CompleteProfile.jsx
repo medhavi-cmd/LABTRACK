@@ -53,7 +53,7 @@ export default function CompleteProfile() {
 
       alert("Profile Completed Successfully");
 
-      navigate("/student/leader-dashboard");
+      navigate("/student/student-dashboard");
     } catch (error) {
       console.log(error);
 
