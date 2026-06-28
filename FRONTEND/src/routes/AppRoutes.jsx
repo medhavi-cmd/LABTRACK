@@ -24,7 +24,7 @@ import AddMembers from "../pages/TeamLeader/AddMembers";
 import ReviewTeamDetails from "../pages/TeamLeader/ReviewTeamDetails";
 import TeamManagement from "../pages/TeamLeader/TeamManagement";
 import Settings from "../pages/TeamLeader/Settings";
-
+import ComponentInventory from "../pages/TeamLeader/ComponentInventory";
 import Login from "../pages/Auth/Login";
 import SignupPage from "../pages/Auth/Signup";
 import GroupLeaderLayout from "../layouts/GroupLeaderLayout";
@@ -79,13 +79,8 @@ const AppRoutes = () => {
         element={<TeamManagement />}
       />
       <Route
-        path="/student/component-inventory"
-        element={
-          <ComingSoon
-            title="Component Inventory"
-            description="Browse available lab components, check stock levels, and view component details."
-          />
-        }
+      path="/student/component-inventory"
+      element={<ComponentInventory />}
       />
       <Route
         path="/student/issue-history"
