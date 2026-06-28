@@ -1,98 +1,60 @@
-
-import React, { useState } from "react";
-import { FiEye, FiCheck, FiInfo, FiX } from "react-icons/fi";
+import React, { useEffect, useMemo, useState } from "react";
+import { FiEye, FiCheck, FiInfo, FiX, FiSearch } from "react-icons/fi";
  
-const requestsData = [
-  {
-    id: "REQ-1023",
-    component: "Arduino Uno R3",
-    quantity: 2,
-    date: "May 28, 2026",
-    priority: "Normal",
-    status: "Pending",
-    student: {
-      name: "Sarah Johnson",
-      enrollmentNo: "EME2024001",
-      batch: "2024",
-      group: "Group 1",
-      email: "sarah@bmu.edu.in",
-    },
-  },
-  {
-    id: "REQ-1022",
-    component: "Raspberry Pi 4",
-    quantity: 1,
-    date: "May 28, 2026",
-    priority: "High",
-    status: "Pending",
-    student: {
-      name: "Michael Chen",
-      enrollmentNo: "EME2024018",
-      batch: "2024",
-      group: "Group 2",
-      email: "michael@bmu.edu.in",
-    },
-  },
-  {
-    id: "REQ-1021",
-    component: "LED Strip 5m",
-    quantity: 3,
-    date: "May 27, 2026",
-    priority: "Normal",
-    status: "Approved",
-    student: {
-      name: "Emma Davis",
-      enrollmentNo: "EME2023033",
-      batch: "2023",
-      group: "Group 1",
-      email: "emma@bmu.edu.in",
-    },
-  },
-  {
-    id: "REQ-1020",
-    component: "DC Motor 12V",
-    quantity: 4,
-    date: "May 27, 2026",
-    priority: "Normal",
-    status: "Rejected",
-    student: {
-      name: "James Wilson",
-      enrollmentNo: "EME2023047",
-      batch: "2023",
-      group: "Group 3",
-      email: "james@bmu.edu.in",
-    },
-  },
-];
- 
-const statusStyle = {
-  Pending: "bg-yellow-500/20 text-yellow-400",
-  Approved: "bg-green-500/20 text-green-400",
-  Rejected: "bg-red-500/20 text-red-400",
+// ─── Status config ─────────────────────────────────────────────────────────────
+const STATUS_CONFIG = {
+  pending:  { label: "Pending",  style: "bg-yellow-500/20 text-yellow-400" },
+  approved: { label: "Approved", style: "bg-green-500/20 text-green-400" },
+  issued:   { label: "Issued",   style: "bg-cyan-500/20 text-cyan-400" },
+  rejected: { label: "Rejected", style: "bg-red-500/20 text-red-400" },
+  returned: { label: "Returned", style: "bg-slate-500/20 text-slate-400" },
 };
  
-const StudentInfoModal = ({ student, onClose }) => {
-  if (!student) return null;
+const getStatusConfig = (status) =>
+  STATUS_CONFIG[status?.toLowerCase()] ?? {
+    label: status ?? "Unknown",
+    style: "bg-slate-500/20 text-slate-400",
+  };
+ 
+const formatDate = (dateStr) => {
+  if (!dateStr) return "—";
+  try {
+    return new Date(dateStr).toLocaleDateString("en-IN", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    });
+  } catch {
+    return dateStr;
+  }
+};
+ 
+// ─── Student / Request info modal ──────────────────────────────────────────────
+const RequestInfoModal = ({ request, onClose }) => {
+  if (!request) return null;
  
   const fields = [
-    { label: "Student Name", value: student.name },
-    { label: "Enrollment Number", value: student.enrollmentNo },
-    { label: "Batch", value: student.batch },
-    { label: "Group", value: student.group },
-    { label: "Email", value: student.email },
+    { label: "Student Name",     value: request.student_name },
+    { label: "Enrollment Number", value: request.enrollment_no },
+    { label: "Team Name",        value: request.team_name },
+    { label: "Purpose",          value: request.purpose },
+    { label: "Component",        value: request.component_name },
+    { label: "Quantity",         value: request.quantity },
+    { label: "Status",           value: getStatusConfig(request.status).label },
+    { label: "Request Date",     value: formatDate(request.request_date) },
   ];
  
   return (
     <div
-      className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 px-4 transition-opacity duration-200"
+      className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 px-4"
       onClick={onClose}
     >
       <div
-        className="bg-[#0b1730] border border-cyan-900/30 rounded-xl w-full max-w-md p-6 shadow-xl transition-transform duration-200 scale-100"
+        className="bg-[#0b1730] border border-cyan-900/30 rounded-xl w-full max-w-md p-6 shadow-xl max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between mb-5">
-          <h3 className="text-xl font-semibold">Student Information</h3>
+          <h3 className="text-xl font-semibold">Request Information</h3>
           <button
             onClick={onClose}
             className="text-slate-400 hover:text-white hover:bg-slate-800 p-1.5 rounded-lg transition-colors"
@@ -102,13 +64,13 @@ const StudentInfoModal = ({ student, onClose }) => {
         </div>
  
         <div className="space-y-3 text-sm">
-          {fields.map((field) => (
+          {fields.map(({ label, value }) => (
             <div
-              key={field.label}
+              key={label}
               className="flex justify-between gap-4 border-b border-cyan-900/20 pb-3 last:border-0 last:pb-0"
             >
-              <span className="text-slate-400">{field.label}</span>
-              <span className="text-right font-medium">{field.value}</span>
+              <span className="text-slate-400 shrink-0">{label}</span>
+              <span className="text-right font-medium">{value ?? "—"}</span>
             </div>
           ))}
         </div>
@@ -124,23 +86,62 @@ const StudentInfoModal = ({ student, onClose }) => {
   );
 };
  
+// ─── Main page ─────────────────────────────────────────────────────────────────
 const ComponentRequests = () => {
-  const [requests] = useState(requestsData);
-  const [selectedStudent, setSelectedStudent] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [requests, setRequests]     = useState([]);
+  const [loading, setLoading]       = useState(true);
+  const [error, setError]           = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [activeRequest, setActiveRequest] = useState(null);
  
-  const openStudentInfo = (student) => {
-    setSelectedStudent(student);
-    setIsModalOpen(true);
-  };
+  // ── Fetch ──────────────────────────────────────────────────────────────────
+  useEffect(() => {
+    const fetchRequests = async () => {
+      try {
+        setLoading(true);
+        setError("");
+        const res = await fetch("http://localhost:5000/api/requests");
+        const result = await res.json();
+        if (!res.ok || !result.success) {
+          throw new Error(result.message || "Failed to load requests.");
+        }
+        const raw = result.data ?? result;
+        setRequests(Array.isArray(raw) ? raw : []);
+      } catch (err) {
+        setError(err.message || "Failed to load requests.");
+        setRequests([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchRequests();
+  }, []);
  
-  const closeStudentInfo = () => {
-    setIsModalOpen(false);
-    setSelectedStudent(null);
-  };
+  // ── Stats ──────────────────────────────────────────────────────────────────
+  const stats = useMemo(() => {
+    if (!Array.isArray(requests)) return { pending: 0, approved: 0, rejected: 0 };
+    return {
+      pending:  requests.filter((r) => r.status?.toLowerCase() === "pending").length,
+      approved: requests.filter((r) => r.status?.toLowerCase() === "approved").length,
+      rejected: requests.filter((r) => r.status?.toLowerCase() === "rejected").length,
+    };
+  }, [requests]);
  
+  // ── Search ─────────────────────────────────────────────────────────────────
+  const filtered = useMemo(() => {
+    if (!Array.isArray(requests)) return [];
+    const term = searchTerm.toLowerCase().trim();
+    if (!term) return requests;
+    return requests.filter((r) =>
+      [r.component_name, r.student_name, r.enrollment_no, r.team_name]
+        .some((field) => field?.toLowerCase().includes(term))
+    );
+  }, [requests, searchTerm]);
+ 
+  // ── Render ─────────────────────────────────────────────────────────────────
   return (
     <div className="text-white">
+      {/* Header */}
       <div className="mb-8">
         <h1 className="text-4xl font-bold">Component Requests</h1>
         <p className="text-slate-400 mt-2">
@@ -148,108 +149,174 @@ const ComponentRequests = () => {
         </p>
       </div>
  
+      {/* Stats */}
       <div className="grid md:grid-cols-3 gap-6 mb-8">
         <div className="bg-[#0b1730] border border-cyan-900/30 rounded-xl p-6">
           <p className="text-slate-400">Pending Requests</p>
-          <h2 className="text-4xl font-bold mt-3">18</h2>
+          <h2 className="text-4xl font-bold mt-3">
+            {loading ? "—" : stats.pending}
+          </h2>
         </div>
- 
         <div className="bg-[#0b1730] border border-cyan-900/30 rounded-xl p-6">
-          <p className="text-slate-400">Approved This Month</p>
-          <h2 className="text-4xl font-bold mt-3 text-cyan-400">156</h2>
+          <p className="text-slate-400">Approved Requests</p>
+          <h2 className="text-4xl font-bold mt-3 text-green-400">
+            {loading ? "—" : stats.approved}
+          </h2>
         </div>
- 
         <div className="bg-[#0b1730] border border-cyan-900/30 rounded-xl p-6">
-          <p className="text-slate-400">Rejected This Month</p>
-          <h2 className="text-4xl font-bold mt-3 text-red-400">12</h2>
+          <p className="text-slate-400">Rejected Requests</p>
+          <h2 className="text-4xl font-bold mt-3 text-red-400">
+            {loading ? "—" : stats.rejected}
+          </h2>
         </div>
       </div>
  
+      {/* Search */}
+      <div className="relative mb-6">
+        <FiSearch className="absolute left-4 top-3.5 text-slate-400" />
+        <input
+          type="text"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          placeholder="Search by component, student, enrollment no, or team..."
+          className="w-full bg-[#0b1730] border border-cyan-900/30 rounded-lg pl-12 pr-4 py-3 outline-none focus:border-cyan-500"
+        />
+      </div>
+ 
+      {/* Table card */}
       <div className="bg-[#0b1730] border border-cyan-900/30 rounded-xl overflow-hidden">
         <div className="p-6 border-b border-cyan-900/20">
           <h2 className="text-2xl font-semibold">All Requests</h2>
         </div>
  
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-[#081222]">
-              <tr>
-                <th className="text-left px-6 py-4">Request ID</th>
-                <th className="text-left px-6 py-4">Component</th>
-                <th className="text-left px-6 py-4">Quantity</th>
-                <th className="text-left px-6 py-4">Date</th>
-                <th className="text-left px-6 py-4">Priority</th>
-                <th className="text-left px-6 py-4">Status</th>
-                <th className="text-left px-6 py-4">Actions</th>
-              </tr>
-            </thead>
+        {/* Loading */}
+        {loading && (
+          <div className="flex items-center justify-center py-16 text-slate-400 gap-3">
+            <svg className="animate-spin w-5 h-5 text-cyan-500" xmlns="http://www.w3.org/2000/svg"
+              fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10"
+                stroke="currentColor" strokeWidth="4" />
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+            </svg>
+            Loading component requests...
+          </div>
+        )}
  
-            <tbody>
-              {requests.map((request) => (
-                <tr
-                  key={request.id}
-                  className="border-t border-cyan-900/20 hover:bg-[#081222]"
-                >
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-2">
-                      <span>{request.id}</span>
-                      <button
-                        onClick={() => openStudentInfo(request.student)}
-                        className="text-slate-500 hover:text-cyan-400 cursor-pointer transition-colors"
-                        title="View student details"
-                      >
-                        <FiInfo className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">{request.component}</td>
-                  <td className="px-6 py-4">{request.quantity}</td>
-                  <td className="px-6 py-4">{request.date}</td>
+        {/* Error */}
+        {!loading && error && (
+          <div className="flex flex-col items-center justify-center py-16 gap-2 text-center px-6">
+            <p className="text-red-400 font-medium">{error}</p>
+          </div>
+        )}
  
-                  <td className="px-6 py-4">
-                    <span
-                      className={`px-3 py-1 rounded-full text-sm ${
-                        request.priority === "High"
-                          ? "bg-red-500/20 text-red-400"
-                          : "bg-slate-700 text-slate-300"
-                      }`}
-                    >
-                      {request.priority}
-                    </span>
-                  </td>
+        {/* Empty */}
+        {!loading && !error && filtered.length === 0 && (
+          <div className="flex flex-col items-center justify-center py-16 gap-2 text-center px-6">
+            <p className="text-slate-400">No component requests found.</p>
+            {searchTerm && (
+              <p className="text-slate-500 text-sm">
+                No results for "{searchTerm}". Try a different search term.
+              </p>
+            )}
+          </div>
+        )}
  
-                  <td className="px-6 py-4">
-                    <span
-                      className={`px-3 py-1 rounded-full text-sm ${
-                        statusStyle[request.status]
-                      }`}
-                    >
-                      {request.status}
-                    </span>
-                  </td>
- 
-                  <td className="px-6 py-4">
-                    <div className="flex gap-3">
-                      <button className="text-cyan-400 hover:text-cyan-300">
-                        <FiEye size={18} />
-                      </button>
- 
-                      <button className="text-green-400 hover:text-green-300">
-                        <FiCheck size={18} />
-                      </button>
-                    </div>
-                  </td>
+        {/* Table */}
+        {!loading && !error && filtered.length > 0 && (
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-[#081222]">
+                <tr>
+                  <th className="text-left px-6 py-4">Request ID</th>
+                  <th className="text-left px-6 py-4">Component</th>
+                  <th className="text-left px-6 py-4">Qty</th>
+                  <th className="text-left px-6 py-4">Enrollment No</th>
+                  <th className="text-left px-6 py-4">Team</th>
+                  <th className="text-left px-6 py-4">Purpose</th>
+                  <th className="text-left px-6 py-4">Date</th>
+                  <th className="text-left px-6 py-4">Status</th>
+                  <th className="text-left px-6 py-4">Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+ 
+              <tbody>
+                {filtered.map((request) => {
+                  const statusConfig = getStatusConfig(request.status);
+                  return (
+                    <tr
+                      key={request.request_id}
+                      className="border-t border-cyan-900/20 hover:bg-[#081222]"
+                    >
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-2">
+                          <span>#{request.request_id}</span>
+                          <button
+                            onClick={() => setActiveRequest(request)}
+                            className="text-slate-500 hover:text-cyan-400 transition-colors"
+                            title="View request details"
+                          >
+                            <FiInfo className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 font-medium">
+                        {request.component_name ?? "—"}
+                      </td>
+                      <td className="px-6 py-4">{request.quantity ?? "—"}</td>
+                      <td className="px-6 py-4 text-slate-300">
+                        {request.enrollment_no ?? "—"}
+                      </td>
+                      <td className="px-6 py-4 text-slate-300">
+                        {request.team_name ?? "—"}
+                      </td>
+                      <td className="px-6 py-4 text-slate-300 max-w-[160px]">
+                        <span
+                          className="block truncate"
+                          title={request.purpose}
+                        >
+                          {request.purpose ?? "—"}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-slate-300 whitespace-nowrap">
+                        {formatDate(request.request_date)}
+                      </td>
+                      <td className="px-6 py-4">
+                        <span
+                          className={`px-3 py-1 rounded-full text-sm ${statusConfig.style}`}
+                        >
+                          {statusConfig.label}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex gap-3">
+                          <button
+                            className="text-cyan-400 hover:text-cyan-300 transition-colors"
+                            title="View"
+                          >
+                            <FiEye size={18} />
+                          </button>
+                          <button
+                            className="text-green-400 hover:text-green-300 transition-colors"
+                            title="Approve"
+                          >
+                            <FiCheck size={18} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
  
-      {isModalOpen && (
-        <StudentInfoModal
-          student={selectedStudent}
-          onClose={closeStudentInfo}
+      {/* Modal */}
+      {activeRequest && (
+        <RequestInfoModal
+          request={activeRequest}
+          onClose={() => setActiveRequest(null)}
         />
       )}
     </div>
@@ -257,3 +324,4 @@ const ComponentRequests = () => {
 };
  
 export default ComponentRequests;
+ 
