@@ -110,28 +110,6 @@ const getConditionStyle = (condition) => {
   return "bg-red-500/10 text-red-400 border border-red-500/30";
 };
  
-const calculateDuration = (issueDate, returnDate) => {
-  const issued = new Date(issueDate);
-  const returned = new Date(returnDate);
-  const diffTime = returned - issued;
-  const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
-  return diffDays;
-};
- 
-const Modal = ({ children, onClose, maxWidth = "max-w-md" }) => (
-  <div
-    className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 px-4 transition-opacity duration-200"
-    onClick={onClose}
-  >
-    <div
-      className={`bg-[#0f172a] border border-slate-800 rounded-xl w-full ${maxWidth} p-6 shadow-xl transition-transform duration-200 scale-100 max-h-[90vh] overflow-y-auto`}
-      onClick={(e) => e.stopPropagation()}
-    >
-      {children}
-    </div>
-  </div>
-);
- 
 const StudentInfoModal = ({ student, onClose }) => {
   if (!student) return null;
  
@@ -144,43 +122,49 @@ const StudentInfoModal = ({ student, onClose }) => {
   ];
  
   return (
-    <Modal onClose={onClose}>
-      <div className="flex items-center justify-between mb-5">
-        <h3 className="text-xl font-semibold">Student Information</h3>
+    <div
+      className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 px-4 transition-opacity duration-200"
+      onClick={onClose}
+    >
+      <div
+        className="bg-[#0f172a] border border-slate-800 rounded-xl w-full max-w-md p-6 shadow-xl transition-transform duration-200 scale-100"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-center justify-between mb-5">
+          <h3 className="text-xl font-semibold">Student Information</h3>
+          <button
+            onClick={onClose}
+            className="text-slate-400 hover:text-white hover:bg-slate-800 p-1.5 rounded-lg transition-colors"
+          >
+            <FiX className="w-5 h-5" />
+          </button>
+        </div>
+ 
+        <div className="space-y-3 text-sm">
+          {fields.map((field) => (
+            <div
+              key={field.label}
+              className="flex justify-between gap-4 border-b border-slate-800 pb-3 last:border-0 last:pb-0"
+            >
+              <span className="text-slate-400">{field.label}</span>
+              <span className="text-right font-medium">{field.value}</span>
+            </div>
+          ))}
+        </div>
+ 
         <button
           onClick={onClose}
-          className="text-slate-400 hover:text-white hover:bg-slate-800 p-1.5 rounded-lg transition-colors"
+          className="mt-6 w-full bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-lg font-medium transition-colors"
         >
-          <FiX className="w-5 h-5" />
+          Close
         </button>
       </div>
- 
-      <div className="space-y-3 text-sm">
-        {fields.map((field) => (
-          <div
-            key={field.label}
-            className="flex justify-between gap-4 border-b border-slate-800 pb-3 last:border-0 last:pb-0"
-          >
-            <span className="text-slate-400">{field.label}</span>
-            <span className="text-right font-medium">{field.value}</span>
-          </div>
-        ))}
-      </div>
- 
-      <button
-        onClick={onClose}
-        className="mt-6 w-full bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-lg font-medium transition-colors"
-      >
-        Close
-      </button>
-    </Modal>
+    </div>
   );
 };
  
 const ReturnDetailsModal = ({ returnItem, onClose }) => {
   if (!returnItem) return null;
- 
-  const duration = calculateDuration(returnItem.issueDate, returnItem.returnDate);
  
   const fields = [
     { label: "Return ID", value: returnItem.returnId },
@@ -191,57 +175,62 @@ const ReturnDetailsModal = ({ returnItem, onClose }) => {
   ];
  
   return (
-    <Modal onClose={onClose} maxWidth="max-w-lg">
-      <div className="flex items-center justify-between mb-5">
-        <h3 className="text-xl font-semibold">Return Details</h3>
+    <div
+      className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 px-4 transition-opacity duration-200"
+      onClick={onClose}
+    >
+      <div
+        className="bg-[#0f172a] border border-slate-800 rounded-xl w-full max-w-md p-6 shadow-xl transition-transform duration-200 scale-100"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-center justify-between mb-5">
+          <h3 className="text-xl font-semibold">Return Details</h3>
+          <button
+            onClick={onClose}
+            className="text-slate-400 hover:text-white hover:bg-slate-800 p-1.5 rounded-lg transition-colors"
+          >
+            <FiX className="w-5 h-5" />
+          </button>
+        </div>
+ 
+        <div className="space-y-3 text-sm">
+          {fields.map((field) => (
+            <div
+              key={field.label}
+              className="flex justify-between gap-4 border-b border-slate-800 pb-3"
+            >
+              <span className="text-slate-400">{field.label}</span>
+              <span className="text-right font-medium">{field.value}</span>
+            </div>
+          ))}
+ 
+          <div>
+            <span className="text-slate-400 block mb-2">Condition</span>
+            <span
+              className={`inline-block px-3 py-1 rounded-full text-sm ${getConditionStyle(
+                returnItem.condition
+              )}`}
+            >
+              {returnItem.condition}
+            </span>
+          </div>
+ 
+          <div className="border-t border-slate-800 pt-3">
+            <span className="text-slate-400 block mb-1">Notes</span>
+            <p className="text-slate-200 leading-relaxed">
+              {returnItem.notes}
+            </p>
+          </div>
+        </div>
+ 
         <button
           onClick={onClose}
-          className="text-slate-400 hover:text-white hover:bg-slate-800 p-1.5 rounded-lg transition-colors"
+          className="mt-6 w-full bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-lg font-medium transition-colors"
         >
-          <FiX className="w-5 h-5" />
+          Close
         </button>
       </div>
- 
-      <div className="space-y-3 text-sm">
-        {fields.map((field) => (
-          <div
-            key={field.label}
-            className="flex justify-between gap-4 border-b border-slate-800 pb-3"
-          >
-            <span className="text-slate-400">{field.label}</span>
-            <span className="text-right font-medium">{field.value}</span>
-          </div>
-        ))}
- 
-        <div className="flex justify-between gap-4 border-b border-slate-800 pb-3">
-          <span className="text-slate-400">Condition</span>
-          <span
-            className={`px-3 py-1 rounded-full text-sm ${getConditionStyle(
-              returnItem.condition
-            )}`}
-          >
-            {returnItem.condition}
-          </span>
-        </div>
- 
-        <div className="flex justify-between gap-4 border-b border-slate-800 pb-3">
-          <span className="text-slate-400">Return Duration</span>
-          <span className="font-medium">{duration} Days</span>
-        </div>
- 
-        <div className="pt-1">
-          <span className="text-slate-400 block mb-1">Full Notes</span>
-          <p className="text-slate-200 leading-relaxed">{returnItem.notes}</p>
-        </div>
-      </div>
- 
-      <button
-        onClick={onClose}
-        className="mt-6 w-full bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-lg font-medium transition-colors"
-      >
-        Close
-      </button>
-    </Modal>
+    </div>
   );
 };
  
@@ -258,10 +247,6 @@ const ReturnManagement = () => {
   const goodCondition = returns.filter((r) => r.condition === "Good").length;
   const fairCondition = returns.filter((r) => r.condition === "Fair").length;
   const damagedReturns = returns.filter((r) => r.condition === "Damaged").length;
- 
-  const goodPercent = Math.round((goodCondition / totalReturns) * 100);
-  const fairPercent = Math.round((fairCondition / totalReturns) * 100);
-  const damagedPercent = Math.round((damagedReturns / totalReturns) * 100);
  
   const openStudentModal = (student) => {
     setSelectedStudent(student);
@@ -328,51 +313,6 @@ const ReturnManagement = () => {
           <h2 className="text-3xl font-bold text-red-400 mt-2">
             {damagedReturns}
           </h2>
-        </div>
-      </div>
- 
-      {/* Return Condition Summary */}
-      <div className="bg-[#0f172a] border border-slate-800 rounded-xl p-5 mb-8">
-        <h2 className="text-lg font-semibold mb-4">Return Condition Summary</h2>
-        <div className="space-y-4">
-          <div>
-            <div className="flex justify-between text-sm mb-1.5">
-              <span>Good Returns</span>
-              <span className="text-slate-400">{goodPercent}%</span>
-            </div>
-            <div className="w-full bg-slate-800 rounded-full h-2">
-              <div
-                className="bg-green-500 h-2 rounded-full"
-                style={{ width: `${goodPercent}%` }}
-              ></div>
-            </div>
-          </div>
- 
-          <div>
-            <div className="flex justify-between text-sm mb-1.5">
-              <span>Fair Returns</span>
-              <span className="text-slate-400">{fairPercent}%</span>
-            </div>
-            <div className="w-full bg-slate-800 rounded-full h-2">
-              <div
-                className="bg-amber-500 h-2 rounded-full"
-                style={{ width: `${fairPercent}%` }}
-              ></div>
-            </div>
-          </div>
- 
-          <div>
-            <div className="flex justify-between text-sm mb-1.5">
-              <span>Damaged Returns</span>
-              <span className="text-slate-400">{damagedPercent}%</span>
-            </div>
-            <div className="w-full bg-slate-800 rounded-full h-2">
-              <div
-                className="bg-red-500 h-2 rounded-full"
-                style={{ width: `${damagedPercent}%` }}
-              ></div>
-            </div>
-          </div>
         </div>
       </div>
  

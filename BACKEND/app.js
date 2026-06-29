@@ -4,6 +4,7 @@ import componentRequestRoutes from "./routes/componentRequestRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import studentRoutes from "./routes/studentRoutes.js";
 import teamRoutes from "./routes/teamRoutes.js";
+import inventoryRoutes from "./routes/inventoryRoutes.js";
 import componentRoutes from "./routes/componentRoutes.js";
 import studentRequestRoutes from "./routes/studentRequestRoutes.js";
 import studentDashboardRoutes from "./routes/studentDashboardRoutes.js";
@@ -23,6 +24,9 @@ app.use("/api/team",teamRoutes);
 app.use("/api/components", componentRoutes);
 app.use("/api/student-requests", studentRequestRoutes);
 app.use("/api/student-dashboard", studentDashboardRoutes);
+
+//labstaff routes
+app.use("/api/inventory", inventoryRoutes);
 
 
 app.get('/', (_req, res) => {

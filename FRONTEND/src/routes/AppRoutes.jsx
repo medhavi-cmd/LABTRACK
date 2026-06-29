@@ -1,6 +1,10 @@
 import { Navigate, Route, Routes } from "react-router-dom";
+import ComponentDemand from "../pages/LabStaff/ComponentDemand";
+import Notifications from "../pages/LabStaff/Notifications";
+
 
 import LabStaffLayout from "../layouts/LabStaffLayout";
+
 
 import LabStaffDashboard from "../pages/LabStaff/Dashboard";
 import LabStaffInventoryManagement from "../pages/LabStaff/InventoryManagement";
@@ -14,6 +18,7 @@ import FacultyProjectApprovals from "../pages/Faculty/ProjectApprovals";
 import FacultyComponentRequests from "../pages/Faculty/ComponentsRequests";
 import FacultyEvents from "../pages/Faculty/Events";
 import FacultyNotifications from "../pages/Faculty/Notifications";
+
 import FacultyGalleryApprovals from "../pages/Faculty/GalleryApprovals";
 import FacultyStudentProgress from "../pages/Faculty/StudentProgress";
 
@@ -23,7 +28,8 @@ import RegisterProjectTeam from "../pages/TeamLeader/RegisterProjectTeam";
 import AddMembers from "../pages/TeamLeader/AddMembers";
 import ReviewTeamDetails from "../pages/TeamLeader/ReviewTeamDetails";
 import TeamManagement from "../pages/TeamLeader/TeamManagement";
-import Settings from "../pages/TeamLeader/Settings";
+import LabStaffSettings from "../pages/LabStaff/Settings";
+import TeamLeaderSettings from "../pages/TeamLeader/Settings";
 import ComponentInventory from "../pages/TeamLeader/ComponentInventory";
 import CartPage from "../pages/TeamLeader/CartPage";
 import Login from "../pages/Auth/Login";
@@ -42,6 +48,7 @@ const ComingSoon = ({ title, description }) => (
     </p> 
   </GroupLeaderLayout>
 );
+
 
 const AppRoutes = () => {
   return (
@@ -114,7 +121,7 @@ const AppRoutes = () => {
           />
         }
       />
-      <Route path="/student/settings" element={<Settings />} />
+      <Route path="/student/settings" element={<TeamLeaderSettings />} />
 
 
       
@@ -146,6 +153,7 @@ const AppRoutes = () => {
 
       {/* LABSTAFF */}
       <Route path="/lab-staff" element={<LabStaffLayout />}>
+
         <Route index element={<Navigate to="dashboard" replace />} />
         <Route path="dashboard" element={<LabStaffDashboard />} />
         <Route path="inventory" element={<LabStaffInventoryManagement />} />
@@ -153,33 +161,10 @@ const AppRoutes = () => {
         <Route path="issued" element={<LabStaffIssuedComponents />} />
         <Route path="returns" element={<LabStaffReturnManagement />} />
         <Route path="damage" element={<LabStaffDamageReports />} />
-        <Route
-          path="demand"
-          element={
-            <ComingSoon
-              title="Component Demand"
-              description="This route is reserved for a future demand forecasting and stock planning screen for Lab Staff."
-            />
-          }
-        />
-        <Route
-          path="notifications"
-          element={
-            <ComingSoon
-              title="Notifications"
-              description="This route is reserved for lab inventory alerts, approvals, and system notifications."
-            />
-          }
-        />
-        <Route
-          path="settings"
-          element={
-            <ComingSoon
-              title="Settings"
-              description="This route is reserved for Lab Staff profile and system preferences."
-            />
-          }
-        />
+        <Route path="demand" element={<ComponentDemand />} />
+        <Route path="notifications" element={<Notifications />} />
+
+        <Route path="settings" element={<LabStaffSettings />} />
       </Route>
 
       <Route
