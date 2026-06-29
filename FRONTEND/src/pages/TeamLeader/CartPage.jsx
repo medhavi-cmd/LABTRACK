@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
 import { Trash2, Plus, Minus, ShoppingCart } from "lucide-react";
 import GroupLeaderLayout from "../../layouts/GroupLeaderLayout";
+import { submitRequest } from "../../services/studentRequestApi";
+import { useNavigate } from "react-router-dom";
 
 export default function CartPage() {
+  const navigate = useNavigate();
   const [cart, setCart] = useState([]);
 
   useEffect(() => {
@@ -58,9 +61,23 @@ export default function CartPage() {
     0
   );
 
-  const handleSubmit = () => {
-    alert("Next step: Save request in database.");
-  };
+  const handleSubmit = async () => {
+  try {
+    await submitRequest(
+      "Project Components",
+      cart
+    );
+
+    alert("Request Submitted Successfully");
+
+    localStorage.removeItem("cart");
+
+    navigate("/student/student-dashboard");
+
+  } catch (error) {
+    alert(error.message);
+  }
+};
 
   return (
     <GroupLeaderLayout>
