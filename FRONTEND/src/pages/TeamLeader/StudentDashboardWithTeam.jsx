@@ -8,38 +8,69 @@ import {
   Clock3,
   CheckCircle2,
 } from "lucide-react";
-
+import { useEffect, useState } from "react";
+import { Loader2 } from "lucide-react";
+import { getDashboardData } from "../../services/studentDashboardApi";
 import GroupLeaderLayout from "../../layouts/GroupLeaderLayout";
 
 export default function StudentDashboardWithTeam() {
   const user = JSON.parse(localStorage.getItem("user") || "null");
+  const [dashboard, setDashboard] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchDashboard();
+  }, []);
+
+  const fetchDashboard = async () => {
+    try {
+      const data = await getDashboardData();
+
+      setDashboard(data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const stats = [
     {
       label: "Total Requests",
-      value: 0,
+      value: dashboard?.totalRequests || 0,
       description: "Component requests created by your team",
       icon: ClipboardList,
     },
     {
       label: "Pending Requests",
-      value: 0,
-      description: "Requests awaiting lab or faculty action",
+      value: dashboard?.pendingRequests || 0,
+      description: "Requests awaiting lab action",
       icon: Clock3,
     },
     {
       label: "Components Issued",
-      value: 0,
-      description: "Components currently issued to your team",
+      value: dashboard?.issuedComponents || 0,
+      description: "Components currently issued",
       icon: ArrowDownToLine,
     },
     {
       label: "Components Returned",
-      value: 0,
-      description: "Components successfully returned to the lab",
+      value: dashboard?.returnedComponents || 0,
+      description: "Components successfully returned",
       icon: RotateCcw,
     },
   ];
+
+  if (loading) {
+    return (
+      <GroupLeaderLayout>
+        <div className="min-h-screen flex items-center justify-center text-white">
+          <Loader2 className="animate-spin mr-3 text-cyan-400" />
+          Loading Dashboard...
+        </div>
+      </GroupLeaderLayout>
+    );
+  }
 
   return (
     <GroupLeaderLayout>
@@ -56,7 +87,8 @@ export default function StudentDashboardWithTeam() {
             </h1>
 
             <p className="mt-2 text-[#bbc9cd]">
-              Track your team’s component requests, issued items, and return activity.
+              Track your team’s component requests, issued items, and return
+              activity.
             </p>
           </div>
 
@@ -66,9 +98,12 @@ export default function StudentDashboardWithTeam() {
               <CheckCircle2 className="text-[#22d3ee]" size={22} />
 
               <div>
-                <h2 className="font-semibold text-white">Project Team Registered</h2>
+                <h2 className="font-semibold text-white">
+                  Project Team Registered
+                </h2>
                 <p className="mt-1 text-sm text-[#bbc9cd]">
-                  Your team workspace is active and available for lab operations.
+                  Your team workspace is active and available for lab
+                  operations.
                 </p>
               </div>
             </div>
@@ -117,7 +152,9 @@ export default function StudentDashboardWithTeam() {
                 </div>
 
                 <div>
-                  <h2 className="font-semibold text-white">Project Workspace</h2>
+                  <h2 className="font-semibold text-white">
+                    Project Workspace
+                  </h2>
                   <p className="text-sm text-[#bbc9cd]">
                     Manage your registered project and team details.
                   </p>
@@ -159,20 +196,62 @@ export default function StudentDashboardWithTeam() {
               </div>
 
               <div>
-                <h2 className="font-semibold text-white">Recent Component Activity</h2>
+                <h2 className="font-semibold text-white">
+                  Recent Component Activity
+                </h2>
                 <p className="text-sm text-[#bbc9cd]">
                   Recent requests, issues, and returns from your team.
                 </p>
               </div>
             </div>
 
-            <div className="rounded-lg border border-dashed border-[#3c494c] bg-[#0b1326]/50 p-8 text-center">
-              <Package className="mx-auto mb-3 text-[#859397]" size={28} />
-              <p className="font-medium text-[#dae2fd]">No component activity yet</p>
-              <p className="mt-1 text-sm text-[#859397]">
-                Activity will appear after your team starts requesting components.
-              </p>
-            </div>
+            {dashboard?.recentActivity?.length > 0 ? (
+              <div className="space-y-3">
+                {dashboard.recentActivity.map((item) => (
+                  <div
+                    key={item.request_item_id}
+                    className="flex items-center justify-between border border-[#3c494c] rounded-lg p-4"
+                  >
+                    <div>
+                      <p className="font-semibold text-white">
+                        {item.component_name}
+                      </p>
+
+                      <p className="text-sm text-slate-400">
+                        Quantity : {item.quantity}
+                      </p>
+                    </div>
+
+                    <span
+                      className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                        item.status === "approved"
+                          ? "bg-green-500/20 text-green-400"
+                          : item.status === "pending"
+                            ? "bg-yellow-500/20 text-yellow-400"
+                            : item.status === "rejected"
+                              ? "bg-red-500/20 text-red-400"
+                              : "bg-slate-700 text-slate-300"
+                      }`}
+                    >
+                      {item.status}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="rounded-lg border border-dashed border-[#3c494c] bg-[#0b1326]/50 p-8 text-center">
+                <Package className="mx-auto mb-3 text-[#859397]" size={28} />
+
+                <p className="font-medium text-[#dae2fd]">
+                  No component activity yet
+                </p>
+
+                <p className="mt-1 text-sm text-[#859397]">
+                  Activity will appear after your team starts requesting
+                  components.
+                </p>
+              </div>
+            )}
           </section>
         </div>
       </div>
