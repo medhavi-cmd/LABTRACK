@@ -27,7 +27,7 @@ const Dashboard = () => {
         </div>
 
         <div className="bg-[#0b1730] border border-cyan-900/30 rounded-xl p-6">
-          <p className="text-slate-400">Damage Reports</p>
+          <p className="text-slate-400">Damage Components</p>
           <h2 className="text-4xl font-bold mt-3 text-red-400">4</h2>
         </div>
       </div>

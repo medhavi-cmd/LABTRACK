@@ -117,7 +117,7 @@ export const SIDEBAR_CONFIG = {
       path: "/lab-staff/returns"
     },
     {
-      label: "Damage Reports",
+      label: "Damage Components",
       icon: Images,
       path: "/lab-staff/damage"
     },

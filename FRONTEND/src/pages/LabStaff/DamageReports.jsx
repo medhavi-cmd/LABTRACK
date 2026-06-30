@@ -201,7 +201,7 @@ const DamageReportModal = ({ report, onClose, onMarkResolved }) => {
   return (
     <Modal onClose={onClose} maxWidth="max-w-lg">
       <div className="flex items-center justify-between mb-5">
-        <h3 className="text-xl font-semibold">Damage Report Details</h3>
+        <h3 className="text-xl font-semibold">Damage Components Details</h3>
         <button
           onClick={onClose}
           className="text-slate-400 hover:text-white hover:bg-slate-800 p-1.5 rounded-lg transition-colors"
@@ -313,7 +313,7 @@ const AddDamageReportModal = ({ onClose, onAdd }) => {
   return (
     <Modal onClose={onClose} maxWidth="max-w-lg">
       <div className="flex items-center justify-between mb-5">
-        <h3 className="text-xl font-semibold">New Damage Report</h3>
+        <h3 className="text-xl font-semibold">New Damage Component</h3>
         <button
           onClick={onClose}
           className="text-slate-400 hover:text-white hover:bg-slate-800 p-1.5 rounded-lg transition-colors"
@@ -494,9 +494,9 @@ const DamageReports = () => {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-3xl font-bold">Damage Reports</h1>
+          <h1 className="text-3xl font-bold">Damage Components</h1>
           <p className="text-slate-400 mt-1">
-            Manage component damage reports and penalties
+            Manage damaged components and their associated penalties
           </p>
         </div>
  
@@ -505,7 +505,7 @@ const DamageReports = () => {
           className="flex items-center gap-2 bg-cyan-500 hover:bg-cyan-600 px-4 py-2 rounded-lg font-medium transition-colors"
         >
           <FiPlus />
-          New Damage Report
+          New Damage Component
         </button>
       </div>
  
@@ -578,7 +578,7 @@ const DamageReports = () => {
       {/* Table */}
       <div className="bg-[#0f172a] border border-slate-800 rounded-xl overflow-hidden">
         <div className="p-5 border-b border-slate-800">
-          <h2 className="text-xl font-semibold">All Damage Reports</h2>
+          <h2 className="text-xl font-semibold">All Damage Components</h2>
         </div>
  
         <div className="overflow-x-auto">
@@ -656,7 +656,7 @@ const DamageReports = () => {
                     colSpan={8}
                     className="px-6 py-8 text-center text-slate-500"
                   >
-                    No damage reports match your search.
+                    No damage components match your search.
                   </td>
                 </tr>
               )}
