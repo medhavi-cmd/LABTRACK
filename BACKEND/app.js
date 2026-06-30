@@ -8,6 +8,7 @@ import inventoryRoutes from "./routes/inventoryRoutes.js";
 import componentRoutes from "./routes/componentRoutes.js";
 import studentRequestRoutes from "./routes/studentRequestRoutes.js";
 import studentDashboardRoutes from "./routes/studentDashboardRoutes.js";
+import topbarRoutes from "./routes/topbarRoutes.js";
 
 const app = express();
 
@@ -24,6 +25,7 @@ app.use("/api/team",teamRoutes);
 app.use("/api/components", componentRoutes);
 app.use("/api/student-requests", studentRequestRoutes);
 app.use("/api/student-dashboard", studentDashboardRoutes);
+app.use("/api/topbar", topbarRoutes);
 
 //labstaff routes
 app.use("/api/inventory", inventoryRoutes);

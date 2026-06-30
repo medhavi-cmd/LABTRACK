@@ -32,6 +32,7 @@ import LabStaffSettings from "../pages/LabStaff/Settings";
 import TeamLeaderSettings from "../pages/TeamLeader/Settings";
 import ComponentInventory from "../pages/TeamLeader/ComponentInventory";
 import CartPage from "../pages/TeamLeader/CartPage";
+import NotificationsPage from "../pages/TeamLeader/Notifications";
 import Login from "../pages/Auth/Login";
 import SignupPage from "../pages/Auth/Signup";
 import GroupLeaderLayout from "../layouts/GroupLeaderLayout";
@@ -122,6 +123,10 @@ const AppRoutes = () => {
         }
       />
       <Route path="/student/settings" element={<TeamLeaderSettings />} />
+      <Route
+        path="/student/notifications"
+        element={<NotificationsPage />}
+      />
 
 
       
