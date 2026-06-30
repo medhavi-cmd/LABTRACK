@@ -9,6 +9,7 @@ import componentRoutes from "./routes/componentRoutes.js";
 import studentRequestRoutes from "./routes/studentRequestRoutes.js";
 import studentDashboardRoutes from "./routes/studentDashboardRoutes.js";
 import topbarRoutes from "./routes/topbarRoutes.js";
+import eventRoutes from "./routes/eventRoutes.js";
 
 const app = express();
 
@@ -26,6 +27,7 @@ app.use("/api/components", componentRoutes);
 app.use("/api/student-requests", studentRequestRoutes);
 app.use("/api/student-dashboard", studentDashboardRoutes);
 app.use("/api/topbar", topbarRoutes);
+app.use("/api/events", eventRoutes);
 
 //labstaff routes
 app.use("/api/inventory", inventoryRoutes);

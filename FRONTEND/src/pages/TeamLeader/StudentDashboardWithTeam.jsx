@@ -7,19 +7,25 @@ import {
   FolderKanban,
   Clock3,
   CheckCircle2,
+  CalendarDays,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
 import { getDashboardData } from "../../services/studentDashboardApi";
 import GroupLeaderLayout from "../../layouts/GroupLeaderLayout";
+import { getNextEvent } from "../../services/eventApi";
 
 export default function StudentDashboardWithTeam() {
+  const [nextEvent, setNextEvent] = useState(null);
+  const [timeLeft, setTimeLeft] = useState({});
+
   const user = JSON.parse(localStorage.getItem("user") || "null");
   const [dashboard, setDashboard] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchDashboard();
+    fetchNextEvent();
   }, []);
 
   const fetchDashboard = async () => {
@@ -32,6 +38,40 @@ export default function StudentDashboardWithTeam() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const fetchNextEvent = async () => {
+    try {
+      const data = await getNextEvent();
+
+      setNextEvent(data);
+
+      updateCountdown(data.event_datetime);
+
+      const interval = setInterval(() => {
+        updateCountdown(data.event_datetime);
+      }, 1000);
+
+      return () => clearInterval(interval);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const updateCountdown = (eventTime) => {
+    const difference = new Date(eventTime) - new Date();
+
+    if (difference <= 0) {
+      setTimeLeft(null);
+      return;
+    }
+
+    setTimeLeft({
+      days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+      hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
+      minutes: Math.floor((difference / (1000 * 60)) % 60),
+      seconds: Math.floor((difference / 1000) % 60),
+    });
   };
 
   const stats = [
@@ -92,25 +132,86 @@ export default function StudentDashboardWithTeam() {
             </p>
           </div>
 
-          {/* Team active banner */}
-          <div className="mb-8 flex flex-col gap-4 rounded-xl border border-[#1e4273] bg-[#11253e] p-5 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex items-center gap-3">
-              <CheckCircle2 className="text-[#22d3ee]" size={22} />
+          {/* Event Countdown */}
+          <div className="mb-8 rounded-xl border border-cyan-500/20 bg-[#171f33] p-5">
+            {nextEvent ? (
+              <>
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-3">
+                    <CalendarDays className="text-cyan-400" size={22} />
 
-              <div>
-                <h2 className="font-semibold text-white">
-                  Project Team Registered
+                    <div>
+                      <h2 className="text-lg font-semibold text-white">
+                        Upcoming Event
+                      </h2>
+
+                      <p className="text-xs text-slate-400">
+                        Countdown to the next lab event
+                      </p>
+                    </div>
+                  </div>
+
+                  <span className="text-xs text-slate-400">
+                    {new Date(nextEvent.event_datetime).toLocaleString()}
+                  </span>
+                </div>
+
+                <div className="mb-4">
+                  <h3 className="text-xl font-bold text-white">
+                    {nextEvent.event_name}
+                  </h3>
+
+                  <p className="text-sm text-slate-400 mt-1 truncate">
+                    {nextEvent.event_description}
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-4 gap-3">
+                  <div className="rounded-lg bg-[#0b1326] py-3 text-center">
+                    <p className="text-2xl font-bold text-cyan-400">
+                      {timeLeft?.days ?? 0}
+                    </p>
+                    <p className="text-[11px] text-slate-400">Days</p>
+                  </div>
+
+                  <div className="rounded-lg bg-[#0b1326] py-3 text-center">
+                    <p className="text-2xl font-bold text-cyan-400">
+                      {timeLeft?.hours ?? 0}
+                    </p>
+                    <p className="text-[11px] text-slate-400">Hours</p>
+                  </div>
+
+                  <div className="rounded-lg bg-[#0b1326] py-3 text-center">
+                    <p className="text-2xl font-bold text-cyan-400">
+                      {timeLeft?.minutes ?? 0}
+                    </p>
+                    <p className="text-[11px] text-slate-400">Minutes</p>
+                  </div>
+
+                  <div className="rounded-lg bg-[#0b1326] py-3 text-center">
+                    <p className="text-2xl font-bold text-cyan-400">
+                      {timeLeft?.seconds ?? 0}
+                    </p>
+                    <p className="text-[11px] text-slate-400">Seconds</p>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <div className="text-center py-4">
+                <CalendarDays
+                  className="mx-auto text-slate-500 mb-2"
+                  size={30}
+                />
+
+                <h2 className="text-lg font-semibold text-white">
+                  No Upcoming Events
                 </h2>
-                <p className="mt-1 text-sm text-[#bbc9cd]">
-                  Your team workspace is active and available for lab
-                  operations.
+
+                <p className="text-sm text-slate-400 mt-1">
+                  There are currently no scheduled lab events.
                 </p>
               </div>
-            </div>
-
-            <span className="w-fit rounded-full border border-[#22d3ee]/30 bg-[#00363e]/50 px-3 py-1 text-xs font-semibold text-[#22d3ee]">
-              Active Team
-            </span>
+            )}
           </div>
 
           {/* Statistics */}
@@ -144,8 +245,8 @@ export default function StudentDashboardWithTeam() {
           </div>
 
           {/* Team workspace overview */}
-          <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
-            <section className="rounded-xl border border-[#3c494c] bg-[#171f33] p-6">
+          {/* <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2"> */}
+          {/* <section className="rounded-xl border border-[#3c494c] bg-[#171f33] p-6">
               <div className="mb-5 flex items-center gap-3">
                 <div className="rounded-lg border border-[#22d3ee]/20 bg-[#00363e]/40 p-2.5">
                   <FolderKanban className="text-[#22d3ee]" size={20} />
@@ -165,9 +266,9 @@ export default function StudentDashboardWithTeam() {
                 Your project team has been registered. Open Team Management to
                 view the project details and registered members.
               </p>
-            </section>
+            </section> */}
 
-            <section className="rounded-xl border border-[#3c494c] bg-[#171f33] p-6">
+          {/* <section className="rounded-xl border border-[#3c494c] bg-[#171f33] p-6">
               <div className="mb-5 flex items-center gap-3">
                 <div className="rounded-lg border border-[#22d3ee]/20 bg-[#00363e]/40 p-2.5">
                   <Users className="text-[#22d3ee]" size={20} />
@@ -185,8 +286,8 @@ export default function StudentDashboardWithTeam() {
                 As your team submits requests and components are issued or
                 returned, the latest activity will be shown here.
               </p>
-            </section>
-          </div>
+            </section> */}
+          {/* </div> */}
 
           {/* Future activity section */}
           <section className="mt-6 rounded-xl border border-[#3c494c] bg-[#171f33] p-6">
