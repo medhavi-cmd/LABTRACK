@@ -1,30 +1,27 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import bgImage from "../../assets/login-bg.jpg";
-import {
-  Link,
-  useNavigate
-} from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
-import { signupUser }
-from "../../services/authService";
+import { signupUser } from "../../services/authService";
 
 // Component Imports
 import { Button } from "../../components/ui/Button";
 import { Input } from "../../components/ui/Input";
 import { RoleSelector } from "../../components/ui/RoleSelector";
+import logo from "../../assets/logo.png";
 
-import { 
-  GraduationCap, 
-  Presentation, 
-  Microscope, 
-  Mail, 
-  Lock, 
-  FlaskConical, 
-  User, 
-  Hash, 
+import {
+  GraduationCap,
+  Presentation,
+  Microscope,
+  Mail,
+  Lock,
+  FlaskConical,
+  User,
+  Hash,
   ArrowRight,
-  Briefcase
+  Briefcase,
 } from "lucide-react";
 
 export default function SignupPage() {
@@ -37,66 +34,60 @@ export default function SignupPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
- const handleSubmit = async (e) => {
-  e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  if (!name.trim() || !email.trim() || !password.trim()) {
-    alert("Please fill all required fields");
-    return;
-  }
-
-  if (accessRole === "student") {
-    if (!enrollmentNo.trim()) {
-      alert("Enrollment number is required");
+    if (!name.trim() || !email.trim() || !password.trim()) {
+      alert("Please fill all required fields");
       return;
     }
 
-    if (!/^\d+$/.test(enrollmentNo)) {
-      alert("Enrollment number must contain numbers only");
-      return;
+    if (accessRole === "student") {
+      if (!enrollmentNo.trim()) {
+        alert("Enrollment number is required");
+        return;
+      }
+
+      if (!/^\d+$/.test(enrollmentNo)) {
+        alert("Enrollment number must contain numbers only");
+        return;
+      }
     }
-  }
 
-  if (accessRole !== "student") {
-    if (!employeeId.trim()) {
-      alert("Employee ID is required");
-      return;
+    if (accessRole !== "student") {
+      if (!employeeId.trim()) {
+        alert("Employee ID is required");
+        return;
+      }
+
+      if (!/^\d+$/.test(employeeId)) {
+        alert("Employee ID must contain numbers only");
+        return;
+      }
     }
 
-    if (!/^\d+$/.test(employeeId)) {
-      alert("Employee ID must contain numbers only");
-      return;
+    try {
+      const response = await signupUser({
+        role: accessRole,
+        name: name.trim(),
+        email: email.trim(),
+        password,
+        enrollmentNo: accessRole === "student" ? enrollmentNo : null,
+        employeeId: accessRole !== "student" ? employeeId : null,
+      });
+
+      localStorage.setItem("token", response.token);
+
+      alert("Registration Successful");
+
+      navigate("/login");
+    } catch (error) {
+      alert(error.response?.data?.message || "Registration Failed");
     }
-  }
-
-  try {
-    const response = await signupUser({
-      role: accessRole,
-      name: name.trim(),
-      email: email.trim(),
-      password,
-      enrollmentNo:
-        accessRole === "student" ? enrollmentNo : null,
-      employeeId:
-        accessRole !== "student" ? employeeId : null,
-    });
-
-    localStorage.setItem("token", response.token);
-
-    alert("Registration Successful");
-
-    navigate("/login");
-  } catch (error) {
-    alert(
-      error.response?.data?.message ||
-      "Registration Failed"
-    );
-  }
-};
+  };
 
   return (
     <div className="h-screen w-full flex bg-[#0b1326] text-[#dae2fd] font-sans antialiased selection:bg-[#22d3ee]/30 selection:text-[#22d3ee] overflow-hidden">
-
       {/* LEFT SIDE — IDENTICAL TO LOGIN PAGE */}
       <div className="relative hidden lg:flex lg:w-1/2 flex-col justify-between p-12 overflow-hidden border-r border-[#3c494c]">
         <div
@@ -117,12 +108,13 @@ export default function SignupPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <div className="w-10 h-10 rounded-md bg-[#171f33] border border-[#3c494c] flex items-center justify-center shadow-md">
-            <FlaskConical size={22} className="text-[#22d3ee]" />
+          <div className="h-18 border-b border-[#222a3d] flex items-center justify-center px-4">
+            <img
+              src={logo}
+              alt="LABTRACK"
+              className="h-10 w-auto object-contain"
+            />
           </div>
-          <span className="text-4xl font-bold tracking-tight text-[#22d3ee]">
-            LabTrack
-          </span>
         </motion.div>
 
         {/* Tagline */}
@@ -145,7 +137,7 @@ export default function SignupPage() {
             control, and collaborative project tracking.
           </motion.p>
         </div>
-        
+
         <div className="h-10 w-full pointer-events-none" />
       </div>
 
@@ -156,7 +148,7 @@ export default function SignupPage() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: "easeOut" }}
-          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }} 
+          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
           <style>{`div::-webkit-scrollbar { display: none; }`}</style>
 
@@ -189,10 +181,10 @@ export default function SignupPage() {
                 />
                 <RoleSelector
                   label="Lab Staff"
-                    icon={Microscope}
-                    active={accessRole === "lab_staff"}
-                    onClick={() => setAccessRole("lab_staff")}
-                  />
+                  icon={Microscope}
+                  active={accessRole === "lab_staff"}
+                  onClick={() => setAccessRole("lab_staff")}
+                />
               </div>
             </div>
 
@@ -366,8 +358,7 @@ export default function SignupPage() {
                 to="/login"
                 className="text-[#22d3ee] hover:text-[#8aebff] font-semibold inline-flex items-center gap-0.5 hover:underline transition-all"
               >
-                Sign In{" "}
-                <ArrowRight size={14} className="inline ml-0.5" />
+                Sign In <ArrowRight size={14} className="inline ml-0.5" />
               </Link>
             </p>
           </div>
