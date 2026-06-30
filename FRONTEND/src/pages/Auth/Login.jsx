@@ -3,6 +3,8 @@ import { motion } from "framer-motion";
 import bgImage from "../../assets/login-bg.jpg";
 import { Link, useNavigate } from "react-router-dom";
 
+import { ArrowUpRight } from "lucide-react";
+
 import { loginUser } from "../../services/authService";
 
 // Component Imports
@@ -270,6 +272,24 @@ export default function LoginPage() {
                 Sign Up <ArrowRight size={14} className="inline ml-0.5" />
               </Link>
             </p>
+          </div>
+          {/* <div className="mt-6 flex justify-center">
+            <Link
+              to="/aboutlabtrack"
+              className="flex items-center gap-1 text-sm text-[#22d3ee] transition-colors"
+            >
+              About LABTRACK
+              <ArrowUpRight size={16} />
+            </Link>
+          </div> */}
+          <div className="mt-6 text-center">
+            <Link
+              to="/about-labtrack"
+              className="inline-flex items-center gap-1 text-sm text-[#22d3ee] hover:text-[#8aebff] transition"
+            >
+              About LABTRACK
+              <ArrowUpRight size={15} />
+            </Link>
           </div>
         </motion.div>
       </div>

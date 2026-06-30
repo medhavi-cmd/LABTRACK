@@ -22,6 +22,7 @@ import FacultyNotifications from "../pages/Faculty/Notifications";
 import FacultyGalleryApprovals from "../pages/Faculty/GalleryApprovals";
 import FacultyStudentProgress from "../pages/Faculty/StudentProgress";
 
+import AboutLabtrack from "../pages/Auth/Aboutlabtrack";
 import CompleteProfile from "../pages/TeamLeader/CompleteProfile";
 import StudentDashboard from "../pages/TeamLeader/StudentDashboard";
 import RegisterProjectTeam from "../pages/TeamLeader/RegisterProjectTeam";
@@ -59,6 +60,10 @@ const AppRoutes = () => {
       element={<Navigate to="/login" replace />}
       />
 
+      <Route
+        path="/about-labtrack"
+        element={<AboutLabtrack />}
+      />
 
       {/* GROUP LEADER */}
 
