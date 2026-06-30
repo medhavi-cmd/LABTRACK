@@ -1,10 +1,21 @@
 import { motion } from "framer-motion";
-import { Users, GraduationCap, Mail, Phone, ArrowLeft } from "lucide-react";
+import {
+  ArrowLeft,
+  Users,
+  GraduationCap,
+  ShieldCheck,
+  Boxes,
+  Mail,
+} from "lucide-react";
 import { Link } from "react-router-dom";
+import logo from "./"
 
 export default function AboutLabtrack() {
   return (
     <div className="min-h-screen bg-[#0b1326] text-white">
+
+      {/* Back Button */}
+
       <div className="max-w-6xl mx-auto px-6 pt-8">
         <Link
           to="/login"
@@ -15,60 +26,141 @@ export default function AboutLabtrack() {
         </Link>
       </div>
 
-      <div className="max-w-6xl mx-auto px-6 py-12">
-        {/* Hero */}
-        <motion.div
-  initial={{ opacity: 0, y: 20 }}
-  animate={{ opacity: 1, y: 0 }}
-  transition={{ duration: 0.5 }}
-  className="text-center py-12"
->
-  <img
-    src={logo}
-    alt="LABTRACK"
-    className="h-24 mx-auto mb-5"
-  />
+      <div className="max-w-6xl mx-auto px-6 pb-16">
 
-  <h1 className="text-4xl font-bold text-white">
-    Laboratory Inventory Management System
-  </h1>
+        {/* HERO */}
 
-  <p className="text-slate-400 mt-4 max-w-2xl mx-auto">
-    A centralized platform for requesting, approving,
-    issuing and managing laboratory components.
-  </p>
-</motion.div>
+        <motion.section
+          initial={{ opacity: 0, y: 35 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: .6 }}
+          className="text-center py-14"
+        >
 
-        {/* Team */}
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
+          <img
+            src={logo}
+            alt="LABTRACK"
+            className="h-28 mx-auto mb-8"
+          />
+
+          <h1 className="text-5xl font-bold mb-6">
+            About
+            <span className="text-cyan-400"> LABTRACK</span>
+          </h1>
+
+          <p className="max-w-3xl mx-auto text-slate-300 text-lg leading-8">
+            LABTRACK is a Laboratory Inventory Management System developed
+            for BML Munjal University to simplify the complete laboratory
+            workflow—from requesting components to issuing, returning,
+            inventory management and tracking.
+          </p>
+
+        </motion.section>
+
+        {/* FEATURES */}
+
+        <motion.section
+          initial={{ opacity: 0, y: 35 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="mb-16"
+          transition={{ duration: .5 }}
+          className="grid md:grid-cols-3 gap-6 mb-20"
         >
-          <div className="flex items-center gap-3 mb-6">
-            <Users className="text-cyan-400" />
-            <h2 className="text-3xl font-bold">Development Team</h2>
+
+          <div className="bg-[#171f33] border border-[#3c494c] rounded-xl p-7">
+            <Boxes className="text-cyan-400 mb-5" size={34} />
+
+            <h3 className="text-xl font-semibold mb-3">
+              Inventory Tracking
+            </h3>
+
+            <p className="text-slate-400 leading-7">
+              Manage laboratory components digitally with
+              accurate stock tracking and request management.
+            </p>
           </div>
+
+          <div className="bg-[#171f33] border border-[#3c494c] rounded-xl p-7">
+            <ShieldCheck className="text-cyan-400 mb-5" size={34} />
+
+            <h3 className="text-xl font-semibold mb-3">
+              Approval Workflow
+            </h3>
+
+            <p className="text-slate-400 leading-7">
+              Faculty approval and lab staff verification
+              ensure secure component issue and return.
+            </p>
+          </div>
+
+          <div className="bg-[#171f33] border border-[#3c494c] rounded-xl p-7">
+            <Users className="text-cyan-400 mb-5" size={34} />
+
+            <h3 className="text-xl font-semibold mb-3">
+              Team Collaboration
+            </h3>
+
+            <p className="text-slate-400 leading-7">
+              Students can work in project teams while
+              maintaining complete transparency of issued
+              components and requests.
+            </p>
+          </div>
+
+        </motion.section>
+
+        {/* TEAM */}
+
+        <motion.section
+          initial={{ opacity: 0, y: 35 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: .5 }}
+          className="mb-20"
+        >
+
+          <h2 className="text-3xl font-bold mb-10">
+            Development Team
+          </h2>
 
           <div className="grid md:grid-cols-3 gap-6">
-            {["Medhavi Singh", "Parikshit", "Neha"].map((member) => (
-              <div
+
+            {[
+              "Medhavi Singh",
+              "Parikshit",
+              "Neha"
+            ].map((member) => (
+
+              <motion.div
+                whileHover={{ y: -5 }}
                 key={member}
-                className="bg-[#171f33] rounded-xl border border-[#3c494c] p-6 text-center hover:border-cyan-400 transition"
+                className="bg-[#171f33] border border-[#3c494c] rounded-xl p-8 text-center"
               >
-                <div className="w-20 h-20 rounded-full bg-cyan-400/10 mx-auto mb-4 flex items-center justify-center">
-                  <Users className="text-cyan-400" size={34} />
+
+                <div className="w-24 h-24 rounded-full bg-cyan-400/10 flex items-center justify-center mx-auto mb-6">
+
+                  <Users
+                    className="text-cyan-400"
+                    size={40}
+                  />
+
                 </div>
 
-                <h3 className="text-xl font-semibold">{member}</h3>
+                <h3 className="text-xl font-semibold">
+                  {member}
+                </h3>
 
-                <p className="text-slate-400 mt-2">B.Tech Computer Science</p>
-              </div>
+                <p className="text-slate-400 mt-2">
+                  B.Tech Computer Science Engineering
+                </p>
+
+              </motion.div>
+
             ))}
+
           </div>
-        </motion.div>
+
+        </motion.section>
 
         {/* Mentor */}
 
