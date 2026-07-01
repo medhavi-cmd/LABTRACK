@@ -5,6 +5,7 @@ import authRoutes from "./routes/authRoutes.js";
 import studentRoutes from "./routes/studentRoutes.js";
 import teamRoutes from "./routes/teamRoutes.js";
 import inventoryRoutes from "./routes/inventoryRoutes.js";
+import issuedComponentsRoutes from "./routes/issuedComponentsRoutes.js";
 import componentRoutes from "./routes/componentRoutes.js";
 import studentRequestRoutes from "./routes/studentRequestRoutes.js";
 import studentDashboardRoutes from "./routes/studentDashboardRoutes.js";
@@ -16,7 +17,7 @@ const app = express();
 
 app.use(express.json());
 app.use(cors({ origin: process.env.CLIENT_URL || '*', credentials: true }));
-app.use("/api/requests", componentRequestRoutes);
+
 
 
 // student routes
@@ -31,6 +32,8 @@ app.use("/api/events", eventRoutes);
 
 //labstaff routes
 app.use("/api/inventory", inventoryRoutes);
+app.use("/api/requests", componentRequestRoutes);
+app.use("/api/issued-components", issuedComponentsRoutes);
 
 
 app.get('/', (_req, res) => {

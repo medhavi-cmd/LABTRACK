@@ -1,118 +1,40 @@
-import { useState } from "react";
-import { FiInfo, FiX } from "react-icons/fi";
+
+import { useEffect, useMemo, useState } from "react";
+import { FiInfo, FiX, FiSearch } from "react-icons/fi";
  
-const initialData = [
-  {
-    issueId: "ISS-001",
-    component: "Arduino Uno R3",
-    quantity: 2,
-    issueDate: "2025-06-01",
-    returnDeadline: "2025-06-08",
-    status: "Overdue",
-    student: {
-      name: "Aarav Sharma",
-      enrollmentNo: "EME2024001",
-      batch: "2024",
-      group: "Group 1",
-      email: "aarav@bmu.edu.in",
-    },
-  },
-  {
-    issueId: "ISS-002",
-    component: "Ultrasonic Sensor HC-SR04",
-    quantity: 1,
-    issueDate: "2025-06-03",
-    returnDeadline: "2025-06-17",
-    status: "Active",
-    student: {
-      name: "Priya Mehta",
-      enrollmentNo: "EME2024014",
-      batch: "2024",
-      group: "Group 2",
-      email: "priya@bmu.edu.in",
-    },
-  },
-  {
-    issueId: "ISS-003",
-    component: "16x2 LCD Display",
-    quantity: 1,
-    issueDate: "2025-05-28",
-    returnDeadline: "2025-06-04",
-    status: "Returned",
-    student: {
-      name: "Rohan Verma",
-      enrollmentNo: "EME2023027",
-      batch: "2023",
-      group: "Group 1",
-      email: "rohan@bmu.edu.in",
-    },
-  },
-  {
-    issueId: "ISS-004",
-    component: "Servo Motor SG90",
-    quantity: 3,
-    issueDate: "2025-06-05",
-    returnDeadline: "2025-06-19",
-    status: "Active",
-    student: {
-      name: "Sneha Kapoor",
-      enrollmentNo: "EME2024039",
-      batch: "2024",
-      group: "Group 3",
-      email: "sneha@bmu.edu.in",
-    },
-  },
-  {
-    issueId: "ISS-005",
-    component: "Raspberry Pi 4 Model B",
-    quantity: 1,
-    issueDate: "2025-05-30",
-    returnDeadline: "2025-06-06",
-    status: "Overdue",
-    student: {
-      name: "Karan Singh",
-      enrollmentNo: "EME2023052",
-      batch: "2023",
-      group: "Group 2",
-      email: "karan@bmu.edu.in",
-    },
-  },
-  {
-    issueId: "ISS-006",
-    component: "DHT11 Temperature Sensor",
-    quantity: 2,
-    issueDate: "2025-06-04",
-    returnDeadline: "2025-06-18",
-    status: "Active",
-    student: {
-      name: "Anjali Rao",
-      enrollmentNo: "EME2024061",
-      batch: "2024",
-      group: "Group 1",
-      email: "anjali@bmu.edu.in",
-    },
-  },
-];
- 
+// ─── Status badge ─────────────────────────────────────────────────────────────
 const getStatusStyle = (status) => {
-  if (status === "Active") {
-    return "bg-blue-500/10 text-blue-400 border border-blue-500/30";
+  switch (status?.toLowerCase()) {
+    case "pending":  return "bg-blue-500/10 text-blue-400 border border-blue-500/30";
+    case "overdue":  return "bg-red-500/10 text-red-400 border border-red-500/30";
+    case "returned": return "bg-green-500/10 text-green-400 border border-green-500/30";
+    default:         return "bg-slate-500/10 text-slate-400 border border-slate-500/30";
   }
-  if (status === "Overdue") {
-    return "bg-red-500/10 text-red-400 border border-red-500/30";
-  }
-  return "bg-green-500/10 text-green-400 border border-green-500/30";
 };
  
-const StudentInfoModal = ({ student, onClose }) => {
-  if (!student) return null;
+const capitalize = (str) =>
+  str ? str.charAt(0).toUpperCase() + str.slice(1).toLowerCase() : "—";
+ 
+const formatDate = (value) => {
+  if (!value) return "—";
+  try { return new Date(value).toLocaleDateString(); }
+  catch { return value; }
+};
+ 
+// ─── Student Info Modal ───────────────────────────────────────────────────────
+const StudentInfoModal = ({ issue, onClose }) => {
+  if (!issue) return null;
  
   const fields = [
-    { label: "Student Name", value: student.name },
-    { label: "Enrollment Number", value: student.enrollmentNo },
-    { label: "Batch", value: student.batch },
-    { label: "Group", value: student.group },
-    { label: "Email", value: student.email },
+    { label: "Student Name",          value: issue.leader_name },
+    { label: "Enrollment Number",     value: issue.enrollment_no },
+    { label: "Team Name",             value: issue.team_name },
+    { label: "Component Name",        value: issue.component_name },
+    { label: "Quantity",              value: issue.quantity },
+    { label: "Issue Date",            value: formatDate(issue.issue_date) },
+    { label: "Expected Return Date",  value: formatDate(issue.expected_return_date) },
+    { label: "Actual Return Date",    value: formatDate(issue.actual_return_date) },
+    { label: "Return Status",         value: capitalize(issue.return_status) },
   ];
  
   return (
@@ -121,7 +43,7 @@ const StudentInfoModal = ({ student, onClose }) => {
       onClick={onClose}
     >
       <div
-        className="bg-[#0f172a] border border-slate-800 rounded-xl w-full max-w-md p-6 shadow-xl transition-transform duration-200 scale-100"
+        className="bg-[#0f172a] border border-slate-800 rounded-xl w-full max-w-md p-6 shadow-xl transition-transform duration-200 scale-100 max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between mb-5">
@@ -135,13 +57,13 @@ const StudentInfoModal = ({ student, onClose }) => {
         </div>
  
         <div className="space-y-3 text-sm">
-          {fields.map((field) => (
+          {fields.map(({ label, value }) => (
             <div
-              key={field.label}
+              key={label}
               className="flex justify-between gap-4 border-b border-slate-800 pb-3 last:border-0 last:pb-0"
             >
-              <span className="text-slate-400">{field.label}</span>
-              <span className="text-right font-medium">{field.value}</span>
+              <span className="text-slate-400 shrink-0">{label}</span>
+              <span className="text-right font-medium">{value ?? "—"}</span>
             </div>
           ))}
         </div>
@@ -157,33 +79,56 @@ const StudentInfoModal = ({ student, onClose }) => {
   );
 };
  
+// ─── Main Page ────────────────────────────────────────────────────────────────
 const IssuedComponents = () => {
-  const [issues, setIssues] = useState(initialData);
-  const [selectedStudent, setSelectedStudent] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [issues, setIssues]         = useState([]);
+  const [loading, setLoading]       = useState(true);
+  const [error, setError]           = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [activeIssue, setActiveIssue] = useState(null);
  
-  const markReturned = (issueId) => {
-    setIssues((prev) =>
-      prev.map((item) =>
-        item.issueId === issueId ? { ...item, status: "Returned" } : item
-      )
+  // ── Fetch ──────────────────────────────────────────────────────────────────
+  useEffect(() => {
+    const fetchIssues = async () => {
+      try {
+        setLoading(true);
+        setError("");
+        const res    = await fetch("http://localhost:5000/api/issued-components");
+        const result = await res.json();
+        if (!res.ok || !result.success) {
+          throw new Error(result.message || "Failed to load issued components.");
+        }
+        const raw = result.data ?? result;
+        setIssues(Array.isArray(raw) ? raw : []);
+      } catch (err) {
+        setError(err.message || "Failed to load issued components.");
+        setIssues([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchIssues();
+  }, []);
+ 
+  // ── Stats ──────────────────────────────────────────────────────────────────
+  const stats = useMemo(() => ({
+    total:    issues.length,
+    pending:  issues.filter((i) => i.return_status?.toLowerCase() === "pending").length,
+    returned: issues.filter((i) => i.return_status?.toLowerCase() === "returned").length,
+    overdue:  issues.filter((i) => i.return_status?.toLowerCase() === "overdue").length,
+  }), [issues]);
+ 
+  // ── Search ─────────────────────────────────────────────────────────────────
+  const filtered = useMemo(() => {
+    const term = searchTerm.toLowerCase().trim();
+    if (!term) return issues;
+    return issues.filter((i) =>
+      [i.component_name, i.leader_name, i.enrollment_no, i.team_name]
+        .some((f) => f?.toLowerCase().includes(term))
     );
-  };
+  }, [issues, searchTerm]);
  
-  const openStudentInfo = (student) => {
-    setSelectedStudent(student);
-    setIsModalOpen(true);
-  };
- 
-  const closeStudentInfo = () => {
-    setIsModalOpen(false);
-    setSelectedStudent(null);
-  };
- 
-  const totalIssued = issues.length;
-  const activeIssues = issues.filter((i) => i.status === "Active").length;
-  const overdueReturns = issues.filter((i) => i.status === "Overdue").length;
- 
+  // ── Render ─────────────────────────────────────────────────────────────────
   return (
     <div className="text-white">
       {/* Header */}
@@ -195,25 +140,35 @@ const IssuedComponents = () => {
       </div>
  
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
         <div className="bg-[#0f172a] border border-slate-800 rounded-xl p-5">
           <p className="text-slate-400">Total Issued</p>
-          <h2 className="text-3xl font-bold mt-2">{totalIssued}</h2>
+          <h2 className="text-3xl font-bold mt-2">{loading ? "—" : stats.total}</h2>
         </div>
- 
         <div className="bg-[#0f172a] border border-slate-800 rounded-xl p-5">
-          <p className="text-slate-400">Active Issues</p>
-          <h2 className="text-3xl font-bold text-blue-400 mt-2">
-            {activeIssues}
-          </h2>
+          <p className="text-slate-400">Pending Returns</p>
+          <h2 className="text-3xl font-bold text-blue-400 mt-2">{loading ? "—" : stats.pending}</h2>
         </div>
- 
+        <div className="bg-[#0f172a] border border-slate-800 rounded-xl p-5">
+          <p className="text-slate-400">Returned</p>
+          <h2 className="text-3xl font-bold text-green-400 mt-2">{loading ? "—" : stats.returned}</h2>
+        </div>
         <div className="bg-[#0f172a] border border-slate-800 rounded-xl p-5">
           <p className="text-slate-400">Overdue Returns</p>
-          <h2 className="text-3xl font-bold text-red-400 mt-2">
-            {overdueReturns}
-          </h2>
+          <h2 className="text-3xl font-bold text-red-400 mt-2">{loading ? "—" : stats.overdue}</h2>
         </div>
+      </div>
+ 
+      {/* Search */}
+      <div className="relative mb-6">
+        <FiSearch className="absolute left-4 top-3.5 text-slate-400" />
+        <input
+          type="text"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          placeholder="Search by component, student, enrollment no, or team..."
+          className="w-full bg-[#0f172a] border border-slate-800 rounded-lg pl-12 pr-4 py-3 outline-none focus:border-cyan-500"
+        />
       </div>
  
       {/* Table */}
@@ -222,78 +177,104 @@ const IssuedComponents = () => {
           <h2 className="text-xl font-semibold">Issued Components List</h2>
         </div>
  
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-[#111827]">
-              <tr>
-                <th className="text-left px-6 py-4">Issue ID</th>
-                <th className="text-left px-6 py-4">Component</th>
-                <th className="text-left px-6 py-4">Quantity</th>
-                <th className="text-left px-6 py-4">Issue Date</th>
-                <th className="text-left px-6 py-4">Return Deadline</th>
-                <th className="text-left px-6 py-4">Status</th>
-                <th className="text-left px-6 py-4">Actions</th>
-              </tr>
-            </thead>
+        {/* Loading */}
+        {loading && (
+          <div className="flex items-center justify-center py-16 text-slate-400 gap-3">
+            <svg className="animate-spin w-5 h-5 text-cyan-500" xmlns="http://www.w3.org/2000/svg"
+              fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10"
+                stroke="currentColor" strokeWidth="4" />
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+            </svg>
+            Loading issued components...
+          </div>
+        )}
  
-            <tbody>
-              {issues.map((item) => (
-                <tr
-                  key={item.issueId}
-                  className="border-t border-slate-800 hover:bg-slate-900/40"
-                >
-                  <td className="px-6 py-4">
-                    <div className="flex flex-col">
-                      <span className="text-slate-300">{item.issueId}</span>
-                      <button
-                        onClick={() => openStudentInfo(item.student)}
-                        className="self-end mt-1 text-slate-500 hover:text-cyan-400 cursor-pointer transition-colors"
-                        title="View student details"
-                      >
-                        <FiInfo className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 text-slate-300">{item.component}</td>
-                  <td className="px-6 py-4">{item.quantity}</td>
-                  <td className="px-6 py-4 text-slate-300">{item.issueDate}</td>
-                  <td className="px-6 py-4 text-slate-300">
-                    {item.returnDeadline}
-                  </td>
-                  <td className="px-6 py-4">
-                    <span
-                      className={`px-3 py-1 rounded-full text-sm ${getStatusStyle(
-                        item.status
-                      )}`}
-                    >
-                      {item.status}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <button
-                      onClick={() => markReturned(item.issueId)}
-                      disabled={item.status === "Returned"}
-                      className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors ${
-                        item.status === "Returned"
-                          ? "bg-slate-800 text-slate-500 cursor-not-allowed"
-                          : "bg-cyan-500 hover:bg-cyan-600 text-white"
-                      }`}
-                    >
-                      {item.status === "Returned" ? "Returned" : "Mark Returned"}
-                    </button>
-                  </td>
+        {/* Error */}
+        {!loading && error && (
+          <div className="flex flex-col items-center justify-center py-16 gap-2 text-center px-6">
+            <p className="text-red-400 font-medium">{error}</p>
+          </div>
+        )}
+ 
+        {/* Empty */}
+        {!loading && !error && filtered.length === 0 && (
+          <div className="flex flex-col items-center justify-center py-16 gap-2 text-center px-6">
+            <p className="text-slate-400">No issued components found.</p>
+            {searchTerm && (
+              <p className="text-slate-500 text-sm">
+                No results for "{searchTerm}". Try a different search term.
+              </p>
+            )}
+          </div>
+        )}
+ 
+        {/* Table rows */}
+        {!loading && !error && filtered.length > 0 && (
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-[#111827]">
+                <tr>
+                  <th className="text-left px-6 py-4">Issue ID</th>
+                  <th className="text-left px-6 py-4">Component</th>
+                  <th className="text-left px-6 py-4">Quantity</th>
+                  <th className="text-left px-6 py-4">Team</th>
+                  <th className="text-left px-6 py-4">Issue Date</th>
+                  <th className="text-left px-6 py-4">Return Deadline</th>
+                  <th className="text-left px-6 py-4">Status</th>
+                  <th className="text-left px-6 py-4">Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+ 
+              <tbody>
+                {filtered.map((item) => (
+                  <tr
+                    key={item.issue_id}
+                    className="border-t border-slate-800 hover:bg-slate-900/40"
+                  >
+                    <td className="px-6 py-4">
+                      <div className="flex flex-col">
+                        <span className="text-slate-300">#{item.issue_id}</span>
+                        <button
+                          onClick={() => setActiveIssue(item)}
+                          className="self-end mt-1 text-slate-500 hover:text-cyan-400 cursor-pointer transition-colors"
+                          title="View student details"
+                        >
+                          <FiInfo className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 text-slate-300">{item.component_name ?? "—"}</td>
+                    <td className="px-6 py-4">{item.quantity ?? "—"}</td>
+                    <td className="px-6 py-4 text-slate-300">{item.team_name ?? "—"}</td>
+                    <td className="px-6 py-4 text-slate-300">{formatDate(item.issue_date)}</td>
+                    <td className="px-6 py-4 text-slate-300">{formatDate(item.expected_return_date)}</td>
+                    <td className="px-6 py-4">
+                      <span className={`px-3 py-1 rounded-full text-sm ${getStatusStyle(item.return_status)}`}>
+                        {capitalize(item.return_status)}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <button
+                        disabled
+                        className="px-3 py-1 rounded-lg text-sm font-medium bg-slate-800 text-slate-500 cursor-not-allowed"
+                      >
+                        Mark Returned
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
  
-      {/* Student Info Modal */}
-      {isModalOpen && (
+      {/* Modal */}
+      {activeIssue && (
         <StudentInfoModal
-          student={selectedStudent}
-          onClose={closeStudentInfo}
+          issue={activeIssue}
+          onClose={() => setActiveIssue(null)}
         />
       )}
     </div>

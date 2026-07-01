@@ -60,9 +60,9 @@ const initialNotifications = [
   },
   {
     id: 7,
-    title: "Damage Report Filed",
+    title: "Damage Component Filed",
     description:
-      "New damage report DMG-045 for Power Supply has been filed",
+      "New damage component DMG-045 for Power Supply has been filed",
     time: "1 day ago",
     type: "Warning",
     unread: false,

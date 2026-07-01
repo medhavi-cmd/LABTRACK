@@ -82,8 +82,8 @@ const Settings = () => {
     },
     {
       key: "damageReport",
-      title: "Damage Report Notifications",
-      description: "Get notified about new damage reports",
+      title: "Damage Component Notifications",
+      description: "Get notified about new damage components",
     },
     {
       key: "email",
