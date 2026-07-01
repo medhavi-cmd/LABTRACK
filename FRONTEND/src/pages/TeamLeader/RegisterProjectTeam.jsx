@@ -10,14 +10,12 @@ import {
   ChevronDown,
 } from "lucide-react";
 
-// Sub-component Imports
 import { StepIndicator } from "../../components/ui/StepIndicator";
 import { ContentCard } from "../../components/ui/ContentCard";
 import { Button } from "../../components/ui/Button";
 import GroupLeaderLayout from "../../layouts/GroupLeaderLayout";
 
 export default function RegisterProjectTeam() {
-  // Controlled States for only the requested fields
   const [projectName, setProjectName] = useState("");
   const [department, setDepartment] = useState("Mechanical Engineering");
   const [year, setYear] = useState("");
@@ -39,7 +37,6 @@ export default function RegisterProjectTeam() {
   return (
     <GroupLeaderLayout>
       <div className="w-full min-h-screen bg-[#0b1326] text-[#dae2fd] p-8 overflow-y-auto font-sans selection:bg-[#22d3ee]/30 selection:text-[#22d3ee]">
-        {/* BREADCRUMB NAVIGATION */}
         <nav className="text-xs font-mono font-semibold uppercase tracking-wider text-[#859397] mb-2">
           <span className="hover:text-[#dae2fd] cursor-pointer transition-colors">
             Project Management
@@ -48,7 +45,6 @@ export default function RegisterProjectTeam() {
           <span className="text-[#bbc9cd]">Create Team</span>
         </nav>
 
-        {/* HEADER TITLE SECTION */}
         <div className="mb-6">
           <h1 className="text-3xl font-bold tracking-tight text-white mb-1.5">
             Create Project Team
@@ -60,15 +56,13 @@ export default function RegisterProjectTeam() {
           </p>
         </div>
 
-        {/* STEPPERS */}
+      
         <StepIndicator currentStep={1} />
 
-        {/* TWO COLUMN GRID CONTENT */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-8 items-start">
-          {/* LEFT COLUMN: FORM DETAILS (Takes up 2/3 cols) */}
           <div className="lg:col-span-2 flex flex-col gap-6">
             <ContentCard>
-              {/* Card Header Title */}
+      
               <div className="flex items-center gap-2.5 border-b border-[#222a3d] pb-4 mb-5">
                 <FolderPlus size={18} className="text-[#22d3ee]" />
                 <h2 className="text-base font-bold tracking-wide text-[#dae2fd]">
@@ -76,11 +70,10 @@ export default function RegisterProjectTeam() {
                 </h2>
               </div>
 
-              {/* Input Form Fields */}
               <form onSubmit={handleFormSubmit} className="space-y-5">
                 {/* Row 1: Project Name & Department */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                  {/* Project Name */}
+                
                   <div className="flex flex-col gap-2">
                     <label className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#bbc9cd]">
                       Project Name
@@ -94,7 +87,7 @@ export default function RegisterProjectTeam() {
                     />
                   </div>
 
-                  {/* Department */}
+      
                   <div className="flex flex-col gap-2">
                     <label className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#bbc9cd]">
                       Department
@@ -117,9 +110,8 @@ export default function RegisterProjectTeam() {
                   </div>
                 </div>
 
-                {/* Row 2: Year & Section */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                  {/* Year */}
+               
                   <div className="flex flex-col gap-2">
                     <label className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#bbc9cd]">
                       Year
@@ -141,7 +133,7 @@ export default function RegisterProjectTeam() {
                     </div>
                   </div>
 
-                  {/* Section */}
+              
                   <div className="flex flex-col gap-2">
                     <label className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#bbc9cd]">
                       Section
@@ -168,7 +160,6 @@ export default function RegisterProjectTeam() {
                 </div>
                 </div>
 
-                {/* Row 3: Description */}
                 <div className="flex flex-col gap-2">
                   <label className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#bbc9cd]">
                     Project Description
@@ -184,7 +175,7 @@ export default function RegisterProjectTeam() {
               </form>
             </ContentCard>
 
-            {/* Form Actions */}
+        
             <div className="flex items-center justify-end gap-6 pt-2">
               <button
                 type="button"
@@ -220,9 +211,9 @@ export default function RegisterProjectTeam() {
             </div>
           </div>
 
-          {/* RIGHT COLUMN: GUIDELINES & METRICS */}
+        
           <div className="space-y-6">
-            {/* Project Guidelines Card */}
+     
             <ContentCard className="relative overflow-hidden">
               <div className="flex items-start justify-between mb-4">
                 <h3 className="text-sm font-bold tracking-wide text-white">
@@ -277,7 +268,6 @@ export default function RegisterProjectTeam() {
               </ul>
             </ContentCard>
 
-            {/* Setup Progress Card */}
             <ContentCard>
               <div className="mb-4">
                 <h4 className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#859397]">

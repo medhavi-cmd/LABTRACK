@@ -80,7 +80,7 @@ export default function ComponentInventory() {
   return (
     <GroupLeaderLayout>
       <div className="w-full min-w-0 bg-[#0b1326] text-white px-4 py-6 sm:px-6 lg:px-8">
-        {/* Header */}
+        
 
         <div className="flex justify-between items-center mb-8">
           <div>
@@ -134,7 +134,6 @@ export default function ComponentInventory() {
           </button>
         </div>
 
-        {/* Search */}
 
         <div className="relative mb-8 w-full max-w-md">
           <Search
@@ -162,7 +161,6 @@ export default function ComponentInventory() {
           />
         </div>
 
-        {/* Cards */}
 
         <div
           className="

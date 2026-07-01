@@ -22,42 +22,40 @@ export default function ReviewTeamDetails() {
 
   // Catch anomalies and force fallback loop
   useEffect(() => {
-  if (!projectData || !teamData) {
-    navigate("/student/team-management", { replace: true });
-  }
-}, [projectData, teamData, navigate]);
+    if (!projectData || !teamData) {
+      navigate("/student/team-management", { replace: true });
+    }
+  }, [projectData, teamData, navigate]);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleFinalDeploymentSubmit = async () => {
-  try {
-    setIsSubmitting(true);
+    try {
+      setIsSubmitting(true);
 
-    const memberEnrollmentNumbers = teamData.members
-      .filter(
-        (member) =>
-          String(member.enrollmentNo) !==
-          String(teamData.leader.enrollment_no)
-      )
-      .map((member) => String(member.enrollmentNo));
+      const memberEnrollmentNumbers = teamData.members
+        .filter(
+          (member) =>
+            String(member.enrollmentNo) !==
+            String(teamData.leader.enrollment_no),
+        )
+        .map((member) => String(member.enrollmentNo));
 
-    await registerTeam({
-      projectName: projectData.projectName,
-      description: projectData.description,
-      memberEnrollmentNumbers,
-    });
+      await registerTeam({
+        projectName: projectData.projectName,
+        description: projectData.description,
+        memberEnrollmentNumbers,
+      });
 
-    alert(
-      "Team registered successfully. It is now awaiting faculty approval."
-    );
+      alert("Team registered successfully!");
 
-    navigate("/student/team-management", { replace: true });
-  } catch (error) {
-    alert(error.message || "Failed to register team");
-  } finally {
-    setIsSubmitting(false);
-  }
-};
+      navigate("/student/team-management", { replace: true });
+    } catch (error) {
+      alert(error.message || "Failed to register team");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   if (!projectData || !teamData) return null;
 
@@ -69,8 +67,8 @@ export default function ReviewTeamDetails() {
             Review Team Registration
           </h1>
           <p className="text-sm text-[#bbc9cd]">
-            Verify your entry data accurately prior to institutional database
-            commit locks.
+            Review your project and team details before submitting your
+            registration.
           </p>
         </div>
 
@@ -82,13 +80,13 @@ export default function ReviewTeamDetails() {
             <ShieldCheck className="text-[#22d3ee] shrink-0 mt-0.5" size={18} />
             <div>
               <h4 className="text-sm font-bold text-white">
-                System Data Lock Notice
+                Before You Submit
               </h4>
               <p className="text-xs text-[#bbc9cd] mt-0.5 leading-relaxed">
-                Confirming registry submission assigns your dynamic team
-                workspace profile parameters to the verification route.
-                Modifications cannot be performed mid-transit during review
-                cycles.
+                Please review all the information carefully before submitting.
+                Once your team is registered, it will be sent for faculty
+                approval and changes cannot be made until the review process is
+                complete.
               </p>
             </div>
           </div>
@@ -98,14 +96,14 @@ export default function ReviewTeamDetails() {
             <div className="flex items-center gap-2.5 border-b border-[#222a3d] pb-4 mb-6">
               <FileText size={18} className="text-[#22d3ee]" />
               <h2 className="text-base font-bold tracking-wide text-[#dae2fd]">
-                Project Core Parameters
+                Project Details
               </h2>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="md:col-span-3 bg-[#0b1326] border border-[#222a3d]/60 rounded-md p-4">
                 <span className="block font-mono text-[10px] tracking-widest text-[#859397] uppercase mb-1">
-                  Registered Project Name
+                  Project Name
                 </span>
                 <span className="text-base font-bold text-white">
                   {projectData.projectName}
@@ -114,7 +112,7 @@ export default function ReviewTeamDetails() {
 
               <div>
                 <span className="block font-mono text-[10px] tracking-widest text-[#859397] uppercase mb-1">
-                  Academic Department
+                  Department
                 </span>
                 <span className="text-sm font-semibold text-[#dae2fd]">
                   {projectData.department}
@@ -122,7 +120,7 @@ export default function ReviewTeamDetails() {
               </div>
               <div>
                 <span className="block font-mono text-[10px] tracking-widest text-[#859397] uppercase mb-1">
-                  Calendar Allocation Year
+                  Academic Year
                 </span>
                 <span className="text-sm font-mono text-[#22d3ee]">
                   {projectData.year}
@@ -130,7 +128,7 @@ export default function ReviewTeamDetails() {
               </div>
               <div>
                 <span className="block font-mono text-[10px] tracking-widest text-[#859397] uppercase mb-1">
-                  Section Track ID
+                  Section
                 </span>
                 <span className="text-sm font-semibold text-[#dae2fd]">
                   {projectData.section}
@@ -139,7 +137,7 @@ export default function ReviewTeamDetails() {
 
               <div className="md:col-span-3 bg-[#0b1326]/40 p-4 rounded-md border border-[#222a3d]/40 text-xs leading-relaxed text-[#bbc9cd]">
                 <span className="block font-mono text-[9px] text-[#859397] uppercase tracking-wider mb-1">
-                  Abstract Profile Description
+                  Project Description
                 </span>
                 {projectData.description}
               </div>
@@ -151,14 +149,14 @@ export default function ReviewTeamDetails() {
             <div className="flex items-center gap-2.5 border-b border-[#222a3d] pb-4 mb-6">
               <Layers size={18} className="text-[#22d3ee]" />
               <h2 className="text-base font-bold tracking-wide text-[#dae2fd]">
-                Team Leader Metadata Profile
+                Team Leader Details
               </h2>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <div>
                 <span className="block font-mono text-[10px] tracking-widest text-[#859397] uppercase mb-0.5">
-                  Leader Identity Name
+                  Name
                 </span>
                 <p className="text-sm font-bold text-white">
                   {teamData.leader?.name || "—"}
@@ -167,7 +165,7 @@ export default function ReviewTeamDetails() {
 
               <div>
                 <span className="block font-mono text-[10px] tracking-widest text-[#859397] uppercase mb-0.5">
-                  Enrollment ID Registry
+                  Enrollment Number
                 </span>
                 <p className="text-sm font-mono text-[#22d3ee] font-bold">
                   {teamData.leader?.enrollment_no ||
@@ -178,7 +176,7 @@ export default function ReviewTeamDetails() {
 
               <div>
                 <span className="block font-mono text-[10px] tracking-widest text-[#859397] uppercase mb-0.5">
-                  Institutional Contact
+                  Email
                 </span>
                 <p className="text-xs text-[#bbc9cd] truncate">
                   {teamData.leader?.email || "Not available"}
@@ -187,7 +185,7 @@ export default function ReviewTeamDetails() {
 
               <div>
                 <span className="block font-mono text-[10px] tracking-widest text-[#859397] uppercase mb-0.5">
-                  Secure Comms Line
+                  Contact Number
                 </span>
                 <p className="text-sm text-[#bbc9cd]">
                   {teamData.leader?.phone_no ||
@@ -203,7 +201,7 @@ export default function ReviewTeamDetails() {
             <div className="flex items-center gap-2.5 border-b border-[#222a3d] pb-4 mb-6">
               <Users size={18} className="text-[#22d3ee]" />
               <h2 className="text-base font-bold tracking-wide text-[#dae2fd]">
-                Allocated Members Array Matrix ({teamData.members.length})
+                Team Members ({teamData.members.length})
               </h2>
             </div>
 
@@ -236,7 +234,7 @@ export default function ReviewTeamDetails() {
                   </div>
                   <div className="md:col-span-4">
                     <span className="inline-block text-xs font-semibold px-2.5 py-1 rounded bg-[#00363e]/40 border border-[#22d3ee]/20 text-[#22d3ee]">
-                      {member.role || "Unspecified architecture track"}
+                      {member.role || "Role not assigned"}
                     </span>
                   </div>
                 </div>
@@ -256,7 +254,7 @@ export default function ReviewTeamDetails() {
               }
               className="flex items-center gap-2 text-sm font-semibold text-[#bbc9cd] hover:text-white transition-colors disabled:opacity-40"
             >
-              <ArrowLeft size={16} /> Back to Editing
+              <ArrowLeft size={16} /> Back
             </button>
 
             <button
@@ -266,7 +264,7 @@ export default function ReviewTeamDetails() {
               className="h-11 px-6 bg-[#22d3ee] text-[#00363e] rounded-md text-sm font-bold shadow-xl shadow-[#22d3ee]/10 hover:bg-[#8aebff] transition-all flex items-center gap-2 disabled:opacity-50"
             >
               <Sparkles size={16} />
-              {isSubmitting ? "Locking Registry..." : "Confirm & Final Submit"}
+              {isSubmitting ? "Submitting..." : "Submit Team"}
             </button>
           </div>
         </div>

@@ -24,7 +24,7 @@ export default function StudentDashboardNoTeam() {
 
       <div className="p-8 text-[#dae2fd]">
 
-        {/* HEADER */}
+     
 
         <div className="mb-8">
           <h1 className="text-3xl font-bold">
@@ -39,7 +39,7 @@ export default function StudentDashboardNoTeam() {
           </p>
         </div>
 
-        {/* STATUS CARDS */}
+
 
         <div className="grid md:grid-cols-2 gap-6 mb-8">
 
@@ -87,7 +87,7 @@ export default function StudentDashboardNoTeam() {
 
         </div>
 
-        {/* REGISTER TEAM CARD */}
+    
 
         <div className="bg-[#171f33] border border-[#3c494c] rounded-xl p-8 mb-8">
 
@@ -124,7 +124,7 @@ export default function StudentDashboardNoTeam() {
 
         </div>
 
-        {/* WORKFLOW */}
+
 
         <div className="bg-[#171f33] border border-[#3c494c] rounded-xl p-8">
 
@@ -146,17 +146,6 @@ export default function StudentDashboardNoTeam() {
               ○ Team Registration
             </div>
 
-            <div className="flex items-center gap-3 text-slate-400">
-              ○ Component Requests
-            </div>
-
-            <div className="flex items-center gap-3 text-slate-400">
-              ○ Component Issue & Return
-            </div>
-
-            <div className="flex items-center gap-3 text-slate-400">
-              ○ Project Completion
-            </div>
 
           </div>
 

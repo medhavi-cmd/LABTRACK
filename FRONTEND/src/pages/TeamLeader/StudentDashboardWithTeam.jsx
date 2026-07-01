@@ -132,7 +132,7 @@ export default function StudentDashboardWithTeam() {
             </p>
           </div>
 
-          {/* Event Countdown */}
+      
           <div className="mb-8 rounded-xl border border-cyan-500/20 bg-[#171f33] p-5">
             {nextEvent ? (
               <>
@@ -214,7 +214,6 @@ export default function StudentDashboardWithTeam() {
             )}
           </div>
 
-          {/* Statistics */}
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
             {stats.map((stat) => {
               const Icon = stat.icon;
@@ -289,7 +288,6 @@ export default function StudentDashboardWithTeam() {
             </section> */}
           {/* </div> */}
 
-          {/* Future activity section */}
           <section className="mt-6 rounded-xl border border-[#3c494c] bg-[#171f33] p-6">
             <div className="mb-5 flex items-center gap-3">
               <div className="rounded-lg border border-[#22d3ee]/20 bg-[#00363e]/40 p-2.5">

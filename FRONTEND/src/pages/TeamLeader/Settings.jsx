@@ -135,7 +135,7 @@ export default function Settings() {
     <GroupLeaderLayout>
       <div className="min-h-screen bg-[#0b1326] p-5 text-[#dae2fd] sm:p-8">
         <div className="mx-auto max-w-6xl">
-          {/* Page Header */}
+      
           <div className="mb-8">
             <p className="mb-2 font-mono text-xs uppercase tracking-[0.18em] text-[#22d3ee]">
               Account Settings
@@ -148,7 +148,7 @@ export default function Settings() {
             </p>
           </div>
 
-          {/* Main Profile Card */}
+          
           <section className="overflow-hidden rounded-xl border border-[#3c494c] bg-[#171f33]">
             {/* Card heading */}
             <div className="flex items-center gap-4 border-b border-[#3c494c] px-5 py-5 sm:px-7">
@@ -165,7 +165,7 @@ export default function Settings() {
               </div>
             </div>
 
-            {/* Details */}
+      
             <div className="px-5 sm:px-7">
               {profileDetails.map((detail) => {
                 const Icon = detail.icon;
@@ -191,7 +191,7 @@ export default function Settings() {
               })}
             </div>
 
-            {/* Logout */}
+  
             <div className="px-5 py-6 sm:px-7">
               <button
                 type="button"
@@ -208,7 +208,7 @@ export default function Settings() {
             </div>
           </section>
 
-          {/* Read-only notice */}
+
           <div className="mt-6 rounded-xl border border-[#1e4273] bg-[#11253e] p-4 text-sm text-[#bbc9cd]">
             Your profile details are currently read-only. Contact the faculty
             coordinator or lab administrator if any registered information needs
