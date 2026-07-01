@@ -1,5 +1,6 @@
-import cors from 'cors';
-import express from 'express';
+import cors from "cors";
+import express from "express";
+import facultyRoutes from "./routes/facultyRoutes.js";
 import componentRequestRoutes from "./routes/componentRequestRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import studentRoutes from "./routes/studentRoutes.js";
@@ -16,7 +17,14 @@ const app = express();
 
 
 app.use(express.json());
-app.use(cors({ origin: process.env.CLIENT_URL || '*', credentials: true }));
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL || "*",
+    credentials: true,
+  })
+);
+
+app.use("/api/faculty", facultyRoutes);
 
 
 
@@ -36,8 +44,10 @@ app.use("/api/requests", componentRequestRoutes);
 app.use("/api/issued-components", issuedComponentsRoutes);
 
 
-app.get('/', (_req, res) => {
-  res.json({ message: 'LABTRACK API is running' });
+app.get("/", (_req, res) => {
+  res.json({
+    message: "LABTRACK API is running",
+  });
 });
 
 export default app;
