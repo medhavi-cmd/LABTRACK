@@ -187,7 +187,7 @@ export default function AboutLabtrack() {
           </h2>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-            {["Medhavi Singh", "Parikshit", "Neha"].map((member) => (
+            {["Medhavi Singh", "Parikshit Kumar Jha", "Neha Sharma"].map((member) => (
               <motion.div
                 whileHover={{ y: -4, borderColor: "rgba(34,211,238,0.4)" }}
                 key={member}

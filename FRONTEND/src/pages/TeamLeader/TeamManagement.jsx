@@ -190,9 +190,9 @@ export default function TeamManagement() {
                           {member.name}
                         </p>
 
-                        {isLeader && (
+                        {/* {isLeader && (
                           <Crown size={15} className="text-yellow-400" />
-                        )}
+                        )} */}
                       </div>
 
                       <div className="flex items-center gap-1.5 text-xs text-[#859397] mt-1">
@@ -232,7 +232,7 @@ export default function TeamManagement() {
 
           <div className="bg-[#11253e] border border-[#1e4273] rounded-xl p-4 text-sm text-[#bbc9cd]">
             This team registration is currently read-only. Contact your faculty
-            coordinator or lab administrator if changes are required.
+             if changes are required.
           </div>
         </div>
       </div>
