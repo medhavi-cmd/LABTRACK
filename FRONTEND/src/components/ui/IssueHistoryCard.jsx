@@ -1,169 +1,152 @@
+import { useState } from "react";
+import { ChevronDown, ChevronUp } from "lucide-react";
+
 export default function IssueHistoryCard({ request }) {
+  const [open, setOpen] = useState(false);
+
   const getStatusColor = (status) => {
     switch (status) {
       case "pending":
-        return "bg-yellow-500/20 text-yellow-400";
+        return "text-yellow-400 bg-yellow-500/10";
 
       case "approved":
-        return "bg-green-500/20 text-green-400";
+        return "text-green-400 bg-green-500/10";
 
       case "issued":
-        return "bg-cyan-500/20 text-cyan-400";
+        return "text-cyan-400 bg-cyan-500/10";
 
       case "returned":
-        return "bg-purple-500/20 text-purple-400";
+        return "text-purple-400 bg-purple-500/10";
 
       case "rejected":
-        return "bg-red-500/20 text-red-400";
+        return "text-red-400 bg-red-500/10";
 
       default:
-        return "bg-gray-500/20 text-gray-300";
+        return "text-gray-300 bg-gray-500/10";
     }
   };
 
   return (
-    <div className="rounded-xl border border-[#24314e] bg-[#111a2f] p-6 shadow-md">
+    <div className="rounded-xl border border-[#24314e] bg-[#111a2f] overflow-hidden">
 
-      {/* Header */}
+      <button
+        onClick={() => setOpen(!open)}
+        className="w-full text-left px-6 py-5 hover:bg-[#17223a] transition flex items-center justify-between"
+      >
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-5 w-full">
 
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div>
+            <p className="text-xs text-gray-400">Request ID</p>
+            <p className="text-white font-semibold">
+              #{request.requestId}
+            </p>
+          </div>
 
-        <div>
-          <h2 className="text-lg font-semibold text-white">
-            Request #{request.requestId}
-          </h2>
+          <div>
+            <p className="text-xs text-gray-400">Request Date</p>
+            <p className="text-white">
+              {new Date(request.requestDate).toLocaleDateString()}
+            </p>
+          </div>
 
-          <p className="mt-1 text-sm text-gray-400">
-            {new Date(request.requestDate).toLocaleDateString()}
-          </p>
-        </div>
+          <div>
+            <p className="text-xs text-gray-400">Purpose</p>
+            <p className="text-white truncate">
+              {request.purpose}
+            </p>
+          </div>
 
-        <span
-          className={`rounded-full px-4 py-1 text-sm font-semibold capitalize ${getStatusColor(
-            request.status
-          )}`}
-        >
-          {request.status}
-        </span>
+          <div className="flex items-center justify-between">
 
-      </div>
+            <span
+              className={`capitalize px-3 py-1 rounded-full text-sm font-semibold ${getStatusColor(
+                request.status
+              )}`}
+            >
+              {request.status}
+            </span>
 
-      {/* Purpose */}
+            {open ? (
+              <ChevronUp className="text-gray-400" size={20} />
+            ) : (
+              <ChevronDown className="text-gray-400" size={20} />
+            )}
 
-      <div className="mt-6">
-
-        <p className="text-sm text-gray-400">
-          Purpose
-        </p>
-
-        <p className="mt-1 text-white">
-          {request.purpose}
-        </p>
-
-      </div>
-
-      {/* Components */}
-
-      <div className="mt-8">
-
-        <h3 className="mb-4 font-semibold text-white">
-          Requested Components
-        </h3>
-
-        <div className="overflow-x-auto rounded-lg border border-[#1f2d48]">
-
-          <table className="w-full">
-
-            <thead className="bg-[#18243d]">
-
-              <tr>
-
-                <th className="px-4 py-3 text-left text-sm text-gray-300">
-                  Component
-                </th>
-
-                <th className="px-4 py-3 text-center text-sm text-gray-300">
-                  Quantity
-                </th>
-
-              </tr>
-
-            </thead>
-
-            <tbody>
-
-              {request.components.map((component, index) => (
-
-                <tr
-                  key={index}
-                  className="border-t border-[#1f2d48]"
-                >
-
-                  <td className="px-4 py-3 text-white">
-                    {component.componentName}
-                  </td>
-
-                  <td className="px-4 py-3 text-center font-semibold text-cyan-400">
-                    {component.quantity}
-                  </td>
-
-                </tr>
-
-              ))}
-
-            </tbody>
-
-          </table>
+          </div>
 
         </div>
+      </button>
 
-      </div>
 
-      {/* Issue Details */}
+      {open && (
+        <div className="border-t border-[#24314e] px-6 py-6">
 
-      <div className="mt-8 grid gap-5 md:grid-cols-3">
+          {/* Components */}
 
-        <div>
+          <h3 className="text-white font-semibold mb-4">
+            Requested Components
+          </h3>
 
-          <p className="text-sm text-gray-400">
-            Issue Date
-          </p>
+          <div className="space-y-3">
 
-          <p className="mt-1 text-white">
-            {request.issueDate
-              ? new Date(request.issueDate).toLocaleDateString()
-              : "-"}
-          </p>
+            {request.components.map((component, index) => (
+              <div
+                key={index}
+                className="flex justify-between rounded-lg bg-[#18243d] px-4 py-3"
+              >
+                <span className="text-white">
+                  {component.componentName}
+                </span>
+
+                <span className="font-semibold text-cyan-400">
+                  × {component.quantity}
+                </span>
+              </div>
+            ))}
+
+          </div>
+
+
+          <div className="grid md:grid-cols-3 gap-6 mt-8">
+
+            <div>
+              <p className="text-gray-400 text-sm">
+                Issue Date
+              </p>
+
+              <p className="text-white mt-1">
+                {request.issueDate
+                  ? new Date(request.issueDate).toLocaleDateString()
+                  : "-"}
+              </p>
+            </div>
+
+            <div>
+              <p className="text-gray-400 text-sm">
+                Expected Return
+              </p>
+
+              <p className="text-white mt-1">
+                {request.expectedReturnDate
+                  ? new Date(request.expectedReturnDate).toLocaleDateString()
+                  : "-"}
+              </p>
+            </div>
+
+            <div>
+              <p className="text-gray-400 text-sm">
+                Return Status
+              </p>
+
+              <p className="capitalize text-white mt-1">
+                {request.returnStatus || "-"}
+              </p>
+            </div>
+
+          </div>
 
         </div>
-
-        <div>
-
-          <p className="text-sm text-gray-400">
-            Expected Return
-          </p>
-
-          <p className="mt-1 text-white">
-            {request.expectedReturnDate
-              ? new Date(request.expectedReturnDate).toLocaleDateString()
-              : "-"}
-          </p>
-
-        </div>
-
-        <div>
-
-          <p className="text-sm text-gray-400">
-            Return Status
-          </p>
-
-          <p className="mt-1 capitalize text-white">
-            {request.returnStatus || "-"}
-          </p>
-
-        </div>
-
-      </div>
+      )}
 
     </div>
   );
