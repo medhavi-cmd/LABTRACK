@@ -37,6 +37,7 @@ import NotificationsPage from "../pages/TeamLeader/Notifications";
 import Login from "../pages/Auth/Login";
 import SignupPage from "../pages/Auth/Signup";
 import GroupLeaderLayout from "../layouts/GroupLeaderLayout";
+import IssueHistory from "../pages/TeamLeader/IssueHistory";
 
 const ComingSoon = ({ title, description }) => (
   
@@ -100,14 +101,9 @@ const AppRoutes = () => {
       path="/student/cart"
       element={<CartPage />}
       />
-      <Route
-        path="/student/issue-history"
-        element={
-          <ComingSoon
-            title="Issue History"
-            description="View all issued, returned, pending, and damaged component records for your team."
-          />
-        }
+      <Route 
+      path="/student/issue-history"
+      element = {<IssueHistory />}
       />
       <Route
         path="/student/component-requests"
