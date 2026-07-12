@@ -28,6 +28,7 @@ export default function TeamManagement() {
         setError("");
 
         const response = await getMyTeam();
+        console.log(response);
 
         setTeam(response);
       } catch (err) {

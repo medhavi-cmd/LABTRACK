@@ -14,6 +14,7 @@ import { Loader2 } from "lucide-react";
 import { getDashboardData } from "../../services/studentDashboardApi";
 import GroupLeaderLayout from "../../layouts/GroupLeaderLayout";
 import { getNextEvent } from "../../services/eventApi";
+import DashboardCarousel from "../../components/ui/DashboardCarousel";
 
 export default function StudentDashboardWithTeam() {
   const [nextEvent, setNextEvent] = useState(null);
@@ -133,7 +134,7 @@ export default function StudentDashboardWithTeam() {
           </div>
 
       
-          <div className="mb-8 rounded-xl border border-cyan-500/20 bg-[#171f33] p-5">
+          {/* <div className="mb-8 rounded-xl border border-cyan-500/20 bg-[#171f33] p-5">
             {nextEvent ? (
               <>
                 <div className="flex items-center justify-between mb-4">
@@ -212,7 +213,12 @@ export default function StudentDashboardWithTeam() {
                 </p>
               </div>
             )}
-          </div>
+          </div> */}
+          <DashboardCarousel
+    nextEvent={nextEvent}
+    timeLeft={timeLeft}
+    dashboard={dashboard}
+/>
 
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
             {stats.map((stat) => {

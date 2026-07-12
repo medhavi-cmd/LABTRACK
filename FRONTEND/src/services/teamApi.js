@@ -36,3 +36,5 @@ export const getMyTeam = () => request("/team/my-team");
 
 export const getMyTeamStatus = () => request("/team/my-team-status");
 
+export const getFacultyList = () => request("/team/faculty");
+

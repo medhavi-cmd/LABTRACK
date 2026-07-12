@@ -18,7 +18,10 @@ export default function ReviewTeamDetails() {
   const location = useLocation();
 
   const projectData = location.state?.projectData;
-  const teamData = location.state?.teamData;
+const teamData = location.state?.teamData;
+
+console.log("Project Data:", projectData);
+console.log("Team Data:", teamData);
 
   // Catch anomalies and force fallback loop
   useEffect(() => {
@@ -42,10 +45,16 @@ export default function ReviewTeamDetails() {
         .map((member) => String(member.enrollmentNo));
 
       await registerTeam({
-        projectName: projectData.projectName,
-        description: projectData.description,
-        memberEnrollmentNumbers,
-      });
+  projectName: projectData.projectName,
+  description: projectData.description,
+  department: projectData.department,
+  year: projectData.year,
+  section: projectData.section,
+  facultyIds: projectData.selectedFaculty.map(
+    (faculty) => faculty.faculty_id
+  ),
+  memberEnrollmentNumbers,
+});
 
       alert("Team registered successfully!");
 
@@ -58,6 +67,7 @@ export default function ReviewTeamDetails() {
   };
 
   if (!projectData || !teamData) return null;
+
 
   return (
     <GroupLeaderLayout>
@@ -134,6 +144,23 @@ export default function ReviewTeamDetails() {
                   {projectData.section}
                 </span>
               </div>
+
+              <div className="md:col-span-3">
+  <span className="block font-mono text-[10px] tracking-widest text-[#859397] uppercase mb-2">
+    Faculty Mentors
+  </span>
+
+  <div className="flex flex-wrap gap-2">
+    {projectData.selectedFaculty?.map((faculty) => (
+      <span
+        key={faculty.faculty_id}
+        className="px-3 py-1 rounded-full text-xs bg-cyan-500/15 border border-cyan-500/20 text-cyan-300"
+      >
+        {faculty.name}
+      </span>
+    ))}
+  </div>
+</div>
 
               <div className="md:col-span-3 bg-[#0b1326]/40 p-4 rounded-md border border-[#222a3d]/40 text-xs leading-relaxed text-[#bbc9cd]">
                 <span className="block font-mono text-[9px] text-[#859397] uppercase tracking-wider mb-1">

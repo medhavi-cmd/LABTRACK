@@ -211,6 +211,8 @@ export default function AddMembers() {
 
   if (!projectData) return null;
 
+  console.log("Received Project Data:", projectData);
+
   return (
     <GroupLeaderLayout>
       <div className="min-h-screen bg-[#0b1326] p-8 text-[#dae2fd]">

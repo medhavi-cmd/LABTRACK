@@ -4,6 +4,7 @@ import {
   registerTeam,
   getTeamByUserId,
   studentHasTeam,
+  getAllFaculty,
 } from "../services/teamService.js";
 
 export const getMyProfile = async (req, res) => {
@@ -22,6 +23,20 @@ export const getMyProfile = async (req, res) => {
 
     return res.status(500).json({
       message: "Failed to fetch profile",
+    });
+  }
+};
+
+export const fetchFacultyList = async (req, res) => {
+  try {
+    const faculty = await getAllFaculty();
+
+    return res.status(200).json(faculty);
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      message: "Failed to fetch faculty",
     });
   }
 };

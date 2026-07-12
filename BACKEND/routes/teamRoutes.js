@@ -5,6 +5,7 @@ import {
   createTeam,
   getMyTeam,
   checkMyTeamStatus,
+  fetchFacultyList,
 } from "../controllers/teamController.js";
 import { requireAuth } from "../middleware/authMiddleware.js";
 
@@ -24,7 +25,12 @@ router.get("/my-team-status", checkMyTeamStatus);
 // Fetch complete registered team
 router.get("/my-team", getMyTeam);
 
+// fetch all faculty members for dropdown
+router.get("/faculty", fetchFacultyList);
+
 // Final submit only happens here
 router.post("/register", createTeam);
+
+
 
 export default router;
