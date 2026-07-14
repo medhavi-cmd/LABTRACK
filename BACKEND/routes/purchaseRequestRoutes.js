@@ -1,0 +1,20 @@
+import express from "express";
+import {
+  fetchRequestFormDetails,
+  submitPurchaseRequest,
+  fetchMyPurchaseRequests,
+} from "../controllers/purchaseRequestController.js";
+
+import { requireAuth } from "../middleware/authMiddleware.js";
+
+const router = express.Router();
+
+router.use(requireAuth);
+
+router.get("/form-details", fetchRequestFormDetails);
+
+router.post("/", submitPurchaseRequest);
+
+router.get("/my-requests", fetchMyPurchaseRequests);
+
+export default router;

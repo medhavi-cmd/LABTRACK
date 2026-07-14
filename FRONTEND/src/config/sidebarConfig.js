@@ -37,7 +37,7 @@ export const SIDEBAR_CONFIG = {
   },
   {
     label: "New Requests",
-    path: "/student/component-requests",
+    path: "/student/new-request",
     icon: ClipboardList,
   },
   {

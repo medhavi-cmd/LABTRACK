@@ -38,6 +38,8 @@ import Login from "../pages/Auth/Login";
 import SignupPage from "../pages/Auth/Signup";
 import GroupLeaderLayout from "../layouts/GroupLeaderLayout";
 import IssueHistory from "../pages/TeamLeader/IssueHistory";
+import NewRequest from "../pages/TeamLeader/NewRequest";
+import ProjectGallery from "../pages/TeamLeader/ProjectGallery";
 
 const ComingSoon = ({ title, description }) => (
   
@@ -105,25 +107,19 @@ const AppRoutes = () => {
       path="/student/issue-history"
       element = {<IssueHistory />}
       />
-      <Route
-        path="/student/component-requests"
-        element={
-          <ComingSoon
-            title="New Requests"
-            description="Create and track component requests for your project."
-          />
-        }
+      <Route 
+      path="/student/new-request"
+      element = {<NewRequest />}
       />
-      <Route
-        path="/student/gallery"
-        element={
-          <ComingSoon
-            title="Project Gallery"
-            description="Showcase project milestones, photos, videos, and achievements."
-          />
-        }
-      />
-      <Route path="/student/settings" element={<TeamLeaderSettings />} />
+      <Route 
+      path="/student/gallery"
+      element = {<ProjectGallery />}
+       />
+      
+      <Route 
+      path="/student/settings"
+       element={<TeamLeaderSettings />} />
+
       <Route
         path="/student/notifications"
         element={<NotificationsPage />}
