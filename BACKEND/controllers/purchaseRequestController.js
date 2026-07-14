@@ -4,9 +4,7 @@ import {
   getPurchaseRequestsByTeam,
 } from "../services/purchaseRequestService.js";
 
-/* ======================================
-   GET FORM DETAILS
-====================================== */
+  //  GET FORM DETAILS
 export const fetchRequestFormDetails = async (req, res) => {
   try {
     const data = await getTeamDetailsForRequest(req.user.id);
@@ -27,9 +25,7 @@ export const fetchRequestFormDetails = async (req, res) => {
   }
 };
 
-/* ======================================
-   CREATE PURCHASE REQUEST
-====================================== */
+  //  CREATE PURCHASE REQUEST
 export const submitPurchaseRequest = async (req, res) => {
   try {
     const purchaseRequest = await createPurchaseRequest(
@@ -50,9 +46,8 @@ export const submitPurchaseRequest = async (req, res) => {
   }
 };
 
-/* ======================================
-   GET MY PURCHASE REQUESTS
-====================================== */
+
+  //  GET MY PURCHASE REQUESTS
 export const fetchMyPurchaseRequests = async (req, res) => {
   try {
     const requests = await getPurchaseRequestsByTeam(req.user.id);

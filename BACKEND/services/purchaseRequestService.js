@@ -1,11 +1,10 @@
 import { pool } from "../config/db.js";
 
-/* ==========================================
-   GET TEAM DETAILS OF LOGGED-IN STUDENT
-========================================== */
+
+//  GET TEAM DETAILS OF LOGGED-IN STUDENT
 export const getTeamDetailsForRequest = async (userId) => {
-  const result = await pool.query(
-    `
+    const result = await pool.query(
+        `
     SELECT
         t.team_id,
         t.team_name,
@@ -41,26 +40,25 @@ export const getTeamDetailsForRequest = async (userId) => {
 
     WHERE s.user_id = $1
     `,
-    [userId]
-  );
+        [userId]
+    );
 
-  return result.rows[0];
+    return result.rows[0];
 };
 
-/* ==========================================
-   CREATE PURCHASE REQUEST
-========================================== */
-export const createPurchaseRequest = async (userId, data) => {
-  const {
-    componentName,
-    quantityRequired,
-    reason,
-    category,
-  } = data;
 
-  // Find the logged-in student's team
-  const teamResult = await pool.query(
-    `
+// CREATE PURCHASE REQUEST
+export const createPurchaseRequest = async (userId, data) => {
+    const {
+        componentName,
+        quantityRequired,
+        reason,
+        category,
+    } = data;
+
+    // Find the logged-in student's team
+    const teamResult = await pool.query(
+        `
     SELECT
         t.team_id
     FROM students s
@@ -74,17 +72,17 @@ export const createPurchaseRequest = async (userId, data) => {
     WHERE s.user_id = $1
     LIMIT 1
     `,
-    [userId]
-  );
+        [userId]
+    );
 
-  if (teamResult.rows.length === 0) {
-    throw new Error("You are not part of any team.");
-  }
+    if (teamResult.rows.length === 0) {
+        throw new Error("You are not part of any team.");
+    }
 
-  const teamId = teamResult.rows[0].team_id;
+    const teamId = teamResult.rows[0].team_id;
 
-  const result = await pool.query(
-    `
+    const result = await pool.query(
+        `
     INSERT INTO component_purchase_requests
     (
         team_id,
@@ -103,24 +101,23 @@ export const createPurchaseRequest = async (userId, data) => {
     )
     RETURNING *
     `,
-    [
-      teamId,
-      componentName,
-      category || null,
-      quantityRequired,
-      reason,
-    ]
-  );
+        [
+            teamId,
+            componentName,
+            category || null,
+            quantityRequired,
+            reason,
+        ]
+    );
 
-  return result.rows[0];
+    return result.rows[0];
 };
 
-/* ==========================================
-   GET ALL PURCHASE REQUESTS OF MY TEAM
-========================================== */
+
+//    GET ALL PURCHASE REQUESTS OF MY TEAM
 export const getPurchaseRequestsByTeam = async (userId) => {
-  const result = await pool.query(
-    `
+    const result = await pool.query(
+        `
     SELECT
         cpr.purchase_request_id,
         cpr.component_name,
@@ -133,21 +130,21 @@ export const getPurchaseRequestsByTeam = async (userId) => {
 
     FROM component_purchase_requests cpr
 
-    JOIN teams t
-        ON cpr.team_id = t.team_id
+    WHERE cpr.team_id = (
+        SELECT tm.team_id
+        FROM students s
 
-    JOIN team_members tm
-        ON tm.team_id = t.team_id
+        JOIN team_members tm
+            ON tm.student_id = s.student_id
 
-    JOIN students s
-        ON s.student_id = tm.student_id
-
-    WHERE s.user_id = $1
+        WHERE s.user_id = $1
+        LIMIT 1
+    )
 
     ORDER BY cpr.request_date DESC
     `,
-    [userId]
-  );
+        [userId]
+    );
 
-  return result.rows;
+    return result.rows;
 };

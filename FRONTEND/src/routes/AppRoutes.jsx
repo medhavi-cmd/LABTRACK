@@ -38,7 +38,7 @@ import Login from "../pages/Auth/Login";
 import SignupPage from "../pages/Auth/Signup";
 import GroupLeaderLayout from "../layouts/GroupLeaderLayout";
 import IssueHistory from "../pages/TeamLeader/IssueHistory";
-import NewRequest from "../pages/TeamLeader/NewRequest";
+import NewRequest from "../pages/TeamLeader/NewRequests";
 import ProjectGallery from "../pages/TeamLeader/ProjectGallery";
 
 const ComingSoon = ({ title, description }) => (
