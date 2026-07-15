@@ -14,6 +14,9 @@ import topbarRoutes from "./routes/topbarRoutes.js";
 import eventRoutes from "./routes/eventRoutes.js";
 import issueHistoryRoutes from "./routes/issueHistoryRoutes.js";
 import purchaseRequestRoutes from "./routes/purchaseRequestRoutes.js";
+import galleryRoutes from "./routes/galleryRoutes.js";
+import projectGalleryRoutes from "./routes/projectGalleryRoutes.js";
+
 
 const app = express();
 
@@ -41,6 +44,8 @@ app.use("/api/topbar", topbarRoutes);
 app.use("/api/events", eventRoutes);
 app.use("/api/issue-history", issueHistoryRoutes);
 app.use("/api/purchase-requests", purchaseRequestRoutes);
+app.use("/api/gallery", galleryRoutes);
+app.use("/api/project-gallery", projectGalleryRoutes);
 
 //labstaff routes
 app.use("/api/inventory", inventoryRoutes);

@@ -163,12 +163,15 @@ export const registerTeam = async (data) => {
     await client.query("BEGIN");
 
     const {
-    leaderUserId,
-    projectName,
-    description,
-    memberEnrollmentNumbers,
-    facultyIds,
-} = data;
+      leaderUserId,
+      projectName,
+      description,
+      memberEnrollmentNumbers,
+      facultyIds,
+      department,
+      academicYear,
+      section,
+    } = data;
 
     // Check whether leader has already joined/created a team
     const alreadyInTeam = await client.query(
@@ -284,11 +287,33 @@ export const registerTeam = async (data) => {
     // Create team
     const teamResult = await client.query(
       `
-      INSERT INTO teams (team_name, leader_id)
-      VALUES ($1, $2)
-      RETURNING *
-      `,
-      [projectName, leader.student_id]
+    INSERT INTO teams
+    (
+    team_name,
+    leader_id,
+    department,
+    academic_year,
+    section
+    )
+
+    VALUES
+    (
+    $1,
+    $2,
+    $3,
+    $4,
+    $5
+    )
+
+    RETURNING *
+    `,
+      [
+        projectName,
+        leader.student_id,
+        department,
+        academicYear,
+        section
+      ]
     );
 
     const team = teamResult.rows[0];
