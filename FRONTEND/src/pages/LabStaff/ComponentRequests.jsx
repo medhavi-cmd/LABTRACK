@@ -1,5 +1,8 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { FiEye, FiCheck, FiInfo, FiX, FiSearch } from "react-icons/fi";
+import React, { useEffect, useMemo, useState, useCallback } from "react";
+import { FiEye, FiCheck, FiInfo, FiX, FiSearch, FiLoader } from "react-icons/fi";
+ 
+// ─── Config ─────────────────────────────────────────────────────────────────
+const API_BASE = "http://localhost:5000/api/requests";
  
 // ─── Status config ─────────────────────────────────────────────────────────────
 const STATUS_CONFIG = {
@@ -94,28 +97,69 @@ const ComponentRequests = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeRequest, setActiveRequest] = useState(null);
  
+  // Tracks which request is currently being approved (by request_id)
+  const [approvingId, setApprovingId] = useState(null);
+ 
+  // Small inline toast for success/error feedback on approve actions
+  const [toast, setToast] = useState(null); // { type: "success" | "error", message: string }
+ 
   // ── Fetch ──────────────────────────────────────────────────────────────────
-  useEffect(() => {
-    const fetchRequests = async () => {
-      try {
-        setLoading(true);
-        setError("");
-        const res = await fetch("http://localhost:5000/api/requests");
-        const result = await res.json();
-        if (!res.ok || !result.success) {
-          throw new Error(result.message || "Failed to load requests.");
-        }
-        const raw = result.data ?? result;
-        setRequests(Array.isArray(raw) ? raw : []);
-      } catch (err) {
-        setError(err.message || "Failed to load requests.");
-        setRequests([]);
-      } finally {
-        setLoading(false);
+  const loadRequests = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError("");
+      const res = await fetch(API_BASE);
+      const result = await res.json();
+      if (!res.ok || !result.success) {
+        throw new Error(result.message || "Failed to load requests.");
       }
-    };
-    fetchRequests();
+      const raw = result.data ?? result;
+      setRequests(Array.isArray(raw) ? raw : []);
+    } catch (err) {
+      setError(err.message || "Failed to load requests.");
+      setRequests([]);
+    } finally {
+      setLoading(false);
+    }
   }, []);
+ 
+  useEffect(() => {
+    loadRequests();
+  }, [loadRequests]);
+ 
+  // Auto-dismiss the toast after a few seconds
+  useEffect(() => {
+    if (!toast) return;
+    const timer = setTimeout(() => setToast(null), 4000);
+    return () => clearTimeout(timer);
+  }, [toast]);
+ 
+  // ── Approve ────────────────────────────────────────────────────────────────
+  const handleApprove = async (requestId) => {
+    if (!requestId || approvingId) return;
+ 
+    try {
+      setApprovingId(requestId);
+      setToast(null);
+ 
+      const res = await fetch(`${API_BASE}/${requestId}/approve`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+      });
+      const result = await res.json();
+ 
+      if (!res.ok || !result.success) {
+        throw new Error(result.message || "Failed to approve request.");
+      }
+ 
+      setToast({ type: "success", message: result.message || "Request approved successfully." });
+      await loadRequests(); // refresh table + stats from the source of truth
+    } catch (err) {
+      setToast({ type: "error", message: err.message || "Failed to approve request." });
+    } finally {
+      setApprovingId(null);
+    }
+  };
  
   // ── Stats ──────────────────────────────────────────────────────────────────
   const stats = useMemo(() => {
@@ -148,6 +192,19 @@ const ComponentRequests = () => {
           Review and approve component requests from students
         </p>
       </div>
+ 
+      {/* Toast */}
+      {toast && (
+        <div
+          className={`mb-6 rounded-xl border px-5 py-3 text-sm font-medium ${
+            toast.type === "success"
+              ? "bg-green-500/10 border-green-500/30 text-green-400"
+              : "bg-red-500/10 border-red-500/30 text-red-400"
+          }`}
+        >
+          {toast.message}
+        </div>
+      )}
  
       {/* Stats */}
       <div className="grid md:grid-cols-3 gap-6 mb-8">
@@ -242,6 +299,9 @@ const ComponentRequests = () => {
               <tbody>
                 {filtered.map((request) => {
                   const statusConfig = getStatusConfig(request.status);
+                  const isPending = request.status?.toLowerCase() === "pending";
+                  const isApproving = approvingId === request.request_id;
+ 
                   return (
                     <tr
                       key={request.request_id}
@@ -288,19 +348,34 @@ const ComponentRequests = () => {
                         </span>
                       </td>
                       <td className="px-6 py-4">
-                        <div className="flex gap-3">
+                        <div className="flex items-center gap-3">
                           <button
+                            onClick={() => setActiveRequest(request)}
                             className="text-cyan-400 hover:text-cyan-300 transition-colors"
                             title="View"
                           >
                             <FiEye size={18} />
                           </button>
-                          <button
-                            className="text-green-400 hover:text-green-300 transition-colors"
-                            title="Approve"
-                          >
-                            <FiCheck size={18} />
-                          </button>
+ 
+                          {isApproving ? (
+                            <span className="flex items-center gap-1.5 text-slate-400 text-sm">
+                              <FiLoader className="w-4 h-4 animate-spin" />
+                              Approving...
+                            </span>
+                          ) : (
+                            <button
+                              onClick={() => handleApprove(request.request_id)}
+                              disabled={!isPending}
+                              title={isPending ? "Approve" : "Only pending requests can be approved"}
+                              className={`transition-colors ${
+                                isPending
+                                  ? "text-green-400 hover:text-green-300 cursor-pointer"
+                                  : "text-slate-600 cursor-not-allowed"
+                              }`}
+                            >
+                              <FiCheck size={18} />
+                            </button>
+                          )}
                         </div>
                       </td>
                     </tr>
@@ -324,4 +399,3 @@ const ComponentRequests = () => {
 };
  
 export default ComponentRequests;
- 
