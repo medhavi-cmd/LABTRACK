@@ -1,24 +1,22 @@
 import { Navigate, Route, Routes } from "react-router-dom";
+import ProtectedRoute from "./ProtectedRoute";
+
 import ComponentDemand from "../pages/LabStaff/ComponentDemand";
 import Notifications from "../pages/LabStaff/Notifications";
-
-
 import LabStaffLayout from "../layouts/LabStaffLayout";
-
-
 import LabStaffDashboard from "../pages/LabStaff/Dashboard";
 import LabStaffInventoryManagement from "../pages/LabStaff/InventoryManagement";
 import LabStaffComponentRequests from "../pages/LabStaff/ComponentRequests";
 import LabStaffIssuedComponents from "../pages/LabStaff/IssuedComponents";
 import LabStaffReturnManagement from "../pages/LabStaff/ReturnManagement";
 import LabStaffDamageReports from "../pages/LabStaff/DamageReports";
+import LabStaffSettings from "../pages/LabStaff/Settings";
 
 import FacultyDashboard from "../pages/Faculty/FacultyDashboard";
 import FacultyProjectApprovals from "../pages/Faculty/ProjectApprovals";
 import FacultyComponentRequests from "../pages/Faculty/ComponentsRequests";
 import FacultyEvents from "../pages/Faculty/Events";
 import FacultyNotifications from "../pages/Faculty/Notifications";
-
 import FacultyGalleryApprovals from "../pages/Faculty/GalleryApprovals";
 import FacultyStudentProgress from "../pages/Faculty/StudentProgress";
 
@@ -29,8 +27,7 @@ import RegisterProjectTeam from "../pages/TeamLeader/RegisterProjectTeam";
 import AddMembers from "../pages/TeamLeader/AddMembers";
 import ReviewTeamDetails from "../pages/TeamLeader/ReviewTeamDetails";
 import TeamManagement from "../pages/TeamLeader/TeamManagement";
-import LabStaffSettings from "../pages/LabStaff/Settings";
-import TeamLeaderSettings from "../pages/TeamLeader/Settings";
+import Settings from "../pages/TeamLeader/Settings";
 import ComponentInventory from "../pages/TeamLeader/ComponentInventory";
 import CartPage from "../pages/TeamLeader/CartPage";
 import NotificationsPage from "../pages/TeamLeader/Notifications";
@@ -41,144 +38,277 @@ import IssueHistory from "../pages/TeamLeader/IssueHistory";
 import NewRequest from "../pages/TeamLeader/NewRequests";
 import ProjectGallery from "../pages/TeamLeader/ProjectGallery";
 
-const ComingSoon = ({ title, description }) => (
-  
-    <GroupLeaderLayout>
-    <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[#859397]">
-      Coming Soon
-    </p>
-    <h1 className="mt-3 text-3xl font-bold text-white">{title}</h1>
-    <p className="mt-3 max-w-2xl text-sm leading-6 text-[#bbc9cd]">
-      {description}
-    </p> 
-  </GroupLeaderLayout>
-);
-
-
 const AppRoutes = () => {
   return (
     <Routes>
-      <Route
-      path="/"
-      element={<Navigate to="/login" replace />}
-      />
+      <Route path="/login" element={<Login />} />
 
-      <Route
-        path="/about-labtrack"
-        element={<AboutLabtrack />}
-      />
+      <Route path="/signup" element={<SignupPage />} />
+
+      <Route path="/about-labtrack" element={<AboutLabtrack />} />
 
       {/* GROUP LEADER */}
 
       <Route
         path="/student/complete-profile"
-        element={<CompleteProfile />}
+        element={
+          <ProtectedRoute allowedRoles="student">
+            <CompleteProfile />
+          </ProtectedRoute>
+        }
       />
 
       <Route
         path="/student/student-dashboard"
-        element={<StudentDashboard />}
+        element={
+          <ProtectedRoute allowedRoles="student">
+            <StudentDashboard />
+          </ProtectedRoute>
+        }
       />
       <Route
         path="/student/team-management/register"
-        element={<RegisterProjectTeam />}
+        element={
+          <ProtectedRoute allowedRoles="student">
+            <RegisterProjectTeam />
+          </ProtectedRoute>
+        }
       />
       <Route
         path="/student/team-management/add-members"
-        element={<AddMembers />}
+        element={
+          <ProtectedRoute allowedRoles="student">
+            <AddMembers />
+          </ProtectedRoute>
+        }
       />
       <Route
         path="/student/team-management/review-team-details"
-        element={<ReviewTeamDetails />}
+        element={
+          <ProtectedRoute allowedRoles="student">
+            <ReviewTeamDetails />
+          </ProtectedRoute>
+        }
       />
       <Route
         path="/student/team-management"
-        element={<TeamManagement />}
+        element={
+          <ProtectedRoute allowedRoles="student">
+            <TeamManagement />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/student/component-inventory"
+        element={
+          <ProtectedRoute allowedRoles="student">
+            <ComponentInventory />
+          </ProtectedRoute>
+        }
       />
       <Route
-      path="/student/component-inventory"
-      element={<ComponentInventory />}
+        path="/student/cart"
+        element={
+          <ProtectedRoute allowedRoles="student">
+            <CartPage />
+          </ProtectedRoute>
+        }
       />
       <Route
-      path="/student/cart"
-      element={<CartPage />}
+        path="/student/issue-history"
+        element={
+          <ProtectedRoute allowedRoles="student">
+            <IssueHistory />
+          </ProtectedRoute>
+        }
       />
-      <Route 
-      path="/student/issue-history"
-      element = {<IssueHistory />}
+      <Route
+        path="/student/new-request"
+        element={
+          <ProtectedRoute allowedRoles="student">
+            <NewRequest />
+          </ProtectedRoute>
+        }
       />
-      <Route 
-      path="/student/new-request"
-      element = {<NewRequest />}
+
+      <Route
+        path="/student/gallery"
+        element={
+          <ProtectedRoute allowedRoles="student">
+            <ProjectGallery />
+          </ProtectedRoute>
+        }
       />
-      <Route 
-      path="/student/gallery"
-      element = {<ProjectGallery />}
-       />
-      
-      <Route 
-      path="/student/settings"
-       element={<TeamLeaderSettings />} />
+
+      <Route
+        path="/student/settings"
+        element={
+          <ProtectedRoute allowedRoles="student">
+            <Settings />
+          </ProtectedRoute>
+        }
+      />
 
       <Route
         path="/student/notifications"
-        element={<NotificationsPage />}
+        element={
+          <ProtectedRoute allowedRoles="student">
+            <NotificationsPage />
+          </ProtectedRoute>
+        }
       />
 
-
-      
       {/* FACULTY */}
-      <Route path="/login" element={<Login />} />
-      <Route path="/signup" element={<SignupPage />} />
-      <Route path="/faculty/dashboard" element={<FacultyDashboard />} />
+
+      <Route
+        path="/faculty/dashboard"
+        element={
+          <ProtectedRoute allowedRoles="faculty">
+            <FacultyDashboard />
+          </ProtectedRoute>
+        }
+      />
+
       <Route
         path="/faculty/project-approvals"
-        element={<FacultyProjectApprovals />}
+        element={
+          <ProtectedRoute allowedRoles="faculty">
+            <FacultyProjectApprovals />
+          </ProtectedRoute>
+        }
       />
       <Route
         path="/faculty/component-requests"
-        element={<FacultyComponentRequests />}
+        element={
+          <ProtectedRoute allowedRoles="faculty">
+            <FacultyComponentRequests />
+          </ProtectedRoute>
+        }
       />
-      <Route path="/faculty/events" element={<FacultyEvents />} />
-      <Route path="/faculty/notifications" element={<FacultyNotifications />} />
+      <Route
+        path="/faculty/events"
+        element={
+          <ProtectedRoute allowedRoles="faculty">
+            <FacultyEvents />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/faculty/notifications"
+        element={
+          <ProtectedRoute allowedRoles="faculty">
+            <FacultyNotifications />
+          </ProtectedRoute>
+        }
+      />
       <Route
         path="/faculty/gallery-approvals"
-        element={<FacultyGalleryApprovals />}
+        element={
+          <ProtectedRoute allowedRoles="faculty">
+            <FacultyGalleryApprovals />
+          </ProtectedRoute>
+        }
       />
       <Route
         path="/faculty/student-progress"
-        element={<FacultyStudentProgress />}
-      />
-
-
-
-
-      {/* LABSTAFF */}
-      <Route path="/lab-staff" element={<LabStaffLayout />}>
-
-        <Route index element={<Navigate to="dashboard" replace />} />
-        <Route path="dashboard" element={<LabStaffDashboard />} />
-        <Route path="inventory" element={<LabStaffInventoryManagement />} />
-        <Route path="requests" element={<LabStaffComponentRequests />} />
-        <Route path="issued" element={<LabStaffIssuedComponents />} />
-        <Route path="returns" element={<LabStaffReturnManagement />} />
-        <Route path="damage" element={<LabStaffDamageReports />} />
-        <Route path="demand" element={<ComponentDemand />} />
-        <Route path="notifications" element={<Notifications />} />
-
-        <Route path="settings" element={<LabStaffSettings />} />
-      </Route>
-
-      <Route
-        path="*"
         element={
-          <div>
-            Page Not Found
-          </div>
+          <ProtectedRoute allowedRoles="faculty">
+            <FacultyStudentProgress />
+          </ProtectedRoute>
         }
       />
+
+      {/* LABSTAFF */}
+      <Route
+        path="/lab-staff"
+        element={
+          <ProtectedRoute allowedRoles="lab_staff">
+            <LabStaffLayout />
+          </ProtectedRoute>
+        }
+      >
+        <Route index element={<Navigate to="dashboard" replace />} />
+
+        <Route
+          path="dashboard"
+          element={
+            <ProtectedRoute allowedRoles="lab_staff">
+              <LabStaffDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="inventory"
+          element={
+            <ProtectedRoute allowedRoles="lab_staff">
+              <LabStaffInventoryManagement />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="requests"
+          element={
+            <ProtectedRoute allowedRoles="lab_staff">
+              <LabStaffComponentRequests />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="issued"
+          element={
+            <ProtectedRoute allowedRoles="lab_staff">
+              <LabStaffIssuedComponents />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="returns"
+          element={
+            <ProtectedRoute allowedRoles="lab_staff">
+              <LabStaffReturnManagement />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="damage"
+          element={
+            <ProtectedRoute allowedRoles="lab_staff">
+              <LabStaffDamageReports />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="demand"
+          element={
+            <ProtectedRoute allowedRoles="lab_staff">
+              <ComponentDemand />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="notifications"
+          element={
+            <ProtectedRoute allowedRoles="lab_staff">
+              <Notifications />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="settings"
+          element={
+            <ProtectedRoute allowedRoles="lab_staff">
+              <LabStaffSettings />
+            </ProtectedRoute>
+          }
+        />
+      </Route>
+
+      <Route path="*" element={<div>Page Not Found</div>} />
     </Routes>
   );
-}
+};
 
 export default AppRoutes;

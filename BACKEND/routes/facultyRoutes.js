@@ -14,8 +14,13 @@ import {
   updateGalleryStatus,
   getStudentProgress,
 } from "../controllers/facultyController.js";
+import { requireAuth } from "../middleware/authMiddleware.js";
+import { requireRole } from "../middleware/roleMiddleware.js";
 
 const router = express.Router();
+
+router.use(requireAuth);
+router.use(requireRole("faculty"));
 
 router.get("/projects", getProjects);
 router.patch("/projects/:id/status", updateProjectStatus);

@@ -8,10 +8,12 @@ import {
   fetchFacultyList,
 } from "../controllers/teamController.js";
 import { requireAuth } from "../middleware/authMiddleware.js";
+import { requireRole } from "../middleware/roleMiddleware.js";
 
 const router = express.Router();
 
 router.use(requireAuth);
+router.use(requireRole("student"));
 
 // Logged-in leader profile
 router.get("/my-profile", getMyProfile);
