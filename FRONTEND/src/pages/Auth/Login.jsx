@@ -3,6 +3,8 @@ import { motion } from "framer-motion";
 import bgImage from "../../assets/login-bg.jpg";
 import { Link, useNavigate } from "react-router-dom";
 
+import { ArrowUpRight } from "lucide-react";
+
 import { loginUser } from "../../services/authService";
 
 // Component Imports
@@ -10,6 +12,7 @@ import { Button } from "../../components/ui/Button";
 import { Input } from "../../components/ui/Input";
 import { RoleSelector } from "../../components/ui/RoleSelector";
 import { getProfile } from "../../services/studentService";
+import logo from "../../assets/logo.png";
 
 import {
   GraduationCap,
@@ -25,7 +28,6 @@ export default function LoginPage() {
   const [accessRole, setAccessRole] = useState("student");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [rememberMe, setRememberMe] = useState(false);
 
   const navigate = useNavigate();
 
@@ -96,12 +98,13 @@ export default function LoginPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <div className="w-10 h-10 rounded-md bg-[#171f33] border border-[#3c494c] flex items-center justify-center shadow-md">
-            <FlaskConical size={22} className="text-[#22d3ee]" />
+          <div className="h-18 border-b border-[#222a3d] flex items-center justify-center px-4">
+            <img
+              src={logo}
+              alt="LABTRACK"
+              className="h-10 w-auto object-contain"
+            />
           </div>
-          <span className="text-4xl font-bold tracking-tight text-[#22d3ee]">
-            LabTrack
-          </span>
         </motion.div>
 
         {/* tag line */}
@@ -195,41 +198,6 @@ export default function LoginPage() {
             />
 
             <div className="flex items-center justify-between pt-1 pb-2">
-              <label className="flex items-center gap-2.5 cursor-pointer group select-none">
-                <input
-                  type="checkbox"
-                  checked={rememberMe}
-                  onChange={(e) => setRememberMe(e.target.checked)}
-                  className="sr-only"
-                />
-                <div
-                  className={`w-4 h-4 rounded border transition-all flex items-center justify-center ${
-                    rememberMe
-                      ? "bg-[#22d3ee] border-[#22d3ee]"
-                      : "border-[#3c494c] group-hover:border-[#859397] bg-[#0b1326]"
-                  }`}
-                >
-                  {rememberMe && (
-                    <svg
-                      className="w-2.5 h-2.5 text-[#00363e]"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="3"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M4.5 12.75l6 6 9-13.5"
-                      />
-                    </svg>
-                  )}
-                </div>
-                <span className="text-sm text-[#bbc9cd] group-hover:text-[#dae2fd] transition-colors">
-                  Keep me logged in
-                </span>
-              </label>
-
               <a
                 href="#forgot"
                 className="text-sm font-medium text-[#22d3ee] hover:text-[#8aebff] transition-colors"
@@ -304,6 +272,24 @@ export default function LoginPage() {
                 Sign Up <ArrowRight size={14} className="inline ml-0.5" />
               </Link>
             </p>
+          </div>
+          {/* <div className="mt-6 flex justify-center">
+            <Link
+              to="/aboutlabtrack"
+              className="flex items-center gap-1 text-sm text-[#22d3ee] transition-colors"
+            >
+              About LABTRACK
+              <ArrowUpRight size={16} />
+            </Link>
+          </div> */}
+          <div className="mt-6 text-center">
+            <Link
+              to="/about-labtrack"
+              className="inline-flex items-center gap-1 text-sm text-[#22d3ee] hover:text-[#8aebff] transition"
+            >
+              About LABTRACK
+              <ArrowUpRight size={15} />
+            </Link>
           </div>
         </motion.div>
       </div>

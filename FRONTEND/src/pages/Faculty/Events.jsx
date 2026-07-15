@@ -1,17 +1,33 @@
+import { useEffect, useState } from "react";
+import { getEvents } from "../../services/eventService";
 import DashboardLayout from "../../components/layout/DashboardLayout";
 import SectionHeader from "../../components/ui/SectionHeader";
 import ActionButton from "../../components/ui/ActionButton";
 
 function Events() {
-  const events = [
-    { date: 15, title: "Project Expo", venue: "Lab 1" },
-    { date: 20, title: "Mid Project Review", venue: "Seminar Hall" },
-    { date: 30, title: "Final Evaluation", venue: "Conference Room" },
-  ];
+  const [events, setEvents] = useState([]);
+
+  useEffect(() => {
+    loadEvents();
+  }, []);
+
+  const loadEvents = async () => {
+    try {
+      const response = await getEvents();
+      setEvents(response.data);
+    } catch (error) {
+      console.error("Error fetching events:", error);
+    }
+  };
 
   const days = Array.from({ length: 30 }, (_, index) => index + 1);
 
-  const getEvent = (day) => events.find((event) => event.date === day);
+  const getDayFromDate = (date) => {
+    return Number(date.split("-")[0]);
+  };
+
+  const getEvent = (day) =>
+    events.find((event) => getDayFromDate(event.date) === day);
 
   return (
     <DashboardLayout>
@@ -54,15 +70,15 @@ function Events() {
                     <p className="text-white font-semibold">{day}</p>
 
                     {event && (
-                   <div className="mt-3 rounded-lg bg-cyan-500/20 p-2 overflow-hidden">
-  <p className="text-cyan-300 text-[11px] font-semibold leading-tight break-words">
-    {event.title}
-  </p>
+                      <div className="mt-3 rounded-lg bg-cyan-500/20 p-2 overflow-hidden">
+                        <p className="text-cyan-300 text-[11px] font-semibold leading-tight break-words">
+                          {event.title}
+                        </p>
 
-  <p className="text-slate-400 text-[11px] mt-1 leading-tight break-words">
-    {event.venue}
-  </p>
-</div>
+                        <p className="text-slate-400 text-[11px] mt-1 leading-tight break-words">
+                          {event.venue}
+                        </p>
+                      </div>
                     )}
                   </div>
                 );
@@ -78,13 +94,11 @@ function Events() {
             <div className="space-y-4">
               {events.map((event) => (
                 <div
-                  key={event.date}
+                  key={event.id}
                   className="rounded-xl border border-white/10 bg-[#050816] p-4"
                 >
                   <p className="text-cyan-300 font-semibold">{event.title}</p>
-                  <p className="text-slate-300 text-sm mt-1">
-                    {event.date} June 2026
-                  </p>
+                  <p className="text-slate-300 text-sm mt-1">{event.date}</p>
                   <p className="text-slate-500 text-sm">{event.venue}</p>
                 </div>
               ))}

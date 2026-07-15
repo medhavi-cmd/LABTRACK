@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import {
@@ -8,21 +8,25 @@ import {
   Circle,
   ArrowRight,
   ChevronDown,
+  Search,
 } from "lucide-react";
 
-// Sub-component Imports
 import { StepIndicator } from "../../components/ui/StepIndicator";
 import { ContentCard } from "../../components/ui/ContentCard";
 import { Button } from "../../components/ui/Button";
 import GroupLeaderLayout from "../../layouts/GroupLeaderLayout";
+import { getFacultyList } from "../../services/teamApi";
 
 export default function RegisterProjectTeam() {
-  // Controlled States for only the requested fields
   const [projectName, setProjectName] = useState("");
   const [department, setDepartment] = useState("Mechanical Engineering");
-  const [year, setYear] = useState("");
-  const [section, setSection] = useState("");
+  const [year, setYear] = useState("2025");
+  const [section, setSection] = useState("CSE I");
   const [description, setDescription] = useState("");
+  const [facultyList, setFacultyList] = useState([]);
+  const [selectedFaculty, setSelectedFaculty] = useState([]);
+  const [facultyDropdown, setFacultyDropdown] = useState(false);
+  const [facultySearch, setFacultySearch] = useState("");
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
@@ -34,12 +38,62 @@ export default function RegisterProjectTeam() {
       description,
     });
   };
+
+  useEffect(() => {
+    loadFaculty();
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setFacultyDropdown(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  const loadFaculty = async () => {
+    try {
+      const data = await getFacultyList();
+      setFacultyList(data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const toggleFaculty = (faculty) => {
+    setSelectedFaculty((prev) => {
+      const exists = prev.some((f) => f.faculty_id === faculty.faculty_id);
+
+      if (exists) {
+        return prev.filter((f) => f.faculty_id !== faculty.faculty_id);
+      }
+
+      return [...prev, faculty];
+    });
+  };
+
   const navigate = useNavigate();
+  const dropdownRef = useRef(null);
+  const projectData = {
+    projectName,
+    department,
+    year,
+    section,
+    description,
+    selectedFaculty,
+  };
+
+  console.log(projectData);
 
   return (
     <GroupLeaderLayout>
       <div className="w-full min-h-screen bg-[#0b1326] text-[#dae2fd] p-8 overflow-y-auto font-sans selection:bg-[#22d3ee]/30 selection:text-[#22d3ee]">
-        {/* BREADCRUMB NAVIGATION */}
         <nav className="text-xs font-mono font-semibold uppercase tracking-wider text-[#859397] mb-2">
           <span className="hover:text-[#dae2fd] cursor-pointer transition-colors">
             Project Management
@@ -48,7 +102,6 @@ export default function RegisterProjectTeam() {
           <span className="text-[#bbc9cd]">Create Team</span>
         </nav>
 
-        {/* HEADER TITLE SECTION */}
         <div className="mb-6">
           <h1 className="text-3xl font-bold tracking-tight text-white mb-1.5">
             Create Project Team
@@ -60,15 +113,11 @@ export default function RegisterProjectTeam() {
           </p>
         </div>
 
-        {/* STEPPERS */}
         <StepIndicator currentStep={1} />
 
-        {/* TWO COLUMN GRID CONTENT */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-8 items-start">
-          {/* LEFT COLUMN: FORM DETAILS (Takes up 2/3 cols) */}
           <div className="lg:col-span-2 flex flex-col gap-6">
             <ContentCard>
-              {/* Card Header Title */}
               <div className="flex items-center gap-2.5 border-b border-[#222a3d] pb-4 mb-5">
                 <FolderPlus size={18} className="text-[#22d3ee]" />
                 <h2 className="text-base font-bold tracking-wide text-[#dae2fd]">
@@ -76,11 +125,9 @@ export default function RegisterProjectTeam() {
                 </h2>
               </div>
 
-              {/* Input Form Fields */}
               <form onSubmit={handleFormSubmit} className="space-y-5">
                 {/* Row 1: Project Name & Department */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                  {/* Project Name */}
                   <div className="flex flex-col gap-2">
                     <label className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#bbc9cd]">
                       Project Name
@@ -94,7 +141,6 @@ export default function RegisterProjectTeam() {
                     />
                   </div>
 
-                  {/* Department */}
                   <div className="flex flex-col gap-2">
                     <label className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#bbc9cd]">
                       Department
@@ -117,9 +163,7 @@ export default function RegisterProjectTeam() {
                   </div>
                 </div>
 
-                {/* Row 2: Year & Section */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                  {/* Year */}
                   <div className="flex flex-col gap-2">
                     <label className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#bbc9cd]">
                       Year
@@ -130,10 +174,11 @@ export default function RegisterProjectTeam() {
                         onChange={(e) => setYear(e.target.value)}
                         className="w-full h-11 bg-[#0b1326] border border-[#222a3d] text-[#dae2fd] text-sm rounded-md px-4 pr-10 outline-none appearance-none cursor-pointer hover:border-[#3c494c] transition-all"
                       >
-                        <option>2023</option>
-                        <option>2024</option>
-                        <option>2025</option>
-                        <option>2026</option>
+                        <option value="">Select Year</option>
+                        <option value="2023">2023</option>
+                        <option value="2024">2024</option>
+                        <option value="2025">2025</option>
+                        <option value="2026">2026</option>
                       </select>
                       <div className="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-[#859397]">
                         <ChevronDown size={16} />
@@ -141,7 +186,6 @@ export default function RegisterProjectTeam() {
                     </div>
                   </div>
 
-                  {/* Section */}
                   <div className="flex flex-col gap-2">
                     <label className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#bbc9cd]">
                       Section
@@ -164,11 +208,106 @@ export default function RegisterProjectTeam() {
                       <div className="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-[#859397]">
                         <ChevronDown size={16} />
                       </div>
+                    </div>
                   </div>
                 </div>
+
+                {/* Faculty Mentors */}
+
+                <div className="flex flex-col gap-2">
+                  <label className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#bbc9cd]">
+                    Faculty Mentor(s)
+                  </label>
+
+                  <div className="relative" ref={dropdownRef}>
+                    {/* Button */}
+
+                    <button
+                      type="button"
+                      onClick={() => setFacultyDropdown(!facultyDropdown)}
+                      className="w-full h-11 rounded-md border border-[#222a3d] bg-[#0b1326] px-4 text-left text-sm text-[#dae2fd] hover:border-[#3c494c] flex items-center justify-between"
+                    >
+                      <span>
+                        {selectedFaculty.length === 0
+                          ? "Select Faculty"
+                          : `${selectedFaculty.length} Faculty Selected`}
+                      </span>
+
+                      <ChevronDown
+                        size={16}
+                        className={`transition-transform ${
+                          facultyDropdown ? "rotate-180" : ""
+                        }`}
+                      />
+                    </button>
+
+                    {/* Dropdown */}
+
+                    {facultyDropdown && (
+                      <div className="absolute z-50 mt-2 w-full rounded-lg border border-[#24314e] bg-[#171f33] shadow-xl">
+                        {/* Search */}
+
+                        <div className="border-b border-[#24314e] p-3">
+                          <div className="relative">
+                            <Search
+                              size={16}
+                              className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+                            />
+
+                            <input
+                              type="text"
+                              placeholder="Search Faculty..."
+                              value={facultySearch}
+                              onChange={(e) => setFacultySearch(e.target.value)}
+                              className="w-full rounded-md bg-[#0b1326] py-2 pl-10 pr-3 text-sm text-white outline-none border border-[#24314e]"
+                            />
+                          </div>
+                        </div>
+
+                        {/* Faculty List */}
+
+                        <div className="max-h-64 overflow-y-auto">
+                          {facultyList
+                            .filter((faculty) =>
+                              faculty.name
+                                .toLowerCase()
+                                .includes(facultySearch.toLowerCase()),
+                            )
+                            .map((faculty) => (
+                              <label
+                                key={faculty.faculty_id}
+                                className="flex cursor-pointer items-center gap-3 px-4 py-3 hover:bg-[#0b1326]"
+                              >
+                                <input
+                                  type="checkbox"
+                                  checked={selectedFaculty.some(
+                                    (f) => f.faculty_id === faculty.faculty_id,
+                                  )}
+                                  onChange={() => toggleFaculty(faculty)}
+                                  className="accent-cyan-400"
+                                />
+
+                                <div>
+                                  <p className="text-sm text-white">
+                                    {faculty.name}
+                                  </p>
+
+                                  <p className="text-xs text-slate-400">
+                                    {faculty.department}
+                                  </p>
+                                </div>
+                              </label>
+                            ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  <p className="text-xs text-slate-400">
+                    Select all faculty members supervising this project.
+                  </p>
                 </div>
 
-                {/* Row 3: Description */}
                 <div className="flex flex-col gap-2">
                   <label className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#bbc9cd]">
                     Project Description
@@ -184,7 +323,6 @@ export default function RegisterProjectTeam() {
               </form>
             </ContentCard>
 
-            {/* Form Actions */}
             <div className="flex items-center justify-end gap-6 pt-2">
               <button
                 type="button"
@@ -203,13 +341,7 @@ export default function RegisterProjectTeam() {
                 onClick={() =>
                   navigate("/student/team-management/add-members", {
                     state: {
-                      projectData: {
-                        projectName,
-                        department,
-                        year,
-                        section,
-                        description,
-                      },
+                      projectData,
                     },
                   })
                 }
@@ -220,9 +352,7 @@ export default function RegisterProjectTeam() {
             </div>
           </div>
 
-          {/* RIGHT COLUMN: GUIDELINES & METRICS */}
           <div className="space-y-6">
-            {/* Project Guidelines Card */}
             <ContentCard className="relative overflow-hidden">
               <div className="flex items-start justify-between mb-4">
                 <h3 className="text-sm font-bold tracking-wide text-white">
@@ -277,7 +407,6 @@ export default function RegisterProjectTeam() {
               </ul>
             </ContentCard>
 
-            {/* Setup Progress Card */}
             <ContentCard>
               <div className="mb-4">
                 <h4 className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#859397]">

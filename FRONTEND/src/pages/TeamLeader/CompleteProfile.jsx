@@ -53,7 +53,7 @@ export default function CompleteProfile() {
 
       alert("Profile Completed Successfully");
 
-      navigate("/student/leader-dashboard");
+      navigate("/student/student-dashboard");
     } catch (error) {
       console.log(error);
 
@@ -64,9 +64,8 @@ export default function CompleteProfile() {
   return (
     <GroupLeaderLayout>
       <div className="min-h-[85vh] w-full flex items-center justify-center p-4 sm:p-6 lg:p-8 text-[#dae2fd] font-sans antialiased selection:bg-[#22d3ee]/30 selection:text-[#22d3ee]">
-        {/* Profile Card Container */}
         <div className="w-full max-w-[540px] bg-[#171f33] border border-[#3c494c] rounded-xl p-8 sm:p-10 shadow-2xl relative my-auto">
-          {/* Decorative Top Accent Glow */}
+         
           <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#22d3ee]/40 to-transparent" />
 
           <div className="mb-8">
@@ -80,7 +79,7 @@ export default function CompleteProfile() {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">
-            {/* Row 1: Branch & Section Fields */}
+          
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div className="flex flex-col gap-1.5 sm:col-span-2">
                 <label className="font-mono text-[11px] font-bold uppercase tracking-wider text-[#bbc9cd]">
@@ -95,7 +94,6 @@ export default function CompleteProfile() {
                 />
               </div>
 
-              {/* DROPDOWN FOR SECTION */}
               <div className="flex flex-col gap-1.5">
                 <label className="font-mono text-[11px] font-bold uppercase tracking-wider text-[#bbc9cd]">
                   Section
@@ -155,9 +153,9 @@ export default function CompleteProfile() {
               </div>
             </div>
 
-            {/* Row 2: Year & Semester Numeric Fields */}
+        
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {/* DROPDOWN FOR ACADEMIC BATCH YEAR */}
+        
               <div className="flex flex-col gap-1.5">
                 <label className="font-mono text-[11px] font-bold uppercase tracking-wider text-[#bbc9cd]">
                   Year (Batch)
@@ -192,7 +190,6 @@ export default function CompleteProfile() {
               </div>
             </div>
 
-            {/* Row 3: Contact Vector */}
             <div className="flex flex-col gap-1.5">
               <label className="font-mono text-[11px] font-bold uppercase tracking-wider text-[#bbc9cd]">
                 Phone Number
@@ -206,7 +203,6 @@ export default function CompleteProfile() {
               />
             </div>
 
-            {/* Form Submission Action Matrix */}
             <div className="pt-3">
               <button
                 type="submit"

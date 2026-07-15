@@ -22,7 +22,7 @@ export const SIDEBAR_CONFIG = {
   },
   {
     label: "Team Management",
-    path: "/student/team-management/register",
+    path: "/student/team-management",
     icon: Users,
   },
   {
@@ -37,7 +37,7 @@ export const SIDEBAR_CONFIG = {
   },
   {
     label: "New Requests",
-    path: "/student/component-requests",
+    path: "/student/new-request",
     icon: ClipboardList,
   },
   {

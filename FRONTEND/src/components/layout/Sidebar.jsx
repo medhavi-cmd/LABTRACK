@@ -1,27 +1,28 @@
 import { NavLink, useNavigate } from "react-router-dom";
-import { LogOut } from "lucide-react";
+import { LogOut, X } from "lucide-react";
+import logo from "../../assets/logo.png";
 
-export default function Sidebar({
-  items,
-  title,
-  subtitle,
-}) {
+export default function Sidebar({ items, isOpen, onClose }) {
   const navigate = useNavigate();
 
   return (
-    <aside className="w-72 bg-[#060e20] border-r border-[#222a3d] sticky top-0 h-screen">
+    <aside
+      className={`fixed inset-y-0 left-0 z-50 w-64 sm:w-72 bg-[#060e20] border-r border-[#222a3d] h-screen transition-transform duration-300 ease-in-out lg:sticky lg:top-0 lg:translate-x-0 flex flex-col ${
+        isOpen ? "translate-x-0" : "-translate-x-full"
+      }`}
+    >
       <div className="h-full flex flex-col">
-        <div className="p-6 border-b border-[#222a3d]">
-          <h1 className="text-2xl font-bold text-[#22d3ee]">
-            {title}
-          </h1>
 
-          <p className="text-xs text-[#859397] mt-1">
-            {subtitle}
-          </p>
+        <div className="h-20 sm:h-28 border-b border-[#222a3d] flex items-center justify-between lg:justify-center px-4 shrink-0">
+          <img
+            src={logo}
+            alt="LABTRACK"
+            className="h-14 sm:h-20 w-auto object-contain mx-auto lg:mx-0"
+          />
+          
         </div>
 
-        <nav className="p-4 space-y-2">
+        <nav className="p-4 space-y-1.5 flex-1 overflow-y-auto">
           {items.map((item) => {
             const Icon = item.icon;
 
@@ -29,6 +30,7 @@ export default function Sidebar({
               <NavLink
                 key={item.path}
                 to={item.path}
+                onClick={onClose}
                 className={({ isActive }) =>
                   `flex items-center gap-3 px-4 py-3 rounded-lg text-sm transition ${
                     isActive
@@ -37,21 +39,24 @@ export default function Sidebar({
                   }`
                 }
               >
-                <Icon size={18} />
-                {item.label}
+                <Icon size={18} className="shrink-0" />
+                <span className="truncate">{item.label}</span>
               </NavLink>
             );
           })}
         </nav>
 
-        <div className="mt-auto p-4 border-t border-[#222a3d]">
+        <div className="p-4 border-t border-[#222a3d] shrink-0">
           <button
             type="button"
-            onClick={() => navigate("/login")}
+            onClick={() => {
+              onClose();
+              navigate("/login");
+            }}
             className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-semibold text-[#bbc9cd] hover:bg-[#171f33] transition"
           >
-            <LogOut size={18} />
-            Logout
+            <LogOut size={18} className="shrink-0" />
+            <span>Logout</span>
           </button>
         </div>
       </div>
