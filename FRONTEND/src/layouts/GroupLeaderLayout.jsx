@@ -7,8 +7,8 @@ export default function GroupLeaderLayout({ children }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   return (
-    <div className="flex min-h-screen bg-[#0b1326] overflow-x-hidden">
-      {/* Mobile Sidebar Backdrop Overlay */}
+    <div className="flex min-h-screen bg-[#0b1326]">
+   
       {isSidebarOpen && (
         <div
           onClick={() => setIsSidebarOpen(false)}
@@ -16,15 +16,13 @@ export default function GroupLeaderLayout({ children }) {
         />
       )}
 
-      {/* Sidebar - Controlled Drawer on Mobile, Static on Desktop */}
       <Sidebar
         items={SIDEBAR_CONFIG.groupLeader}
         isOpen={isSidebarOpen}
         onClose={() => setIsSidebarOpen(false)}
       />
 
-      {/* Content Wrapper */}
-      <div className="flex-1 flex flex-col min-w-0">
+      <div className="flex-1 flex flex-col min-w-0 overflow-x-hidden">
         <Topbar onMenuClick={() => setIsSidebarOpen(true)} />
 
         <main className="flex-1 p-4 sm:p-8 overflow-y-auto">

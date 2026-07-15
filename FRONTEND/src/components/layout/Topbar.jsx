@@ -30,7 +30,6 @@ export default function Topbar({ onMenuClick }) {
   return (
     <header className="h-16 sm:h-20 bg-[#060e20] border-b border-[#222a3d] px-4 sm:px-8 flex items-center justify-between sticky top-0 z-30 shrink-0">
       
-      {/* Left: Brand Identity & Mobile Hamburger Toggle */}
       <div className="flex items-center gap-3 min-w-0">
         <button
           onClick={onMenuClick}
@@ -49,10 +48,8 @@ export default function Topbar({ onMenuClick }) {
         </div>
       </div>
 
-      {/* Right: Functional Quick Actions */}
       <div className="flex items-center gap-3 sm:gap-5 shrink-0">
         
-        {/* Notification Hub Trigger */}
         <button
           onClick={() => navigate("/student/notifications")}
           className="relative p-2 rounded-lg bg-[#171f33] border border-[#222a3d] hover:border-cyan-400 transition shrink-0"
@@ -65,7 +62,7 @@ export default function Topbar({ onMenuClick }) {
           )}
         </button>
 
-        {/* Profile Controls Dropdown */}
+   
         <div className="relative">
           <button
             onClick={() => setShowProfileMenu(!showProfileMenu)}
@@ -73,9 +70,9 @@ export default function Topbar({ onMenuClick }) {
           >
             <UserCircle size={28} className="text-cyan-400 sm:h-9 sm:w-9 shrink-0" />
             
-            {/* Hidden on ultra-thin screens (<360px) to prevent structural crowding */}
-            <div className="hidden xs:block min-w-0 max-w-[90px] sm:max-w-[150px]">
-              <p className="text-xs sm:text-sm font-medium text-white truncate">
+          
+            <div className="hidden sm:block min-w-0 max-w-[120px] md:max-w-[180px]">
+              <p className="text-xs sm:text-sm font-semibold text-white truncate">
                 {user?.full_name || "Loading..."}
               </p>
               {user?.role && (
