@@ -16,7 +16,7 @@ import issueHistoryRoutes from "./routes/issueHistoryRoutes.js";
 import purchaseRequestRoutes from "./routes/purchaseRequestRoutes.js";
 import galleryRoutes from "./routes/galleryRoutes.js";
 import projectGalleryRoutes from "./routes/projectGalleryRoutes.js";
-
+import returnManagementRoutes from "./routes/returnManagementRoutes.js";
 
 const app = express();
 
@@ -51,7 +51,7 @@ app.use("/api/project-gallery", projectGalleryRoutes);
 app.use("/api/inventory", inventoryRoutes);
 app.use("/api/requests", componentRequestRoutes);
 app.use("/api/issued-components", issuedComponentsRoutes);
-
+app.use("/api/returns", returnManagementRoutes);
 
 app.get("/", (_req, res) => {
   res.json({
