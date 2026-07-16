@@ -1,153 +1,125 @@
-import { useState } from "react";
+// ==========================================
+// 1. components/ui/IssueHistoryCard.jsx
+// ==========================================
 import { ChevronDown, ChevronUp } from "lucide-react";
 
-export default function IssueHistoryCard({ request }) {
-  const [open, setOpen] = useState(false);
+const statusColors = {
+  pending: "bg-amber-50 border border-amber-200 text-amber-700",
+  approved: "bg-green-50 border border-green-200 text-green-700",
+  issued: "bg-cyan-50 border border-cyan-200 text-cyan-700",
+  returned: "bg-purple-50 border border-purple-200 text-purple-700",
+  rejected: "bg-red-50 border border-red-200 text-red-700",
+};
 
-  const getStatusColor = (status) => {
-    switch (status) {
-      case "pending":
-        return "text-yellow-400 bg-yellow-500/10";
-
-      case "approved":
-        return "text-green-400 bg-green-500/10";
-
-      case "issued":
-        return "text-cyan-400 bg-cyan-500/10";
-
-      case "returned":
-        return "text-purple-400 bg-purple-500/10";
-
-      case "rejected":
-        return "text-red-400 bg-red-500/10";
-
-      default:
-        return "text-gray-300 bg-gray-500/10";
-    }
-  };
-
+export default function IssueHistoryCard({ request, expanded, onToggle }) {
   return (
-    <div className="rounded-xl border border-[#24314e] bg-[#111a2f] overflow-hidden">
-
+    <div className="rounded-xl border border-[#E5E7EB] bg-[#FFFFFF] overflow-hidden shadow-[0_1px_3px_rgba(0,0,0,0.05)]">
+      
       <button
-        onClick={() => setOpen(!open)}
-        className="w-full text-left px-6 py-5 hover:bg-[#17223a] transition flex items-center justify-between"
+        onClick={onToggle}
+        className="w-full text-left px-4 py-4 sm:px-6 sm:py-5 hover:bg-slate-50/80 transition flex items-center justify-between"
       >
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-5 w-full">
-
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-5 w-full mr-4">
           <div>
-            <p className="text-xs text-gray-400">Request ID</p>
-            <p className="text-white font-semibold">
+            <p className="text-[10px] sm:text-xs font-semibold tracking-wider text-[#6B7280] uppercase">
+              Request ID
+            </p>
+            <p className="text-[#111827] text-xs sm:text-sm font-bold font-mono mt-0.5">
               #{request.requestId}
             </p>
           </div>
 
           <div>
-            <p className="text-xs text-gray-400">Request Date</p>
-            <p className="text-white">
+            <p className="text-[10px] sm:text-xs font-semibold tracking-wider text-[#6B7280] uppercase">
+              Request Date
+            </p>
+            <p className="text-[#4B5563] text-xs sm:text-sm mt-0.5">
               {new Date(request.requestDate).toLocaleDateString()}
             </p>
           </div>
 
-          <div>
-            <p className="text-xs text-gray-400">Purpose</p>
-            <p className="text-white truncate">
+          <div className="col-span-2 md:col-span-1 min-w-0">
+            <p className="text-[10px] sm:text-xs font-semibold tracking-wider text-[#6B7280] uppercase">
+              Purpose
+            </p>
+            <p className="text-[#4B5563] text-xs sm:text-sm truncate mt-0.5">
               {request.purpose}
             </p>
           </div>
 
-          <div className="flex items-center justify-between">
-
+          <div className="col-span-2 md:col-span-1 flex items-center justify-between md:justify-end gap-3 pt-2 md:pt-0 border-t border-slate-100 md:border-t-0">
             <span
-              className={`capitalize px-3 py-1 rounded-full text-sm font-semibold ${getStatusColor(
-                request.status
-              )}`}
+              className={`px-2.5 py-0.5 rounded-full text-[10px] sm:text-xs font-bold tracking-wide uppercase ${
+                statusColors[request.status] || "bg-slate-50 border border-slate-200 text-slate-700"
+              }`}
             >
               {request.status}
             </span>
-
-            {open ? (
-              <ChevronUp className="text-gray-400" size={20} />
-            ) : (
-              <ChevronDown className="text-gray-400" size={20} />
-            )}
-
           </div>
+        </div>
 
+        <div className="shrink-0 text-[#6B7280]">
+          {expanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
         </div>
       </button>
 
-
-      {open && (
-        <div className="border-t border-[#24314e] px-6 py-6">
-
-          {/* Components */}
-
-          <h3 className="text-white font-semibold mb-4">
-            Requested Components
-          </h3>
-
-          <div className="space-y-3">
-
-            {request.components.map((component, index) => (
-              <div
-                key={index}
-                className="flex justify-between rounded-lg bg-[#18243d] px-4 py-3"
-              >
-                <span className="text-white">
-                  {component.componentName}
-                </span>
-
-                <span className="font-semibold text-cyan-400">
-                  × {component.quantity}
-                </span>
-              </div>
-            ))}
-
+      {expanded && (
+        <div className="border-t border-[#E5E7EB] bg-[#F8FAFC]/40 px-4 py-4 sm:px-6 sm:py-5 space-y-5">
+          <div>
+            <h3 className="text-xs font-bold uppercase tracking-wider text-[#111827] mb-3">
+              Requested Components
+            </h3>
+            <div className="space-y-2">
+              {request.components?.map((component, index) => (
+                <div
+                  key={index}
+                  className="flex justify-between items-center rounded-xl bg-[#FFFFFF] border border-[#E5E7EB] px-4 py-2.5 shadow-sm text-xs sm:text-sm"
+                >
+                  <span className="text-[#4B5563] font-medium">
+                    {component.componentName}
+                  </span>
+                  <span className="font-bold font-mono text-[#2563EB]">
+                    × {component.quantity}
+                  </span>
+                </div>
+              ))}
+            </div>
           </div>
 
-
-          <div className="grid md:grid-cols-3 gap-6 mt-8">
-
-            <div>
-              <p className="text-gray-400 text-sm">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4 pt-3 border-t border-[#E5E7EB]">
+            <div className="bg-[#FFFFFF] p-3 rounded-xl border border-[#E5E7EB] shadow-sm">
+              <p className="text-[10px] sm:text-xs font-semibold tracking-wider text-[#6B7280] uppercase">
                 Issue Date
               </p>
-
-              <p className="text-white mt-1">
+              <p className="text-[#111827] text-xs sm:text-sm font-medium mt-0.5">
                 {request.issueDate
                   ? new Date(request.issueDate).toLocaleDateString()
                   : "-"}
               </p>
             </div>
 
-            <div>
-              <p className="text-gray-400 text-sm">
+            <div className="bg-[#FFFFFF] p-3 rounded-xl border border-[#E5E7EB] shadow-sm">
+              <p className="text-[10px] sm:text-xs font-semibold tracking-wider text-[#6B7280] uppercase">
                 Expected Return
               </p>
-
-              <p className="text-white mt-1">
+              <p className="text-[#111827] text-xs sm:text-sm font-medium mt-0.5">
                 {request.expectedReturnDate
                   ? new Date(request.expectedReturnDate).toLocaleDateString()
                   : "-"}
               </p>
             </div>
 
-            <div>
-              <p className="text-gray-400 text-sm">
+            <div className="col-span-2 md:col-span-1 bg-[#FFFFFF] p-3 rounded-xl border border-[#E5E7EB] shadow-sm">
+              <p className="text-[10px] sm:text-xs font-semibold tracking-wider text-[#6B7280] uppercase">
                 Return Status
               </p>
-
-              <p className="capitalize text-white mt-1">
+              <p className="capitalize text-[#111827] text-xs sm:text-sm font-medium mt-0.5">
                 {request.returnStatus || "-"}
               </p>
             </div>
-
           </div>
-
         </div>
       )}
-
     </div>
   );
 }

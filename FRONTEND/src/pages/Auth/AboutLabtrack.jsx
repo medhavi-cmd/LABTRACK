@@ -14,16 +14,12 @@ import ContactForm from "../../components/ui/ContactForm";
 
 export default function AboutLabtrack() {
   return (
-    <div className="min-h-screen bg-[#0b1326] text-[#dae2fd] font-sans antialiased selection:bg-[#22d3ee]/30 selection:text-[#22d3ee] relative overflow-x-hidden">
-      {/* Visual Ambient Grid Overlays */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(34,211,238,0.06),transparent_50%)] pointer-events-none" />
-      <div className="absolute inset-0 opacity-[0.02] bg-[linear-gradient(to_right,#859397_1px,transparent_1px),linear-gradient(to_bottom,#859397_1px,transparent_1px)] bg-[size:4rem_4rem] pointer-events-none" />
-
+    <div className="min-h-screen bg-[#F8FAFC] text-[#111827] font-sans antialiased selection:bg-[#2563EB]/20 selection:text-[#2563EB] relative overflow-x-hidden">
       
       <div className="max-w-6xl mx-auto px-6 pt-6 relative z-10">
         <Link
           to="/login"
-          className="inline-flex items-center gap-1.5 font-mono text-xs uppercase tracking-wider text-[#22d3ee] hover:text-[#8aebff] transition group"
+          className="inline-flex items-center gap-1.5 font-mono text-xs uppercase tracking-wider text-[#2563EB] hover:text-[#1D4ED8] transition group"
         >
           <ArrowLeft
             size={14}
@@ -45,17 +41,17 @@ export default function AboutLabtrack() {
             <img
               src={logo}
               alt="LABTRACK"
-              className="h-20 mx-auto opacity-95 relative z-10 filter drop-shadow-[0_0_15px_rgba(34,211,238,0.2)]"
+              className="h-20 mx-auto opacity-95 relative z-10"
             />
           </div>
 
-          <h1 className="text-4xl font-bold tracking-tight text-[#dae2fd] mb-4">
+          <h1 className="text-4xl font-bold tracking-tight text-[#111827] mb-4">
             Laboratory Inventory Management System
           </h1>
 
-          <p className="text-[#bbc9cd] text-base leading-relaxed">
+          <p className="text-[#6B7280] text-base leading-relaxed">
             LABTRACK is a web-based inventory management system developed for
-            <span className="text-[#dae2fd] font-medium">
+            <span className="text-[#111827] font-medium">
               {" "}
               BML Munjal University
             </span>
@@ -73,23 +69,23 @@ export default function AboutLabtrack() {
           className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-14"
         >
   
-          <div className="bg-[#171f33] border border-[#3c494c] rounded-xl p-6 relative group hover:border-[#22d3ee]/50 transition-all duration-300">
-            <Boxes className="text-[#22d3ee] mb-4" size={26} />
-            <h3 className="text-lg font-semibold text-[#dae2fd] mb-2 tracking-tight">
+          <div className="bg-[#FFFFFF] border border-[#E5E7EB] rounded-xl p-6 relative group hover:border-[#2563EB] hover:-translate-y-0.5 transition-all duration-200 shadow-sm">
+            <Boxes className="text-[#2563EB] mb-4" size={26} />
+            <h3 className="text-lg font-semibold text-[#111827] mb-2 tracking-tight">
               Inventory Management
             </h3>
-            <p className="text-[#bbc9cd] text-sm leading-relaxed">
+            <p className="text-[#6B7280] text-sm leading-relaxed">
               Keep track of all laboratory components, available stock, issued
               items and returned components in one place.
             </p>
           </div>
 
-          <div className="bg-[#171f33] border border-[#3c494c] rounded-xl p-6 relative group hover:border-[#22d3ee]/50 transition-all duration-300">
-            <ShieldCheck className="text-[#22d3ee] mb-4" size={26} />
-            <h3 className="text-lg font-semibold text-[#dae2fd] mb-2 tracking-tight">
+          <div className="bg-[#FFFFFF] border border-[#E5E7EB] rounded-xl p-6 relative group hover:border-[#2563EB] hover:-translate-y-0.5 transition-all duration-200 shadow-sm">
+            <ShieldCheck className="text-[#2563EB] mb-4" size={26} />
+            <h3 className="text-lg font-semibold text-[#111827] mb-2 tracking-tight">
               Approval Workflow
             </h3>
-            <p className="text-[#bbc9cd] text-sm leading-relaxed">
+            <p className="text-[#6B7280] text-sm leading-relaxed">
               Students can request components, faculty members approve requests,
               and lab staff issue and receive components through a structured
               workflow.
@@ -97,12 +93,12 @@ export default function AboutLabtrack() {
           </div>
 
      
-          <div className="bg-[#171f33] border border-[#3c494c] rounded-xl p-6 relative group hover:border-[#22d3ee]/50 transition-all duration-300">
-            <Users className="text-[#22d3ee] mb-4" size={26} />
-            <h3 className="text-lg font-semibold text-[#dae2fd] mb-2 tracking-tight">
+          <div className="bg-[#FFFFFF] border border-[#E5E7EB] rounded-xl p-6 relative group hover:border-[#2563EB] hover:-translate-y-0.5 transition-all duration-200 shadow-sm">
+            <Users className="text-[#2563EB] mb-4" size={26} />
+            <h3 className="text-lg font-semibold text-[#111827] mb-2 tracking-tight">
               Project Team Management
             </h3>
-            <p className="text-[#bbc9cd] text-sm leading-relaxed">
+            <p className="text-[#6B7280] text-sm leading-relaxed">
               Students can register project teams, manage team members and
               monitor all component requests made by their project.
             </p>
@@ -116,15 +112,15 @@ export default function AboutLabtrack() {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5 }}
-              className="bg-[#171f33] border border-[#3c494c] rounded-xl p-6 sm:p-8 space-y-4"
+              className="bg-[#FFFFFF] border border-[#E5E7EB] rounded-xl p-6 sm:p-8 space-y-4 shadow-sm transition-all duration-200 hover:border-[#2563EB] hover:-translate-y-0.5"
             >
               <div className="flex items-center gap-2.5 mb-1">
-                <Cpu size={18} className="text-[#22d3ee]" />
-                <h2 className="text-xl font-semibold text-[#dae2fd] tracking-tight">
+                <Cpu size={18} className="text-[#2563EB]" />
+                <h2 className="text-xl font-semibold text-[#111827] tracking-tight">
                   About the Project
                 </h2>
               </div>
-              <div className="text-sm text-[#bbc9cd] space-y-3.5 leading-relaxed">
+              <div className="text-sm text-[#6B7280] space-y-3.5 leading-relaxed">
                 <p>
                   Managing laboratory components manually often leads to missing
                   records, delays and difficulty in tracking issued items.
@@ -150,17 +146,17 @@ export default function AboutLabtrack() {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5 }}
-              className="bg-[#171f33] border border-[#3c494c] rounded-xl p-6 sm:p-8"
+              className="bg-[#FFFFFF] border border-[#E5E7EB] rounded-xl p-6 sm:p-8 shadow-sm transition-all duration-200 hover:border-[#2563EB] hover:-translate-y-0.5"
             >
               <div className="flex items-center gap-2.5 mb-3">
-                <GraduationCap className="text-[#22d3ee]" size={20} />
-                <h2 className="text-xl font-semibold text-[#dae2fd] tracking-tight">
+                <GraduationCap className="text-[#2563EB]" size={20} />
+                <h2 className="text-xl font-semibold text-[#111827] tracking-tight">
                   Project Mentor
                 </h2>
               </div>
-              <p className="text-sm text-[#bbc9cd] leading-relaxed">
+              <p className="text-sm text-[#6B7280] leading-relaxed">
                 LABTRACK has been developed under the guidance of
-                <span className="text-[#22d3ee] font-medium">
+                <span className="text-[#2563EB] font-medium">
                   {" "}
                   Dr. Kiran Sharma
                 </span>
@@ -182,29 +178,29 @@ export default function AboutLabtrack() {
           transition={{ duration: 0.5 }}
           className="pt-4"
         >
-          <h2 className="text-2xl font-bold tracking-tight text-[#dae2fd] mb-6 text-center lg:text-left">
+          <h2 className="text-2xl font-bold tracking-tight text-[#111827] mb-6 text-center lg:text-left">
             Development Team
           </h2>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
             {["Medhavi Singh", "Parikshit Kumar Jha", "Neha Sharma"].map((member) => (
               <motion.div
-                whileHover={{ y: -4, borderColor: "rgba(34,211,238,0.4)" }}
+                whileHover={{ y: -2, borderColor: "#2563EB" }}
                 key={member}
-                className="bg-[#171f33] border border-[#3c494c] rounded-xl p-5 text-center transition-all duration-200 shadow-md relative overflow-hidden"
+                className="bg-[#FFFFFF] border border-[#E5E7EB] rounded-xl p-5 text-center transition-all duration-200 shadow-sm relative overflow-hidden group"
               >
-                <div className="w-14 h-14 rounded-full bg-[#0b1326] border border-[#3c494c] flex items-center justify-center mx-auto mb-4 group-hover:border-[#22d3ee]/40">
-                  <Users className="text-[#22d3ee]/80" size={20} />
+                <div className="w-14 h-14 rounded-full bg-[#EFF6FF] border border-[#E5E7EB] flex items-center justify-center mx-auto mb-4 transition-colors duration-200 group-hover:border-[#2563EB]/40">
+                  <Users className="text-[#2563EB]" size={20} />
                 </div>
 
-                <h3 className="text-base font-semibold text-[#dae2fd] tracking-tight">
+                <h3 className="text-base font-semibold text-[#111827] tracking-tight">
                   {member}
                 </h3>
 
-                <p className="font-mono text-[11px] text-[#bbc9cd]/70 mt-1 uppercase tracking-wider">
+                <p className="font-mono text-[11px] text-[#6B7280] mt-1 uppercase tracking-wider">
                   B.Tech Computer Science Engineering
                 </p>
-                <p className="font-mono text-[11px] text-[#bbc9cd]/70 mt-1 uppercase tracking-wider">
+                <p className="font-mono text-[11px] text-[#9CA3AF] mt-1 uppercase tracking-wider">
                   Batch 2024
                 </p>
               </motion.div>

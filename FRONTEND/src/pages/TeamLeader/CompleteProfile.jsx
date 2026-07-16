@@ -41,48 +41,41 @@ export default function CompleteProfile() {
         user_id: user.user_id,
         enrollment_no: String(user.enrollment_number),
         name: user.full_name,
-
         branch: formData.branch,
         section: formData.section,
-
         year: Number(formData.year),
         semester: Number(formData.semester),
-
         phone_no: formData.phone_no,
       });
 
       alert("Profile Completed Successfully");
-
       navigate("/student/student-dashboard");
     } catch (error) {
       console.log(error);
-
       alert(error.response?.data?.message || error.message || "Failed");
     }
   };
 
   return (
     <GroupLeaderLayout>
-      <div className="min-h-[85vh] w-full flex items-center justify-center p-4 sm:p-6 lg:p-8 text-[#dae2fd] font-sans antialiased selection:bg-[#22d3ee]/30 selection:text-[#22d3ee]">
-        <div className="w-full max-w-[540px] bg-[#171f33] border border-[#3c494c] rounded-xl p-8 sm:p-10 shadow-2xl relative my-auto">
-         
-          <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#22d3ee]/40 to-transparent" />
+      <div className="min-h-[85vh] w-full flex items-center justify-center p-4 sm:p-6 lg:p-8 bg-slate-50 text-slate-600 font-sans antialiased selection:bg-cyan-200 selection:text-cyan-900">
+        <div className="w-full max-w-[540px] bg-white border border-slate-200 rounded-xl p-8 sm:p-10 shadow-sm relative my-auto">
+          
+          <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-cyan-600/40 to-transparent" />
 
           <div className="mb-8">
-            <h1 className="text-[26px] font-semibold text-[#22d3ee] tracking-tight leading-[1.3] mb-1.5">
+            <h1 className="text-2xl font-bold tracking-tight text-slate-900 mb-1.5">
               Complete Your Profile
             </h1>
-            <p className="text-sm text-[#bbc9cd]">
-              Configure your institutional matrix parameters to access the
-              workspace
+            <p className="text-sm text-slate-500">
+              Configure your institutional matrix parameters to access the workspace
             </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">
-          
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div className="flex flex-col gap-1.5 sm:col-span-2">
-                <label className="font-mono text-[11px] font-bold uppercase tracking-wider text-[#bbc9cd]">
+                <label className="font-mono text-[10px] font-bold uppercase tracking-widest text-slate-500">
                   Branch
                 </label>
                 <input
@@ -90,93 +83,56 @@ export default function CompleteProfile() {
                   placeholder="e.g. Computer Science"
                   value={formData.branch}
                   onChange={handleChange}
-                  className="w-full bg-[#0b1326] border border-[#3c494c] rounded-md px-4 py-2.5 text-[#dae2fd] text-sm placeholder-[#bbc9cd]/30 focus:outline-none focus:border-[#22d3ee] focus:ring-1 focus:ring-[#22d3ee] transition-all"
+                  className="w-full bg-white border border-slate-200 rounded-md px-4 py-2.5 text-slate-900 text-sm placeholder-slate-400 outline-none focus:border-cyan-500 transition-all shadow-sm"
                 />
               </div>
 
               <div className="flex flex-col gap-1.5">
-                <label className="font-mono text-[11px] font-bold uppercase tracking-wider text-[#bbc9cd]">
+                <label className="font-mono text-[10px] font-bold uppercase tracking-widest text-slate-500">
                   Section
                 </label>
-                <select
-                  name="section"
-                  value={formData.section}
-                  onChange={handleChange}
-                  className="w-full bg-[#0b1326] border border-[#3c494c] rounded-md px-4 py-2.5 text-[#dae2fd] text-sm focus:outline-none focus:border-[#22d3ee] focus:ring-1 focus:ring-[#22d3ee] transition-all cursor-pointer dynamic-select"
-                >
-                  <option value="" className="bg-[#171f33] text-[#bbc9cd]/50">
-                    Select
-                  </option>
-                  <option value="CSE I" className="bg-[#171f33] text-[#dae2fd]">
-                    CSE I
-                  </option>
-                  <option
-                    value="CSE II"
-                    className="bg-[#171f33] text-[#dae2fd]"
+                <div className="relative w-full">
+                  <select
+                    name="section"
+                    value={formData.section}
+                    onChange={handleChange}
+                    className="w-full bg-white border border-slate-200 rounded-md px-4 py-2.5 text-slate-900 text-sm outline-none focus:border-cyan-500 transition-all cursor-pointer shadow-sm appearance-none"
                   >
-                    CSE II
-                  </option>
-                  <option
-                    value="CSE III"
-                    className="bg-[#171f33] text-[#dae2fd]"
-                  >
-                    CSE III
-                  </option>
-                  <option
-                    value="CSE IV"
-                    className="bg-[#171f33] text-[#dae2fd]"
-                  >
-                    CSE IV
-                  </option>
-                  <option value="CSE V" className="bg-[#171f33] text-[#dae2fd]">
-                    CSE V
-                  </option>
-                  <option
-                    value="CSE VI"
-                    className="bg-[#171f33] text-[#dae2fd]"
-                  >
-                    CSE VI
-                  </option>
-                  <option
-                    value="CSE VII"
-                    className="bg-[#171f33] text-[#dae2fd]"
-                  >
-                    CSE VII
-                  </option>
-                  <option
-                    value="CSE VIII"
-                    className="bg-[#171f33] text-[#dae2fd]"
-                  >
-                    CSE VIII
-                  </option>
-                </select>
+                    <option value="">Select</option>
+                    <option value="CSE I">CSE I</option>
+                    <option value="CSE II">CSE II</option>
+                    <option value="CSE III">CSE III</option>
+                    <option value="CSE IV">CSE IV</option>
+                    <option value="CSE V">CSE V</option>
+                    <option value="CSE VI">CSE VI</option>
+                    <option value="CSE VII">CSE VII</option>
+                    <option value="CSE VIII">CSE VIII</option>
+                  </select>
+                </div>
               </div>
             </div>
 
-        
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        
               <div className="flex flex-col gap-1.5">
-                <label className="font-mono text-[11px] font-bold uppercase tracking-wider text-[#bbc9cd]">
+                <label className="font-mono text-[10px] font-bold uppercase tracking-widest text-slate-500">
                   Year (Batch)
                 </label>
                 <select
                   name="year"
                   value={formData.year}
                   onChange={handleChange}
-                    className="w-full bg-[#0b1326] border border-[#3c494c] rounded-md px-4 py-2.5 text-[#dae2fd] text-sm focus:outline-none focus:border-[#22d3ee] focus:ring-1 focus:ring-[#22d3ee] transition-all cursor-pointer dynamic-select"
-
+                  className="w-full bg-white border border-slate-200 rounded-md px-4 py-2.5 text-slate-900 text-sm outline-none focus:border-cyan-500 transition-all cursor-pointer shadow-sm appearance-none"
                 >
-                  <option value="" className="bg-[#171f33] text-[#dae2fd]">Select Year</option>
-                  <option value="1" className="bg-[#171f33] text-[#dae2fd]">1st Year</option>
-                  <option value="2" className="bg-[#171f33] text-[#dae2fd]">2nd Year</option>
-                  <option value="3" className="bg-[#171f33] text-[#dae2fd]">3rd Year</option>
-                  <option value="4" className="bg-[#171f33] text-[#dae2fd]">4th Year</option>
+                  <option value="">Select Year</option>
+                  <option value="1">1st Year</option>
+                  <option value="2">2nd Year</option>
+                  <option value="3">3rd Year</option>
+                  <option value="4">4th Year</option>
                 </select>
               </div>
 
               <div className="flex flex-col gap-1.5">
-                <label className="font-mono text-[11px] font-bold uppercase tracking-wider text-[#bbc9cd]">
+                <label className="font-mono text-[10px] font-bold uppercase tracking-widest text-slate-500">
                   Semester
                 </label>
                 <input
@@ -185,13 +141,13 @@ export default function CompleteProfile() {
                   placeholder="e.g. 6"
                   value={formData.semester}
                   onChange={handleChange}
-                  className="w-full bg-[#0b1326] border border-[#3c494c] rounded-md px-4 py-2.5 text-[#dae2fd] text-sm placeholder-[#bbc9cd]/30 focus:outline-none focus:border-[#22d3ee] focus:ring-1 focus:ring-[#22d3ee] transition-all"
+                  className="w-full bg-white border border-slate-200 rounded-md px-4 py-2.5 text-slate-900 text-sm placeholder-slate-400 outline-none focus:border-cyan-500 transition-all shadow-sm"
                 />
               </div>
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <label className="font-mono text-[11px] font-bold uppercase tracking-wider text-[#bbc9cd]">
+              <label className="font-mono text-[10px] font-bold uppercase tracking-widest text-slate-500">
                 Phone Number
               </label>
               <input
@@ -199,14 +155,14 @@ export default function CompleteProfile() {
                 placeholder="e.g. +1 555-0199"
                 value={formData.phone_no}
                 onChange={handleChange}
-                className="w-full bg-[#0b1326] border border-[#3c494c] rounded-md px-4 py-2.5 text-[#dae2fd] text-sm placeholder-[#bbc9cd]/30 focus:outline-none focus:border-[#22d3ee] focus:ring-1 focus:ring-[#22d3ee] transition-all"
+                className="w-full bg-white border border-slate-200 rounded-md px-4 py-2.5 text-slate-900 text-sm placeholder-slate-400 outline-none focus:border-cyan-500 transition-all shadow-sm"
               />
             </div>
 
             <div className="pt-3">
               <button
                 type="submit"
-                className="w-full bg-[#22d3ee] hover:bg-[#8aebff] text-[#00363e] font-semibold py-3 px-6 rounded-md shadow-md hover:shadow-[#22d3ee]/20 transition-all duration-200 text-sm uppercase tracking-wider font-mono"
+                className="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-3 px-6 rounded-md shadow-sm transition-all duration-200 text-xs uppercase tracking-wider font-mono active:scale-95"
               >
                 Save Profile Matrix
               </button>
