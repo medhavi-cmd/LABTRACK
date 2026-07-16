@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useMemo } from "react";
+import { authFetch } from "../../services/api";
 import {
   FiSearch,
   FiPlus,
@@ -138,7 +139,7 @@ const ComponentFormModal = ({ initialData, onClose, onSuccess }) => {
         : API_BASE;
       const method = isEdit ? "PUT" : "POST";
  
-      const response = await fetch(url, {
+      const response = await authFetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -280,7 +281,7 @@ const DeleteConfirmModal = ({ component, onClose, onSuccess }) => {
     setDeleting(true);
     setApiError("");
     try {
-      const response = await fetch(`${API_BASE}/${component.component_id}`, {
+      const response = await authFetch(`${API_BASE}/${component.component_id}`, {
         method: "DELETE",
       });
       const data = await response.json();
@@ -377,7 +378,7 @@ const InventoryManagement = () => {
       setLoading(true);
       setError(null);
  
-      const response = await fetch(API_BASE);
+      const response = await authFetch(API_BASE);
       if (!response.ok) {
         throw new Error(`Server error: ${response.status} ${response.statusText}`);
       }

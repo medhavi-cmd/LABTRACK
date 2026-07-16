@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState, useCallback } from "react";
 import { FiEye, FiCheck, FiInfo, FiX, FiSearch, FiLoader } from "react-icons/fi";
+import { authFetch } from "../../services/api";
  
 // ─── Config ─────────────────────────────────────────────────────────────────
 const API_BASE = "http://localhost:5000/api/requests";
@@ -108,7 +109,7 @@ const ComponentRequests = () => {
     try {
       setLoading(true);
       setError("");
-      const res = await fetch(API_BASE);
+      const res = await authFetch(API_BASE);
       const result = await res.json();
       if (!res.ok || !result.success) {
         throw new Error(result.message || "Failed to load requests.");
@@ -142,7 +143,7 @@ const ComponentRequests = () => {
       setApprovingId(requestId);
       setToast(null);
  
-      const res = await fetch(`${API_BASE}/${requestId}/approve`, {
+      const res = await authFetch(`${API_BASE}/${requestId}/approve`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
       });

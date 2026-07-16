@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { FiInfo, FiX, FiSearch, FiLoader, FiAlertTriangle } from "react-icons/fi";
+import { authFetch } from "../../services/api";
  
 // ─── Config ─────────────────────────────────────────────────────────────────
 const API_BASE = "http://localhost:5000/api/issued-components";
@@ -198,7 +199,7 @@ const IssuedComponents = () => {
     try {
       setLoading(true);
       setError("");
-      const res    = await fetch(API_BASE);
+      const res    = await authFetch(API_BASE);
       const result = await res.json();
       if (!res.ok || !result.success) {
         throw new Error(result.message || "Failed to load issued components.");
@@ -240,7 +241,7 @@ const IssuedComponents = () => {
  
     try {
       setReturningId(issueId);
-      const res = await fetch(`${API_BASE}/${issueId}/return`, {
+      const res = await authFetch(`${API_BASE}/${issueId}/return`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
       });
