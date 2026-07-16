@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import bgImage from "../../assets/login-bg.jpg";
+import { loginWithGoogle } from "../../services/authService";
 import { Link, useNavigate } from "react-router-dom";
 import {
   ArrowUpRight,
@@ -173,12 +174,7 @@ export default function LoginPage() {
             />
 
             <div className="flex items-center justify-between pt-0.5">
-              <a
-                href="#forgot"
-                className="text-sm font-semibold text-[#2563EB] hover:text-[#1d4ed8] transition-colors"
-              >
-                Forgot password?
-              </a>
+              <Link to="/forgot-password">Forgot password?</Link>
             </div>
 
             <Button
@@ -187,6 +183,15 @@ export default function LoginPage() {
               className="w-full bg-[#2563EB] hover:bg-[#1d4ed8] text-white font-medium py-2.5 rounded-lg shadow-sm transition-colors mt-2"
             >
               Sign In
+            </Button>
+
+            <Button
+              type="button"
+              variant="outline"
+              onClick={loginWithGoogle}
+              className="w-full mt-3"
+            >
+              Continue with Google
             </Button>
           </form>
 
