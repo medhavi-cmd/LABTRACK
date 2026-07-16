@@ -1,123 +1,66 @@
-import { useState } from "react";
-import { FiInfo, FiEye, FiX, FiSearch } from "react-icons/fi";
+import { useEffect, useMemo, useState } from "react";
+import { FiInfo, FiEye, FiX, FiSearch, FiAlertTriangle } from "react-icons/fi";
+import { authFetch } from "../../services/api";
+// NOTE: adjust this import to match the actual path/name of the shared
+// authFetch utility used on your other Lab Staff pages. This file assumes
+// authFetch(url) resolves directly to the parsed JSON body (i.e. it already
+// attaches the JWT and calls res.json() internally). If it instead returns
+// a raw Response, change the single call site inside loadReturns() below.
  
-const initialData = [
-  {
-    returnId: "RET-001",
-    component: "Arduino Uno R3",
-    quantity: 2,
-    issueDate: "2025-06-01",
-    returnDate: "2025-06-08",
-    condition: "Good",
-    notes: "Returned in original condition.",
-    student: {
-      name: "Aarav Sharma",
-      enrollmentNo: "EME2024001",
-      batch: "2024",
-      group: "Group 1",
-      email: "aarav@bmu.edu.in",
-    },
-  },
-  {
-    returnId: "RET-002",
-    component: "Ultrasonic Sensor HC-SR04",
-    quantity: 1,
-    issueDate: "2025-06-03",
-    returnDate: "2025-06-10",
-    condition: "Fair",
-    notes: "Minor scratches on casing.",
-    student: {
-      name: "Priya Mehta",
-      enrollmentNo: "EME2024014",
-      batch: "2024",
-      group: "Group 2",
-      email: "priya@bmu.edu.in",
-    },
-  },
-  {
-    returnId: "RET-003",
-    component: "16x2 LCD Display",
-    quantity: 1,
-    issueDate: "2025-05-28",
-    returnDate: "2025-06-04",
-    condition: "Damaged",
-    notes: "One pin bent, display partially unresponsive.",
-    student: {
-      name: "Rohan Verma",
-      enrollmentNo: "EME2023027",
-      batch: "2023",
-      group: "Group 1",
-      email: "rohan@bmu.edu.in",
-    },
-  },
-  {
-    returnId: "RET-004",
-    component: "Servo Motor SG90",
-    quantity: 3,
-    issueDate: "2025-06-05",
-    returnDate: "2025-06-12",
-    condition: "Good",
-    notes: "All units working correctly.",
-    student: {
-      name: "Sneha Kapoor",
-      enrollmentNo: "EME2024039",
-      batch: "2024",
-      group: "Group 3",
-      email: "sneha@bmu.edu.in",
-    },
-  },
-  {
-    returnId: "RET-005",
-    component: "Raspberry Pi 4 Model B",
-    quantity: 1,
-    issueDate: "2025-05-30",
-    returnDate: "2025-06-09",
-    condition: "Fair",
-    notes: "SD card slot slightly worn.",
-    student: {
-      name: "Karan Singh",
-      enrollmentNo: "EME2023052",
-      batch: "2023",
-      group: "Group 2",
-      email: "karan@bmu.edu.in",
-    },
-  },
-  {
-    returnId: "RET-006",
-    component: "DHT11 Temperature Sensor",
-    quantity: 2,
-    issueDate: "2025-06-04",
-    returnDate: "2025-06-11",
-    condition: "Damaged",
-    notes: "One sensor not functioning after use.",
-    student: {
-      name: "Anjali Rao",
-      enrollmentNo: "EME2024061",
-      batch: "2024",
-      group: "Group 1",
-      email: "anjali@bmu.edu.in",
-    },
-  },
-];
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+const capitalizeCondition = (value) => {
+  if (!value) return "Unknown";
+  return value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
+};
  
 const getConditionStyle = (condition) => {
-  if (condition === "Good") {
+  const normalized = condition?.toLowerCase();
+  if (normalized === "good") {
     return "bg-green-500/10 text-green-400 border border-green-500/30";
   }
-  if (condition === "Fair") {
+  if (normalized === "fair") {
     return "bg-amber-500/10 text-amber-400 border border-amber-500/30";
   }
-  return "bg-red-500/10 text-red-400 border border-red-500/30";
+  if (normalized === "damaged") {
+    return "bg-red-500/10 text-red-400 border border-red-500/30";
+  }
+  return "bg-slate-500/10 text-slate-400 border border-slate-500/30";
 };
  
 const calculateDuration = (issueDate, returnDate) => {
+  if (!issueDate || !returnDate) return null;
   const issued = new Date(issueDate);
   const returned = new Date(returnDate);
   const diffTime = returned - issued;
   const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
-  return diffDays;
+  return Number.isFinite(diffDays) ? diffDays : null;
 };
  
+// Maps a raw GET /api/returns record onto the shape the existing UI expects.
+// Backend field names (per returnManagementService.js) are on the left.
+const mapReturnRecord = (record) => ({
+  returnId: record?.return_id ?? "—",
+  issueId: record?.issue_id,
+  component: record?.component_name ?? "—",
+  quantity: record?.quantity ?? "—",
+  issueDate: record?.issue_date ?? null,
+  returnDate: record?.actual_return_date ?? null,
+  condition: capitalizeCondition(record?.component_condition),
+  // "notes" is not part of the current GET /api/returns response — see note
+  // in the accompanying message. This is a static placeholder, not fetched data.
+  notes: record?.notes ?? "No notes recorded for this return.",
+  student: {
+    name: record?.student_name ?? "—",
+    enrollmentNo: record?.enrollment_no ?? "—",
+    batch: record?.batch ?? "—",
+    // Backend has no separate "group" field; team_name is used as the
+    // closest equivalent available from the API.
+    group: record?.team_name ?? "—",
+    email: record?.email ?? "—",
+  },
+});
+ 
+// ─── Modal shell ──────────────────────────────────────────────────────────────
 const Modal = ({ children, onClose, maxWidth = "max-w-md" }) => (
   <div
     className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 px-4 transition-opacity duration-200"
@@ -132,15 +75,16 @@ const Modal = ({ children, onClose, maxWidth = "max-w-md" }) => (
   </div>
 );
  
+// ─── Student Info Modal ───────────────────────────────────────────────────────
 const StudentInfoModal = ({ student, onClose }) => {
   if (!student) return null;
  
   const fields = [
-    { label: "Student Name", value: student.name },
-    { label: "Enrollment Number", value: student.enrollmentNo },
-    { label: "Batch", value: student.batch },
-    { label: "Group", value: student.group },
-    { label: "Email", value: student.email },
+    { label: "Student Name", value: student?.name },
+    { label: "Enrollment Number", value: student?.enrollmentNo },
+    { label: "Batch", value: student?.batch },
+    { label: "Group", value: student?.group },
+    { label: "Email", value: student?.email },
   ];
  
   return (
@@ -162,7 +106,7 @@ const StudentInfoModal = ({ student, onClose }) => {
             className="flex justify-between gap-4 border-b border-slate-800 pb-3 last:border-0 last:pb-0"
           >
             <span className="text-slate-400">{field.label}</span>
-            <span className="text-right font-medium">{field.value}</span>
+            <span className="text-right font-medium">{field.value ?? "—"}</span>
           </div>
         ))}
       </div>
@@ -177,17 +121,18 @@ const StudentInfoModal = ({ student, onClose }) => {
   );
 };
  
+// ─── Return Details Modal ─────────────────────────────────────────────────────
 const ReturnDetailsModal = ({ returnItem, onClose }) => {
   if (!returnItem) return null;
  
-  const duration = calculateDuration(returnItem.issueDate, returnItem.returnDate);
+  const duration = calculateDuration(returnItem?.issueDate, returnItem?.returnDate);
  
   const fields = [
-    { label: "Return ID", value: returnItem.returnId },
-    { label: "Component Name", value: returnItem.component },
-    { label: "Quantity", value: returnItem.quantity },
-    { label: "Issue Date", value: returnItem.issueDate },
-    { label: "Return Date", value: returnItem.returnDate },
+    { label: "Return ID", value: returnItem?.returnId },
+    { label: "Component Name", value: returnItem?.component },
+    { label: "Quantity", value: returnItem?.quantity },
+    { label: "Issue Date", value: returnItem?.issueDate },
+    { label: "Return Date", value: returnItem?.returnDate },
   ];
  
   return (
@@ -209,7 +154,7 @@ const ReturnDetailsModal = ({ returnItem, onClose }) => {
             className="flex justify-between gap-4 border-b border-slate-800 pb-3"
           >
             <span className="text-slate-400">{field.label}</span>
-            <span className="text-right font-medium">{field.value}</span>
+            <span className="text-right font-medium">{field.value ?? "—"}</span>
           </div>
         ))}
  
@@ -217,21 +162,25 @@ const ReturnDetailsModal = ({ returnItem, onClose }) => {
           <span className="text-slate-400">Condition</span>
           <span
             className={`px-3 py-1 rounded-full text-sm ${getConditionStyle(
-              returnItem.condition
+              returnItem?.condition
             )}`}
           >
-            {returnItem.condition}
+            {returnItem?.condition ?? "—"}
           </span>
         </div>
  
         <div className="flex justify-between gap-4 border-b border-slate-800 pb-3">
           <span className="text-slate-400">Return Duration</span>
-          <span className="font-medium">{duration} Days</span>
+          <span className="font-medium">
+            {duration !== null ? `${duration} Days` : "—"}
+          </span>
         </div>
  
         <div className="pt-1">
           <span className="text-slate-400 block mb-1">Full Notes</span>
-          <p className="text-slate-200 leading-relaxed">{returnItem.notes}</p>
+          <p className="text-slate-200 leading-relaxed">
+            {returnItem?.notes ?? "—"}
+          </p>
         </div>
       </div>
  
@@ -245,8 +194,11 @@ const ReturnDetailsModal = ({ returnItem, onClose }) => {
   );
 };
  
+// ─── Main Page ────────────────────────────────────────────────────────────────
 const ReturnManagement = () => {
-  const [returns] = useState(initialData);
+  const [returns, setReturns] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
  
   const [selectedStudent, setSelectedStudent] = useState(null);
@@ -254,15 +206,79 @@ const ReturnManagement = () => {
   const [isStudentModalOpen, setIsStudentModalOpen] = useState(false);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
  
-  const totalReturns = returns.length;
-  const goodCondition = returns.filter((r) => r.condition === "Good").length;
-  const fairCondition = returns.filter((r) => r.condition === "Fair").length;
-  const damagedReturns = returns.filter((r) => r.condition === "Damaged").length;
+  // ── Fetch ──────────────────────────────────────────────────────────────────
+  useEffect(() => {
+    let isMounted = true;
  
-  const goodPercent = Math.round((goodCondition / totalReturns) * 100);
-  const fairPercent = Math.round((fairCondition / totalReturns) * 100);
-  const damagedPercent = Math.round((damagedReturns / totalReturns) * 100);
+    const loadReturns = async () => {
+      try {
+        setLoading(true);
+        setError("");
  
+        const res = await authFetch("http://localhost:5000/api/returns");
+        const result = await res.json();
+ 
+        if (!res.ok || !result?.success) {
+          throw new Error(result?.message || "Failed to load return history.");
+        }
+ 
+        const raw = result.data ?? [];
+        const mapped = Array.isArray(raw) ? raw.map(mapReturnRecord) : [];
+ 
+        if (isMounted) {
+          setReturns(mapped);
+        }
+      } catch (err) {
+        if (isMounted) {
+          setError(err?.message || "Failed to load return history.");
+          setReturns([]);
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
+ 
+    loadReturns();
+ 
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+ 
+  // ── Stats ──────────────────────────────────────────────────────────────────
+  const stats = useMemo(() => {
+    const total = returns.length;
+    const good = returns.filter((r) => r.condition === "Good").length;
+    const fair = returns.filter((r) => r.condition === "Fair").length;
+    const damaged = returns.filter((r) => r.condition === "Damaged").length;
+ 
+    const percentOf = (count) => (total > 0 ? Math.round((count / total) * 100) : 0);
+ 
+    return {
+      total,
+      good,
+      fair,
+      damaged,
+      goodPercent: percentOf(good),
+      fairPercent: percentOf(fair),
+      damagedPercent: percentOf(damaged),
+    };
+  }, [returns]);
+ 
+  // ── Search ─────────────────────────────────────────────────────────────────
+  const filteredReturns = useMemo(() => {
+    const term = searchTerm.toLowerCase().trim();
+    if (!term) return returns;
+    return returns.filter((item) =>
+      [item?.returnId, item?.component, item?.student?.enrollmentNo].some(
+        (field) => field?.toLowerCase().includes(term)
+      )
+    );
+  }, [returns, searchTerm]);
+ 
+  // ── Modal handlers ─────────────────────────────────────────────────────────
   const openStudentModal = (student) => {
     setSelectedStudent(student);
     setIsStudentModalOpen(true);
@@ -283,15 +299,7 @@ const ReturnManagement = () => {
     setSelectedReturn(null);
   };
  
-  const filteredReturns = returns.filter((item) => {
-    const term = searchTerm.toLowerCase();
-    return (
-      item.returnId.toLowerCase().includes(term) ||
-      item.component.toLowerCase().includes(term) ||
-      item.student.enrollmentNo.toLowerCase().includes(term)
-    );
-  });
- 
+  // ── Render ─────────────────────────────────────────────────────────────────
   return (
     <div className="text-white">
       {/* Header */}
@@ -306,27 +314,27 @@ const ReturnManagement = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
         <div className="bg-[#0f172a] border border-slate-800 rounded-xl p-5">
           <p className="text-slate-400">Total Returns This Week</p>
-          <h2 className="text-3xl font-bold mt-2">{totalReturns}</h2>
+          <h2 className="text-3xl font-bold mt-2">{loading ? "—" : stats.total}</h2>
         </div>
  
         <div className="bg-[#0f172a] border border-slate-800 rounded-xl p-5">
           <p className="text-slate-400">Good Condition</p>
           <h2 className="text-3xl font-bold text-green-400 mt-2">
-            {goodCondition}
+            {loading ? "—" : stats.good}
           </h2>
         </div>
  
         <div className="bg-[#0f172a] border border-slate-800 rounded-xl p-5">
           <p className="text-slate-400">Fair Condition</p>
           <h2 className="text-3xl font-bold text-amber-400 mt-2">
-            {fairCondition}
+            {loading ? "—" : stats.fair}
           </h2>
         </div>
  
         <div className="bg-[#0f172a] border border-slate-800 rounded-xl p-5">
           <p className="text-slate-400">Damaged Returns</p>
           <h2 className="text-3xl font-bold text-red-400 mt-2">
-            {damagedReturns}
+            {loading ? "—" : stats.damaged}
           </h2>
         </div>
       </div>
@@ -338,12 +346,12 @@ const ReturnManagement = () => {
           <div>
             <div className="flex justify-between text-sm mb-1.5">
               <span>Good Returns</span>
-              <span className="text-slate-400">{goodPercent}%</span>
+              <span className="text-slate-400">{loading ? "—" : `${stats.goodPercent}%`}</span>
             </div>
             <div className="w-full bg-slate-800 rounded-full h-2">
               <div
                 className="bg-green-500 h-2 rounded-full"
-                style={{ width: `${goodPercent}%` }}
+                style={{ width: `${loading ? 0 : stats.goodPercent}%` }}
               ></div>
             </div>
           </div>
@@ -351,12 +359,12 @@ const ReturnManagement = () => {
           <div>
             <div className="flex justify-between text-sm mb-1.5">
               <span>Fair Returns</span>
-              <span className="text-slate-400">{fairPercent}%</span>
+              <span className="text-slate-400">{loading ? "—" : `${stats.fairPercent}%`}</span>
             </div>
             <div className="w-full bg-slate-800 rounded-full h-2">
               <div
                 className="bg-amber-500 h-2 rounded-full"
-                style={{ width: `${fairPercent}%` }}
+                style={{ width: `${loading ? 0 : stats.fairPercent}%` }}
               ></div>
             </div>
           </div>
@@ -364,12 +372,12 @@ const ReturnManagement = () => {
           <div>
             <div className="flex justify-between text-sm mb-1.5">
               <span>Damaged Returns</span>
-              <span className="text-slate-400">{damagedPercent}%</span>
+              <span className="text-slate-400">{loading ? "—" : `${stats.damagedPercent}%`}</span>
             </div>
             <div className="w-full bg-slate-800 rounded-full h-2">
               <div
                 className="bg-red-500 h-2 rounded-full"
-                style={{ width: `${damagedPercent}%` }}
+                style={{ width: `${loading ? 0 : stats.damagedPercent}%` }}
               ></div>
             </div>
           </div>
@@ -409,58 +417,111 @@ const ReturnManagement = () => {
             </thead>
  
             <tbody>
-              {filteredReturns.map((item) => (
-                <tr
-                  key={item.returnId}
-                  className="border-t border-slate-800 hover:bg-slate-900/40"
-                >
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-2">
-                      <span className="text-slate-300">{item.returnId}</span>
-                      <button
-                        onClick={() => openStudentModal(item.student)}
-                        className="text-slate-500 hover:text-cyan-400 cursor-pointer transition-colors"
-                        title="View student details"
+              {/* Loading */}
+              {loading && (
+                <tr>
+                  <td colSpan={7} className="px-6 py-16">
+                    <div className="flex items-center justify-center text-slate-400 gap-3">
+                      <svg
+                        className="animate-spin w-5 h-5 text-cyan-500"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
                       >
-                        <FiInfo className="w-3.5 h-3.5" />
-                      </button>
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        />
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8v8H4z"
+                        />
+                      </svg>
+                      Loading return history...
                     </div>
                   </td>
-                  <td className="px-6 py-4 text-slate-300">{item.component}</td>
-                  <td className="px-6 py-4">{item.quantity}</td>
-                  <td className="px-6 py-4 text-slate-300">{item.issueDate}</td>
-                  <td className="px-6 py-4 text-slate-300">{item.returnDate}</td>
-                  <td className="px-6 py-4">
-                    <span
-                      className={`px-3 py-1 rounded-full text-sm ${getConditionStyle(
-                        item.condition
-                      )}`}
-                    >
-                      {item.condition}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <button
-                      onClick={() => openDetailsModal(item)}
-                      className="text-cyan-400 hover:text-cyan-300 cursor-pointer transition-colors"
-                      title="View return details"
-                    >
-                      <FiEye size={18} />
-                    </button>
+                </tr>
+              )}
+ 
+              {/* Error */}
+              {!loading && error && (
+                <tr>
+                  <td colSpan={7} className="px-6 py-16">
+                    <div className="flex flex-col items-center justify-center gap-2 text-center">
+                      <FiAlertTriangle className="w-6 h-6 text-red-400" />
+                      <p className="text-red-400 font-medium">{error}</p>
+                    </div>
                   </td>
                 </tr>
-              ))}
+              )}
  
-              {filteredReturns.length === 0 && (
+              {/* Empty — no returns at all */}
+              {!loading && !error && returns.length === 0 && (
                 <tr>
-                  <td
-                    colSpan={7}
-                    className="px-6 py-8 text-center text-slate-500"
-                  >
+                  <td colSpan={7} className="px-6 py-8 text-center text-slate-500">
+                    No returned components found.
+                  </td>
+                </tr>
+              )}
+ 
+              {/* Empty — search yielded nothing */}
+              {!loading && !error && returns.length > 0 && filteredReturns.length === 0 && (
+                <tr>
+                  <td colSpan={7} className="px-6 py-8 text-center text-slate-500">
                     No return records match your search.
                   </td>
                 </tr>
               )}
+ 
+              {/* Rows */}
+              {!loading &&
+                !error &&
+                filteredReturns.map((item) => (
+                  <tr
+                    key={item.returnId}
+                    className="border-t border-slate-800 hover:bg-slate-900/40"
+                  >
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-2">
+                        <span className="text-slate-300">{item.returnId}</span>
+                        <button
+                          onClick={() => openStudentModal(item.student)}
+                          className="text-slate-500 hover:text-cyan-400 cursor-pointer transition-colors"
+                          title="View student details"
+                        >
+                          <FiInfo className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 text-slate-300">{item.component}</td>
+                    <td className="px-6 py-4">{item.quantity}</td>
+                    <td className="px-6 py-4 text-slate-300">{item.issueDate ?? "—"}</td>
+                    <td className="px-6 py-4 text-slate-300">{item.returnDate ?? "—"}</td>
+                    <td className="px-6 py-4">
+                      <span
+                        className={`px-3 py-1 rounded-full text-sm ${getConditionStyle(
+                          item.condition
+                        )}`}
+                      >
+                        {item.condition}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <button
+                        onClick={() => openDetailsModal(item)}
+                        className="text-cyan-400 hover:text-cyan-300 cursor-pointer transition-colors"
+                        title="View return details"
+                      >
+                        <FiEye size={18} />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
             </tbody>
           </table>
         </div>
@@ -468,17 +529,11 @@ const ReturnManagement = () => {
  
       {/* Modals */}
       {isStudentModalOpen && (
-        <StudentInfoModal
-          student={selectedStudent}
-          onClose={closeStudentModal}
-        />
+        <StudentInfoModal student={selectedStudent} onClose={closeStudentModal} />
       )}
  
       {isDetailsModalOpen && (
-        <ReturnDetailsModal
-          returnItem={selectedReturn}
-          onClose={closeDetailsModal}
-        />
+        <ReturnDetailsModal returnItem={selectedReturn} onClose={closeDetailsModal} />
       )}
     </div>
   );
