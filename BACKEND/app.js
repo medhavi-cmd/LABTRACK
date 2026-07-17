@@ -18,6 +18,7 @@ import galleryRoutes from "./routes/galleryRoutes.js";
 import projectGalleryRoutes from "./routes/projectGalleryRoutes.js";
 import returnManagementRoutes from "./routes/returnManagementRoutes.js";
 import damageComponentsRoutes from "./routes/damageComponentsRoutes.js";
+import componentDemandRoutes from "./routes/componentDemandRoutes.js";
 
 const app = express();
 
@@ -54,6 +55,7 @@ app.use("/api/requests", componentRequestRoutes);
 app.use("/api/issued-components", issuedComponentsRoutes);
 app.use("/api/returns", returnManagementRoutes);
 app.use("/api/damage-components", damageComponentsRoutes);
+app.use("/api/component-demand", componentDemandRoutes);
 
 app.get("/", (_req, res) => {
   res.json({

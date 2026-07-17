@@ -3,7 +3,7 @@ dotenv.config();
 
 async function checkSchema() {
   const { pool } = await import("./config/db.js");
-  const tables = ['students', 'users', 'teams', 'issue_records', 'damage_reports', 'components', 'request_items', 'component_requests'];
+  const tables = ['component_purchase_requests', 'purchase_request_summary', 'low_stock_components'];
   for (const table of tables) {
     const result = await pool.query(`
       SELECT column_name, data_type 
