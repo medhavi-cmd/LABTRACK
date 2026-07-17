@@ -43,10 +43,10 @@ export default function SignupPage() {
         alert("Enrollment number is required");
         return;
       }
-      if (!/^\d+$/.test(enrollmentNo)) {
-        alert("Enrollment number must contain numbers only");
-        return;
-      }
+      if (!/^\d{6}$/.test(enrollmentNo)) {
+  alert("Enrollment number must be exactly 6 digits.");
+  return;
+}
     }
 
     if (accessRole !== "student") {
@@ -193,9 +193,12 @@ export default function SignupPage() {
                     type="text"
                     inputMode="numeric"
                     placeholder="Enter numeric enrollment number"
+                    maxLength={6}
                     value={enrollmentNo}
                     onChange={(e) =>
-                      setEnrollmentNo(e.target.value.replace(/\D/g, ""))
+                      setEnrollmentNo(
+                        e.target.value.replace(/\D/g, "").slice(0, 6)
+                      )
                     }
                     icon={Hash}
                     className="font-mono"

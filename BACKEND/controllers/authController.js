@@ -57,11 +57,11 @@ export const signup = async (req, res) => {
     let finalEmployeeId = null;
 
     if (role === "student") {
-      if (!/^\d+$/.test(String(enrollmentNo))) {
-        return res.status(400).json({
-          message: "Enrollment number is required and must contain numbers only",
-        });
-      }
+      if (!/^\d{6}$/.test(String(enrollmentNo))) {
+  return res.status(400).json({
+    message: "Enrollment number must be exactly 6 digits.",
+  });
+}
 
       finalEnrollmentNo = Number(enrollmentNo);
     }
