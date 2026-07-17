@@ -45,17 +45,17 @@ const ProjectSubmissionForm = ({ onSuccess }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6 max-w-4xl mx-auto px-1">
-      <div className="border-b border-slate-800 pb-5">
-        <h2 className="text-2xl font-bold tracking-tight text-white">Submit Project</h2>
-        <p className="mt-1 text-sm text-slate-400">
+    <form onSubmit={handleSubmit} className="space-y-6 max-w-4xl mx-auto px-1 text-slate-600 font-sans">
+      <div className="border-b border-slate-200 pb-5">
+        <h2 className="text-2xl font-bold tracking-tight text-slate-900">Submit Project</h2>
+        <p className="mt-1 text-sm text-slate-500">
           Submit your completed project details and files for faculty review.
         </p>
       </div>
 
-      <div className="rounded-xl border border-slate-800 bg-[#0e1626] p-5 md:p-6 space-y-5">
-        <div>
-          <label className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+      <div className="rounded-xl border border-slate-200 bg-white p-5 md:p-6 space-y-5 shadow-sm">
+        <div className="flex flex-col gap-1.5">
+          <label className="font-mono text-[10px] font-bold uppercase tracking-widest text-slate-500">
             Project Objective
           </label>
           <textarea
@@ -65,12 +65,12 @@ const ProjectSubmissionForm = ({ onSuccess }) => {
             placeholder="Describe the core objective or problem your project solves..."
             value={form.objective}
             onChange={handleChange}
-            className="mt-2 w-full rounded-xl border border-slate-800 bg-[#111a2f] px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all resize-none"
+            className="w-full bg-white border border-slate-200 rounded-md px-4 py-2.5 text-slate-900 text-sm placeholder-slate-400 outline-none focus:border-cyan-500 transition-all shadow-sm resize-none"
           />
         </div>
 
-        <div>
-          <label className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+        <div className="flex flex-col gap-1.5">
+          <label className="font-mono text-[10px] font-bold uppercase tracking-widest text-slate-500">
             Detailed Description
           </label>
           <textarea
@@ -80,23 +80,24 @@ const ProjectSubmissionForm = ({ onSuccess }) => {
             placeholder="Provide a comprehensive breakdown of your project implementation, architecture, and results..."
             value={form.description}
             onChange={handleChange}
-            className="mt-2 w-full rounded-xl border border-slate-800 bg-[#111a2f] px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all resize-none"
+            className="w-full bg-white border border-slate-200 rounded-md px-4 py-2.5 text-slate-900 text-sm placeholder-slate-400 outline-none focus:border-cyan-500 transition-all shadow-sm resize-none"
           />
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         
-        <div className="rounded-xl border border-slate-800 bg-[#0e1626] p-5 flex flex-col justify-between">
-          <span className="text-xs font-semibold uppercase tracking-wider text-slate-400 block mb-3">
+        {/* Cover Image Upload */}
+        <div className="rounded-xl border border-slate-200 bg-white p-5 flex flex-col justify-between shadow-sm">
+          <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-slate-500 block mb-3">
             Cover Image
           </span>
-          <label className="flex flex-col items-center justify-center flex-1 border border-dashed border-slate-800 hover:border-slate-700 bg-[#111a2f] rounded-xl p-4 cursor-pointer text-center group transition">
-            <Image size={24} className="text-slate-400 group-hover:text-blue-400 mb-2 transition-colors" />
-            <span className="text-xs font-medium text-slate-300 line-clamp-1 px-2">
+          <label className="flex flex-col items-center justify-center flex-1 border border-dashed border-slate-200 hover:border-slate-300 bg-slate-50 rounded-lg p-4 cursor-pointer text-center group transition shadow-sm">
+            <Image size={24} className="text-slate-400 group-hover:text-cyan-600 mb-2 transition-colors" />
+            <span className="text-xs font-semibold text-slate-700 line-clamp-1 px-2">
               {coverImage ? coverImage.name : "Select cover image"}
             </span>
-            <span className="text-[10px] text-slate-500 mt-1">Aspect ratio 16:9 preferred</span>
+            <span className="text-[10px] text-slate-400 mt-1">Aspect ratio 16:9 preferred</span>
             <input
               required={!coverImage}
               type="file"
@@ -107,16 +108,17 @@ const ProjectSubmissionForm = ({ onSuccess }) => {
           </label>
         </div>
 
-        <div className="rounded-xl border border-slate-800 bg-[#0e1626] p-5 flex flex-col justify-between">
-          <span className="text-xs font-semibold uppercase tracking-wider text-slate-400 block mb-3">
+        {/* Gallery Images Upload */}
+        <div className="rounded-xl border border-slate-200 bg-white p-5 flex flex-col justify-between shadow-sm">
+          <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-slate-500 block mb-3">
             Gallery Images
           </span>
-          <label className="flex flex-col items-center justify-center flex-1 border border-dashed border-slate-800 hover:border-slate-700 bg-[#111a2f] rounded-xl p-4 cursor-pointer text-center group transition">
-            <Upload size={24} className="text-slate-400 group-hover:text-blue-400 mb-2 transition-colors" />
-            <span className="text-xs font-medium text-slate-300 line-clamp-1 px-2">
+          <label className="flex flex-col items-center justify-center flex-1 border border-dashed border-slate-200 hover:border-slate-300 bg-slate-50 rounded-lg p-4 cursor-pointer text-center group transition shadow-sm">
+            <Upload size={24} className="text-slate-400 group-hover:text-cyan-600 mb-2 transition-colors" />
+            <span className="text-xs font-semibold text-slate-700 line-clamp-1 px-2">
               {galleryImages.length > 0 ? `${galleryImages.length} images selected` : "Select gallery photos"}
             </span>
-            <span className="text-[10px] text-slate-500 mt-1">Upload multiple snapshots</span>
+            <span className="text-[10px] text-slate-400 mt-1">Upload multiple snapshots</span>
             <input
               multiple
               type="file"
@@ -127,16 +129,17 @@ const ProjectSubmissionForm = ({ onSuccess }) => {
           </label>
         </div>
 
-        <div className="rounded-xl border border-slate-800 bg-[#0e1626] p-5 flex flex-col justify-between">
-          <span className="text-xs font-semibold uppercase tracking-wider text-slate-400 block mb-3">
+        {/* Project Report Upload */}
+        <div className="rounded-xl border border-slate-200 bg-white p-5 flex flex-col justify-between shadow-sm">
+          <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-slate-500 block mb-3">
             Project Report
           </span>
-          <label className="flex flex-col items-center justify-center flex-1 border border-dashed border-slate-800 hover:border-slate-700 bg-[#111a2f] rounded-xl p-4 cursor-pointer text-center group transition">
-            <FileText size={24} className="text-slate-400 group-hover:text-blue-400 mb-2 transition-colors" />
-            <span className="text-xs font-medium text-slate-300 line-clamp-1 px-2">
+          <label className="flex flex-col items-center justify-center flex-1 border border-dashed border-slate-200 hover:border-slate-300 bg-slate-50 rounded-lg p-4 cursor-pointer text-center group transition shadow-sm">
+            <FileText size={24} className="text-slate-400 group-hover:text-cyan-600 mb-2 transition-colors" />
+            <span className="text-xs font-semibold text-slate-700 line-clamp-1 px-2">
               {report ? report.name : "Select report document"}
             </span>
-            <span className="text-[10px] text-slate-500 mt-1">Strictly PDF format</span>
+            <span className="text-[10px] text-slate-400 mt-1">Strictly PDF format</span>
             <input
               required={!report}
               type="file"
@@ -153,16 +156,16 @@ const ProjectSubmissionForm = ({ onSuccess }) => {
         <button
           type="submit"
           disabled={loading}
-          className="inline-flex items-center justify-center gap-2 w-full sm:w-auto min-w-[160px] rounded-xl bg-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-600/10 hover:bg-blue-500 transition disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.99]"
+          className="inline-flex items-center justify-center gap-2 w-full sm:w-auto min-w-[160px] rounded-md bg-[#2563EB] px-6 py-3 text-xs font-mono font-bold uppercase tracking-wider text-white shadow-sm hover:bg-[#1d4ed8] transition disabled:opacity-50 disabled:cursor-not-allowed active:scale-95"
         >
           {loading ? (
             <>
-              <Loader2 size={16} className="animate-spin" />
+              <Loader2 size={15} className="animate-spin" />
               Submitting...
             </>
           ) : (
             <>
-              <FileUp size={16} />
+              <FileUp size={15} />
               Submit Project
             </>
           )}

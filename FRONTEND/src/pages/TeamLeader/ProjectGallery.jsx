@@ -49,7 +49,6 @@ const ProjectGallery = () => {
     }
   };
 
-  /* ---------------- SEARCH LOGIC ---------------- */
   const filteredProjects = useMemo(() => {
     return projects.filter((project) => {
       return (
@@ -64,7 +63,7 @@ const ProjectGallery = () => {
   const paginatedProjects = useMemo(() => {
     return filteredProjects.slice(
       (currentPage - 1) * ITEMS_PER_PAGE,
-      currentPage * ITEMS_PER_PAGE
+      currentPage * ITEMS_PER_PAGE,
     );
   }, [filteredProjects, currentPage]);
 
@@ -83,21 +82,25 @@ const ProjectGallery = () => {
 
   return (
     <GroupLeaderLayout>
-      <div className="space-y-6 sm:space-y-8 px-2 sm:px-4 max-w-7xl mx-auto">
+      <div className="space-y-6 sm:space-y-8 px-2 sm:px-4 max-w-7xl mx-auto text-slate-600 font-sans">
         {/* ================= HEADER SECTION ================= */}
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-slate-800 pb-5 sm:pb-6">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-slate-200 pb-5 sm:pb-6">
           <div className="space-y-1">
-            <h1 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-white">
+            <p className="font-mono text-xs uppercase tracking-[0.18em] text-[#2563EB]">
+              Showcase
+            </p>
+            <h1 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-slate-900">
               Project Gallery
             </h1>
-            <p className="text-xs sm:text-sm text-slate-400 max-w-xl leading-relaxed">
-              Explore projects developed by students across different batches and departments.
+            <p className="text-xs sm:text-sm text-slate-500 max-w-xl leading-relaxed">
+              Explore projects developed by students across different batches
+              and departments.
             </p>
           </div>
 
           <button
             onClick={() => setShowModal(true)}
-            className="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 sm:px-5 sm:py-3 text-xs sm:text-sm font-semibold text-white shadow-lg shadow-blue-600/10 hover:bg-blue-500 transition active:scale-[0.98] w-full sm:w-auto"
+            className="inline-flex items-center justify-center gap-2 rounded-md bg-[#2563EB] px-5 py-2.5 text-xs font-bold uppercase tracking-wider text-white shadow-sm hover:bg-[#1d4ed8] transition active:scale-[0.98] w-full sm:w-auto"
           >
             <Plus size={16} />
             Add Project
@@ -105,34 +108,34 @@ const ProjectGallery = () => {
         </div>
 
         {/* ================= STATISTICS DISPLAY ================= */}
-        <div className="grid gap-3 sm:gap-4 grid-cols-2">
+        <div className="grid gap-4 grid-cols-2">
           {/* Card 1 */}
-          <div className="group rounded-xl border border-slate-800/80 bg-[#0e1626] p-3 sm:p-5 flex items-center justify-between transition-all duration-300 hover:border-slate-700 hover:bg-[#111a2e]">
+          <div className="group rounded-xl border border-slate-200 bg-white p-4 sm:p-5 flex items-center justify-between transition-all duration-200 hover:shadow-md">
             <div className="space-y-0.5 min-w-0">
-              <p className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-slate-400 truncate">
+              <p className="font-mono text-[10px] font-bold uppercase tracking-widest text-slate-500 truncate">
                 Total Projects
               </p>
-              <h2 className="text-xl sm:text-3xl font-bold text-white tracking-tight truncate">
+              <h2 className="text-xl sm:text-3xl font-bold text-slate-900 tracking-tight truncate">
                 {statistics.total_projects}
               </h2>
             </div>
-            <div className="rounded-lg sm:rounded-xl bg-blue-500/10 p-2 sm:p-3 text-blue-400 group-hover:scale-105 transition-transform duration-300 shrink-0">
-              <FolderGit2 className="h-4 w-4 sm:h-6 sm:w-6" />
+            <div className="rounded-xl bg-cyan-50 p-2.5 sm:p-3 text-cyan-600 group-hover:scale-105 transition-transform shrink-0">
+              <FolderGit2 className="h-5 w-5 sm:h-6 sm:w-6" />
             </div>
           </div>
 
           {/* Card 2 */}
-          <div className="group rounded-xl border border-slate-800/80 bg-[#0e1626] p-3 sm:p-5 flex items-center justify-between transition-all duration-300 hover:border-slate-700 hover:bg-[#111a2e]">
+          <div className="group rounded-xl border border-slate-200 bg-white p-4 sm:p-5 flex items-center justify-between transition-all duration-200 hover:shadow-md">
             <div className="space-y-0.5 min-w-0">
-              <p className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-slate-400 truncate">
+              <p className="font-mono text-[10px] font-bold uppercase tracking-widest text-slate-500 truncate">
                 Active Teams
               </p>
-              <h2 className="text-xl sm:text-3xl font-bold text-white tracking-tight truncate">
+              <h2 className="text-xl sm:text-3xl font-bold text-slate-900 tracking-tight truncate">
                 {statistics.total_teams}
               </h2>
             </div>
-            <div className="rounded-lg sm:rounded-xl bg-cyan-500/10 p-2 sm:p-3 text-cyan-400 group-hover:scale-105 transition-transform duration-300 shrink-0">
-              <Users className="h-4 w-4 sm:h-6 sm:w-6" />
+            <div className="rounded-xl bg-cyan-50 p-2.5 sm:p-3 text-cyan-600 group-hover:scale-105 transition-transform shrink-0">
+              <Users className="h-5 w-5 sm:h-6 sm:w-6" />
             </div>
           </div>
         </div>
@@ -151,21 +154,26 @@ const ProjectGallery = () => {
               setSearch(e.target.value);
               setCurrentPage(1);
             }}
-            className="w-full rounded-xl border border-slate-800 bg-[#0e1626] py-2.5 pl-10 pr-4 text-xs sm:text-sm text-white placeholder:text-slate-500 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
+            className="w-full rounded-md border border-slate-200 bg-white py-2.5 pl-10 pr-4 text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 outline-none focus:border-cyan-500 transition-all shadow-sm"
           />
         </div>
 
         {/* ================= GRID CONTENT PANEL ================= */}
         {loading ? (
           <div className="flex flex-col items-center justify-center py-20 space-y-3">
-            <Loader2 className="h-7 w-7 animate-spin text-blue-500" />
-            <p className="text-xs sm:text-sm text-slate-400">Loading dynamic directory...</p>
+            <Loader2 className="h-7 w-7 animate-spin text-cyan-600" />
+            <p className="text-xs sm:text-sm text-slate-400 font-medium">
+              Loading dynamic directory...
+            </p>
           </div>
         ) : filteredProjects.length === 0 ? (
-          <div className="rounded-xl border border-slate-850 bg-[#0e1626] py-16 px-4 text-center">
-            <h3 className="text-lg font-semibold text-white">No Results Found</h3>
-            <p className="mt-1 text-xs sm:text-sm text-slate-400 max-w-xs mx-auto">
-              We couldn't find matches matching those details. Adjust your search parameters.
+          <div className="rounded-xl border border-slate-200 bg-white py-16 px-4 text-center shadow-sm">
+            <h3 className="text-lg font-bold text-slate-900">
+              No Results Found
+            </h3>
+            <p className="mt-1 text-xs sm:text-sm text-slate-500 max-w-xs mx-auto font-medium">
+              We couldn't find matches matching those details. Adjust your
+              search parameters.
             </p>
           </div>
         ) : (
@@ -182,26 +190,28 @@ const ProjectGallery = () => {
 
             {/* ================= PAGINATION STEPS ================= */}
             {totalPages > 1 && (
-              <div className="mt-8 flex items-center justify-between sm:justify-center gap-3 border-t border-slate-850 pt-5">
+              <div className="mt-8 flex items-center justify-between sm:justify-center gap-3 border-t border-slate-100 pt-5">
                 <button
                   disabled={currentPage === 1}
                   onClick={() => setCurrentPage((prev) => prev - 1)}
-                  className="rounded-xl border border-slate-800 bg-[#0e1626] px-3.5 py-2 text-xs font-semibold text-white shadow transition hover:bg-[#111a2e] disabled:cursor-not-allowed disabled:opacity-40"
+                  className="rounded-md border border-slate-200 bg-white px-3.5 py-2 text-xs font-bold text-slate-700 shadow-sm transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40 active:scale-95"
                 >
                   Prev
                 </button>
 
-                <span className="text-xs font-semibold text-slate-400">
+                <span className="text-xs font-semibold text-slate-500">
                   <span className="hidden xs:inline">Page </span>
-                  <span className="text-white">{currentPage}</span>
+                  <span className="text-slate-900 font-bold">
+                    {currentPage}
+                  </span>
                   <span className="mx-1">/</span>
-                  <span className="text-white">{totalPages}</span>
+                  <span className="text-slate-900 font-bold">{totalPages}</span>
                 </span>
 
                 <button
                   disabled={currentPage === totalPages}
                   onClick={() => setCurrentPage((prev) => prev + 1)}
-                  className="rounded-xl border border-slate-800 bg-[#0e1626] px-3.5 py-2 text-xs font-semibold text-white shadow transition hover:bg-[#111a2e] disabled:cursor-not-allowed disabled:opacity-40"
+                  className="rounded-md border border-slate-200 bg-white px-3.5 py-2 text-xs font-bold text-slate-700 shadow-sm transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40 active:scale-95"
                 >
                   Next
                 </button>
@@ -221,11 +231,21 @@ const ProjectGallery = () => {
           />
         )}
 
+        {showModal && (
+          <AddProjectModal
+            open={showModal}
+            onClose={() => {
+              setShowModal(false);
+              loadGallery();
+            }}
+          />
+        )}
+
         {detailsLoading && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-            <div className="flex flex-col items-center gap-3 rounded-2xl border border-slate-800 bg-[#0e1626] p-6 sm:p-8 shadow-2xl max-w-xs w-full text-center">
-              <Loader2 className="h-6 w-6 sm:h-7 sm:w-7 animate-spin text-blue-500" />
-              <span className="text-xs sm:text-sm font-medium text-slate-200">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4">
+            <div className="flex flex-col items-center gap-3 rounded-xl border border-slate-200 bg-white p-6 sm:p-8 shadow-xl max-w-xs w-full text-center">
+              <Loader2 className="h-6 w-6 sm:h-7 sm:w-7 animate-spin text-cyan-600" />
+              <span className="text-xs sm:text-sm font-bold text-slate-800">
                 Fetching Project Profiles...
               </span>
             </div>

@@ -1,10 +1,11 @@
+// ==========================================
+// 2. pages/student/PurchaseRequestForm.jsx
+// ==========================================
 import { useEffect, useState } from "react";
 import {
   getRequestFormDetails,
   submitPurchaseRequest,
 } from "../../services/purchaseRequestApi";
-import GroupLeaderLayout from "../../layouts/GroupLeaderLayout";
-import { X } from "lucide-react";
 
 const initialForm = {
   componentName: "",
@@ -13,13 +14,10 @@ const initialForm = {
   reason: "",
 };
 
-const PurchaseRequestForm = ({ onSuccess, onClose }) => {
+const PurchaseRequestForm = ({ onSuccess }) => {
   const [team, setTeam] = useState(null);
-
   const [form, setForm] = useState(initialForm);
-
   const [loading, setLoading] = useState(true);
-
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
@@ -46,16 +44,11 @@ const PurchaseRequestForm = ({ onSuccess, onClose }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
       setSubmitting(true);
-
       await submitPurchaseRequest(form);
-
       alert("Purchase request submitted successfully.");
-
       setForm(initialForm);
-
       if (onSuccess) {
         onSuccess();
       }
@@ -67,100 +60,89 @@ const PurchaseRequestForm = ({ onSuccess, onClose }) => {
   };
 
   if (loading) {
-    return <div className="text-white text-lg">Loading...</div>;
+    return (
+      <div className="text-center py-8 text-[#4B5563] text-xs sm:text-sm font-medium">
+        Loading form profiles...
+      </div>
+    );
   }
 
   return (
-    <div className="relative bg-[#0f172a] rounded-2xl p-8">
-   
-
-      <button
-        type="button"
-        onClick={onClose}
-        className="absolute top-5 right-5 w-7 h-7 p-1 rounded-full bg-red-500  text-white text-xl font-bold flex items-center justify-center "
-      >
-        <X size={44} color="#ffffff" />
-      </button>
-
-      <div className="pr-12">
-        <h1 className="text-3xl font-bold text-white">New Purchase Request</h1>
-
-        <p className="text-gray-400 mt-2">
-          Request components that are currently unavailable in the laboratory.
-        </p>
-      </div>
-
-      <form onSubmit={handleSubmit} className="mt-8 space-y-8">
+    <form onSubmit={handleSubmit} className="space-y-5 text-xs sm:text-sm text-[#4B5563]">
       
+      {/* Section 1: Team Info */}
+      <div className="bg-[#F8FAFC]/60 rounded-xl border border-[#E5E7EB] p-4 sm:p-5 space-y-4">
+        <h4 className="text-xs font-bold uppercase tracking-wider text-[#111827]">
+          Team Information
+        </h4>
 
-        <div className="bg-[#10192d] rounded-xl border border-slate-700 p-6">
-          <h2 className="text-xl font-semibold text-white mb-6">
-            Team Information
-          </h2>
+        <div className="grid sm:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-[11px] font-semibold text-[#6B7280] uppercase tracking-wide">
+              Project Title
+            </label>
+            <input
+              value={team?.project_title || ""}
+              disabled
+              className="mt-1.5 w-full rounded-xl border border-[#E5E7EB] bg-[#F8FAFC] text-[#6B7280] px-4 py-2.5 cursor-not-allowed outline-none shadow-sm"
+            />
+          </div>
 
-          <div className="grid md:grid-cols-2 gap-6">
-          
-
-            <div>
-              <label className="text-sm text-gray-400">Project Title</label>
-
-              <input
-                value={team?.project_title || ""}
-                disabled
-                className="mt-2 w-full rounded-lg bg-[#1a2744] px-4 py-3 text-white"
-              />
-            </div>
-
-            <div className="md:col-span-2">
-              <label className="text-sm text-gray-400">Faculty Mentor(s)</label>
-
-              <textarea
-                rows={2}
-                disabled
-                value={
-                  team?.faculty?.map((f) => f.name).join(", ") || "Not Assigned"
-                }
-                className="mt-2 w-full rounded-lg bg-[#1a2744] px-4 py-3 text-white resize-none"
-              />
-            </div>
+          <div className="sm:col-span-2">
+            <label className="block text-[11px] font-semibold text-[#6B7280] uppercase tracking-wide">
+              Faculty Mentor(s)
+            </label>
+            <textarea
+              rows={2}
+              disabled
+              value={
+                team?.faculty?.map((f) => f.name).join(", ") || "Not Assigned"
+              }
+              className="mt-1.5 w-full rounded-xl border border-[#E5E7EB] bg-[#F8FAFC] text-[#6B7280] px-4 py-2.5 cursor-not-allowed resize-none outline-none shadow-sm"
+            />
           </div>
         </div>
+      </div>
 
+      {/* Section 2: Component Specs */}
+      <div className="bg-[#FFFFFF] rounded-xl border border-[#E5E7EB] p-4 sm:p-5 space-y-4 shadow-[0_1px_2px_rgba(0,0,0,0.02)]">
+        <h4 className="text-xs font-bold uppercase tracking-wider text-[#111827]">
+          Component Details
+        </h4>
 
-        <div className="bg-[#10192d] rounded-xl border border-slate-700 p-6">
-          <h2 className="text-xl font-semibold text-white mb-6">
-            Component Details
-          </h2>
+        <div className="space-y-4">
+          <div>
+            <label className="block text-[11px] font-semibold text-[#4B5563] uppercase tracking-wide">
+              Component Name <span className="text-red-500">*</span>
+            </label>
+            <input
+              required
+              name="componentName"
+              value={form.componentName}
+              onChange={handleChange}
+              placeholder="e.g., Arduino Uno R3"
+              className="mt-1.5 w-full rounded-xl border border-[#E5E7EB] bg-[#FFFFFF] px-4 py-2.5 text-[#111827] placeholder:text-slate-400 outline-none focus:border-[#2563EB] transition-all shadow-sm"
+            />
+          </div>
 
-          <div className="space-y-6">
+          <div className="grid sm:grid-cols-2 gap-4">
             <div>
-              <label className="text-sm text-gray-400">Component Name</label>
-
-              <input
-                required
-                name="componentName"
-                value={form.componentName}
-                onChange={handleChange}
-                placeholder="Example: Arduino Uno R3"
-                className="mt-2 w-full rounded-lg bg-[#1a2744] px-4 py-3 text-white"
-              />
-            </div>
-
-            <div>
-              <label className="text-sm text-gray-400">Category</label>
-
+              <label className="block text-[11px] font-semibold text-[#4B5563] uppercase tracking-wide">
+                Category
+              </label>
               <input
                 name="category"
                 value={form.category}
                 onChange={handleChange}
-                placeholder="Optional"
-                className="mt-2 w-full rounded-lg bg-[#1a2744] px-4 py-3 text-white"
+                placeholder="Optional (e.g., Sensors)"
+                className="mt-1.5 w-full rounded-xl border border-[#E5E7EB] bg-[#FFFFFF] px-4 py-2.5 text-[#111827] placeholder:text-slate-400 outline-none focus:border-[#2563EB] transition-all shadow-sm"
               />
             </div>
 
             <div>
-              <label className="text-sm text-gray-400">Quantity Required</label>
-
+              <label className="block text-[11px] font-semibold text-[#4B5563] uppercase tracking-wide">
+                Quantity Required <span className="text-red-500">*</span>
+              </label>
               <input
                 required
                 type="number"
@@ -168,37 +150,39 @@ const PurchaseRequestForm = ({ onSuccess, onClose }) => {
                 name="quantityRequired"
                 value={form.quantityRequired}
                 onChange={handleChange}
-                className="mt-2 w-full rounded-lg bg-[#1a2744] px-4 py-3 text-white"
-              />
-            </div>
-
-            <div>
-              <label className="text-sm text-gray-400">Reason</label>
-
-              <textarea
-                required
-                rows={5}
-                name="reason"
-                value={form.reason}
-                onChange={handleChange}
-                placeholder="Explain why your team needs this component."
-                className="mt-2 w-full rounded-lg bg-[#1a2744] px-4 py-3 text-white resize-none"
+                className="mt-1.5 w-full rounded-xl border border-[#E5E7EB] bg-[#FFFFFF] px-4 py-2.5 text-[#111827] font-mono outline-none focus:border-[#2563EB] transition-all shadow-sm"
               />
             </div>
           </div>
-        </div>
 
-        <div className="flex justify-end pt-2">
-          <button
-            type="submit"
-            disabled={submitting}
-            className="bg-blue-600 hover:bg-blue-700 transition px-8 py-3 rounded-lg text-white font-semibold disabled:opacity-50"
-          >
-            {submitting ? "Submitting..." : "Submit Request"}
-          </button>
+          <div>
+            <label className="block text-[11px] font-semibold text-[#4B5563] uppercase tracking-wide">
+              Reason <span className="text-red-500">*</span>
+            </label>
+            <textarea
+              required
+              rows={4}
+              name="reason"
+              value={form.reason}
+              onChange={handleChange}
+              placeholder="Explain why your project team requires this new equipment component."
+              className="mt-1.5 w-full rounded-xl border border-[#E5E7EB] bg-[#FFFFFF] px-4 py-2.5 text-[#111827] placeholder:text-slate-400 resize-none outline-none focus:border-[#2563EB] transition-all shadow-sm"
+            />
+          </div>
         </div>
-      </form>
-    </div>
+      </div>
+
+      <div className="flex justify-end pt-2 border-t border-[#E5E7EB]">
+        <button
+          type="submit"
+          disabled={submitting}
+          className="w-full sm:w-auto bg-[#2563EB] hover:bg-blue-700 text-white font-bold px-6 py-2.5 sm:py-3 rounded-xl transition shadow-sm active:scale-[0.98] disabled:opacity-40"
+        >
+          {submitting ? "Submitting..." : "Submit Request"}
+        </button>
+      </div>
+
+    </form>
   );
 };
 

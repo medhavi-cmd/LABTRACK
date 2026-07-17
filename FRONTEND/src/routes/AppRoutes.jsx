@@ -37,6 +37,10 @@ import GroupLeaderLayout from "../layouts/GroupLeaderLayout";
 import IssueHistory from "../pages/TeamLeader/IssueHistory";
 import NewRequest from "../pages/TeamLeader/NewRequests";
 import ProjectGallery from "../pages/TeamLeader/ProjectGallery";
+import ForgotPassword from "../pages/Auth/ForgotPassword";
+import VerifyOTP from "../pages/Auth/VerifyOTP";
+import ResetPassword from "../pages/Auth/ResetPassword";
+import AuthCallback from "../pages/Auth/AuthCallback";
 
 const AppRoutes = () => {
   return (
@@ -47,7 +51,15 @@ const AppRoutes = () => {
 
       <Route path="/signup" element={<SignupPage />} />
 
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+
+      <Route path="/verify-otp" element={<VerifyOTP />} />
+
+      <Route path="/reset-password" element={<ResetPassword />} />
+
       <Route path="/about-labtrack" element={<AboutLabtrack />} />
+
+      <Route path="/auth/callback" element={<AuthCallback />} />
 
       {/* GROUP LEADER */}
 

@@ -4,16 +4,16 @@ export const Input = ({ label, id, type, placeholder, value, onChange, icon: Ico
   const [isFocused, setIsFocused] = useState(false);
 
   return (
-    <div className="w-full flex flex-col gap-1.5 mb-4">
+    <div className="w-full flex flex-col gap-1.5 mb-4 text-slate-600">
       <label 
         htmlFor={id} 
-        className="font-mono text-[12px] font-semibold uppercase tracking-wider text-[#bbc9cd]"
+        className="font-mono text-[10px] font-bold uppercase tracking-widest text-slate-500"
       >
         {label}
       </label>
       <div className="relative flex items-center">
         {Icon && (
-          <div className="absolute left-3.5 text-[#859397] pointer-events-none">
+          <div className="absolute left-3.5 text-slate-400 pointer-events-none">
             <Icon size={18} />
           </div>
         )}
@@ -25,10 +25,10 @@ export const Input = ({ label, id, type, placeholder, value, onChange, icon: Ico
           onChange={onChange}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
-          className={`w-full h-11 bg-[#0b1326] text-[#dae2fd] placeholder-[#3c494c] font-sans text-sm rounded-md pl-11 pr-4 outline-none transition-all duration-200 border ${
+          className={`w-full h-11 bg-white text-slate-900 placeholder-slate-400 font-sans text-sm rounded-md pl-11 pr-4 outline-none transition-all duration-200 border shadow-sm ${
             isFocused 
-              ? 'border-[#22d3ee] shadow-[0_0_12px_rgba(34,211,238,0.2)]' 
-              : 'border-[#3c494c] hover:border-[#859397]'
+              ? 'border-cyan-500 shadow-[0_0_8px_rgba(6,182,212,0.15)]' 
+              : 'border-slate-200 hover:border-slate-300'
           }`}
         />
       </div>

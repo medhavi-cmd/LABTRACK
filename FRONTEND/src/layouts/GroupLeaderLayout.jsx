@@ -1,3 +1,6 @@
+// ==========================================
+// 3. layouts/GroupLeaderLayout.jsx
+// ==========================================
 import { useState } from "react";
 import Sidebar from "../components/layout/Sidebar";
 import Topbar from "../components/layout/Topbar";
@@ -7,7 +10,7 @@ export default function GroupLeaderLayout({ children }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   return (
-    <div className="flex min-h-screen bg-[#0b1326]">
+    <div className="flex min-h-screen bg-[#F8FAFC]">
    
       {isSidebarOpen && (
         <div
