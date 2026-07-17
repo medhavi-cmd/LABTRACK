@@ -4,6 +4,7 @@ import generateToken from "../utils/generateTokens.js";
 import generateResetToken from "../utils/generateResetToken.js";
 import { sendPasswordResetOtp } from "../services/mailService.js";
 import { verifyPasswordResetOTP, resetPassword } from "../services/passwordResetService.js";
+import { isBMUEmail } from "../utils/emailValidator.js";
 
 
 export const signup = async (req, res) => {
@@ -28,6 +29,13 @@ export const signup = async (req, res) => {
     if (!name || !email || !password) {
       return res.status(400).json({
         message: "Name, email and password are required",
+      });
+    }
+
+    if (!isBMUEmail(email)) {
+      return res.status(400).json({
+        message:
+          "Only BMU email addresses (@bmu.edu.in or @bml.edu.in) are allowed.",
       });
     }
 
@@ -176,6 +184,13 @@ export const login = async (req, res) => {
       });
     }
 
+    if (!isBMUEmail(email)) {
+      return res.status(400).json({
+        message:
+          "Only BMU email addresses (@bmu.edu.in or @bml.edu.in) are allowed.",
+      });
+    }
+
     const result = await pool.query(
       "SELECT * FROM users WHERE email = $1",
       [email.trim().toLowerCase()]
@@ -229,6 +244,13 @@ export const forgotPassword = async (req, res) => {
     if (!email) {
       return res.status(400).json({
         message: "Email is required",
+      });
+    }
+
+    if (!isBMUEmail(email)) {
+      return res.status(400).json({
+        message:
+          "Only BMU email addresses (@bmu.edu.in or @bml.edu.in) are allowed.",
       });
     }
 
@@ -364,6 +386,13 @@ export const resetUserPassword = async (req, res) => {
 export const googleLogin = async (req, res) => {
   try {
     const email = req.googleUser.email;
+
+    if (!isBMUEmail(email)) {
+      return res.status(403).json({
+        message:
+          "Only BMU email addresses (@bmu.edu.in or @bml.edu.in) are allowed.",
+      });
+    }
 
     const result = await pool.query(
       `
