@@ -401,7 +401,7 @@ const IssuedComponents = () => {
  
                   return (
                     <tr
-                      key={item.issue_id}
+                      key={`${item.issue_id}-${item.component_id}`}
                       className="border-t border-slate-800 hover:bg-slate-900/40 transition-colors"
                     >
                       <td className="px-6 py-4">

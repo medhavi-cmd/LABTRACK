@@ -1,123 +1,9 @@
 
-import { useState } from "react";
-import { FiPlus, FiEye, FiInfo, FiX, FiSearch } from "react-icons/fi";
+import { useState, useEffect, useMemo } from "react";
+import { FiPlus, FiEye, FiInfo, FiX, FiSearch, FiAlertTriangle } from "react-icons/fi";
+import { authFetch } from "../../services/api";
  
-const initialData = [
-  {
-    reportId: "DMG-001",
-    component: "Arduino Uno R3",
-    damageType: "Physical Damage",
-    reportDate: "2025-06-02",
-    penalty: 500,
-    status: "Pending",
-    severity: "Medium",
-    description: "Board casing cracked after being dropped during use.",
-    resolutionNotes: "",
-    student: {
-      name: "Aarav Sharma",
-      enrollmentNo: "EME2024001",
-      batch: "2024",
-      group: "Group 1",
-      email: "aarav@bmu.edu.in",
-    },
-  },
-  {
-    reportId: "DMG-002",
-    component: "Raspberry Pi 4 Model B",
-    damageType: "Burnt Component",
-    reportDate: "2025-06-04",
-    penalty: 2000,
-    status: "Resolved",
-    severity: "High",
-    description: "Power regulator burnt out due to incorrect voltage supply.",
-    resolutionNotes: "Student counselled on safe power handling. Penalty collected.",
-    student: {
-      name: "Karan Singh",
-      enrollmentNo: "EME2023052",
-      batch: "2023",
-      group: "Group 2",
-      email: "karan@bmu.edu.in",
-    },
-  },
-  {
-    reportId: "DMG-003",
-    component: "16x2 LCD Display",
-    damageType: "Broken Pin",
-    reportDate: "2025-06-05",
-    penalty: 300,
-    status: "Pending",
-    severity: "Low",
-    description: "One header pin snapped while connecting jumper wires.",
-    resolutionNotes: "",
-    student: {
-      name: "Rohan Verma",
-      enrollmentNo: "EME2023027",
-      batch: "2023",
-      group: "Group 1",
-      email: "rohan@bmu.edu.in",
-    },
-  },
-  {
-    reportId: "DMG-004",
-    component: "DHT11 Temperature Sensor",
-    damageType: "Non-Functional",
-    reportDate: "2025-06-07",
-    penalty: 150,
-    status: "Resolved",
-    severity: "Low",
-    description: "Sensor stopped reporting readings after issue period.",
-    resolutionNotes: "Replaced with new unit from stock. Case closed.",
-    student: {
-      name: "Anjali Rao",
-      enrollmentNo: "EME2024061",
-      batch: "2024",
-      group: "Group 1",
-      email: "anjali@bmu.edu.in",
-    },
-  },
-  {
-    reportId: "DMG-005",
-    component: "Servo Motor SG90",
-    damageType: "Gear Stripped",
-    reportDate: "2025-06-08",
-    penalty: 250,
-    status: "Pending",
-    severity: "Medium",
-    description: "Internal gear teeth stripped from excessive load.",
-    resolutionNotes: "",
-    student: {
-      name: "Sneha Kapoor",
-      enrollmentNo: "EME2024039",
-      batch: "2024",
-      group: "Group 3",
-      email: "sneha@bmu.edu.in",
-    },
-  },
-  {
-    reportId: "DMG-006",
-    component: "Ultrasonic Sensor HC-SR04",
-    damageType: "Water Damage",
-    reportDate: "2025-06-09",
-    penalty: 400,
-    status: "Pending",
-    severity: "High",
-    description: "Sensor exposed to liquid spill during lab session.",
-    resolutionNotes: "",
-    student: {
-      name: "Priya Mehta",
-      enrollmentNo: "EME2024014",
-      batch: "2024",
-      group: "Group 2",
-      email: "priya@bmu.edu.in",
-    },
-  },
-];
- 
-const damageTypeFrequency = [
-  { type: "Physical Damage", count: 12 },
-  { type: "Water Damage", count: 8 },
-  { type: "Burnt Component", count: 5 },
-];
+
  
 const getStatusStyle = (status) => {
   if (status === "Resolved") {
@@ -156,7 +42,6 @@ const StudentInfoModal = ({ student, onClose }) => {
   const fields = [
     { label: "Student Name", value: student.name },
     { label: "Enrollment Number", value: student.enrollmentNo },
-    { label: "Batch", value: student.batch },
     { label: "Group", value: student.group },
     { label: "Email", value: student.email },
   ];
@@ -412,7 +297,9 @@ const AddDamageReportModal = ({ onClose, onAdd }) => {
 };
  
 const DamageReports = () => {
-  const [reports, setReports] = useState(initialData);
+  const [reports, setReports] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
  
   const [selectedReport, setSelectedReport] = useState(null);
@@ -420,13 +307,48 @@ const DamageReports = () => {
   const [isStudentModalOpen, setIsStudentModalOpen] = useState(false);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+
+  const fetchReports = async () => {
+    try {
+      setLoading(true);
+      setError("");
+      const res = await authFetch("http://localhost:5000/api/damage-components");
+      const result = await res.json();
+      if (!res.ok || !result.success) {
+        throw new Error(result.message || "Failed to load damage components.");
+      }
+      setReports(result.data || []);
+    } catch (err) {
+      setError(err.message || "Failed to load damage components.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchReports();
+  }, []);
  
   const totalReports = reports.length;
   const pendingResolution = reports.filter((r) => r.status === "Pending").length;
   const totalPenalties = reports.reduce((sum, r) => sum + r.penalty, 0);
   const highSeverityCases = reports.filter((r) => r.severity === "High").length;
  
-  const maxDamageCount = Math.max(...damageTypeFrequency.map((d) => d.count));
+  const damageTypeFrequency = useMemo(() => {
+    const freq = {};
+    reports.forEach(r => {
+      const type = r.damageType || "Unknown";
+      freq[type] = (freq[type] || 0) + 1;
+    });
+    return Object.entries(freq)
+      .map(([type, count]) => ({ type, count }))
+      .sort((a,b) => b.count - a.count)
+      .slice(0, 5);
+  }, [reports]);
+
+  const maxDamageCount = damageTypeFrequency.length > 0 
+    ? Math.max(...damageTypeFrequency.map((d) => d.count)) 
+    : 1;
  
   const openStudentModal = (student) => {
     setSelectedStudent(student);
@@ -448,36 +370,42 @@ const DamageReports = () => {
     setSelectedReport(null);
   };
  
-  const markResolved = (reportId) => {
-    setReports((prev) =>
-      prev.map((r) =>
-        r.reportId === reportId ? { ...r, status: "Resolved" } : r
-      )
-    );
-    closeReportModal();
+  const markResolved = async (reportId) => {
+    try {
+      const report = reports.find(r => r.reportId === reportId);
+      if (!report) return;
+      const res = await authFetch(`http://localhost:5000/api/damage-components/${report.issue_id}/resolve`, {
+        method: "PATCH",
+      });
+      const result = await res.json();
+      if (!res.ok || !result.success) throw new Error(result.message);
+      
+      setReports((prev) =>
+        prev.map((r) =>
+          r.reportId === reportId ? { ...r, status: "Resolved" } : r
+        )
+      );
+      closeReportModal();
+    } catch (err) {
+      alert("Failed to resolve: " + err.message);
+    }
   };
  
-  const handleAddReport = (form) => {
-    const newReport = {
-      reportId: `DMG-${String(reports.length + 1).padStart(3, "0")}`,
-      component: form.component,
-      damageType: form.damageType,
-      reportDate: new Date().toISOString().split("T")[0],
-      penalty: Number(form.penalty) || 0,
-      status: "Pending",
-      severity: form.severity,
-      description: form.description,
-      resolutionNotes: "",
-      student: {
-        name: "Unassigned",
-        enrollmentNo: "—",
-        batch: "—",
-        group: "—",
-        email: "—",
-      },
-    };
-    setReports((prev) => [newReport, ...prev]);
-    setIsAddModalOpen(false);
+  const handleAddReport = async (form) => {
+    try {
+      const res = await authFetch("http://localhost:5000/api/damage-components", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form)
+      });
+      const result = await res.json();
+      if (!res.ok || !result.success) throw new Error(result.message);
+      
+      setIsAddModalOpen(false);
+      fetchReports(); 
+    } catch (err) {
+      alert("Failed to add report: " + err.message);
+    }
   };
  
   const filteredReports = reports.filter((item) => {
@@ -597,7 +525,22 @@ const DamageReports = () => {
             </thead>
  
             <tbody>
-              {filteredReports.map((item) => (
+              {loading && (
+                <tr>
+                  <td colSpan={8} className="px-6 py-16 text-center text-slate-400">
+                    Loading damage components...
+                  </td>
+                </tr>
+              )}
+              {!loading && error && (
+                <tr>
+                  <td colSpan={8} className="px-6 py-16 text-center text-red-400">
+                    <FiAlertTriangle className="mx-auto mb-2 w-6 h-6" />
+                    {error}
+                  </td>
+                </tr>
+              )}
+              {!loading && !error && filteredReports.map((item) => (
                 <tr
                   key={item.reportId}
                   className="border-t border-slate-800 hover:bg-slate-900/40"
@@ -650,13 +593,15 @@ const DamageReports = () => {
                 </tr>
               ))}
  
-              {filteredReports.length === 0 && (
+              {!loading && !error && filteredReports.length === 0 && (
                 <tr>
                   <td
                     colSpan={8}
                     className="px-6 py-8 text-center text-slate-500"
                   >
-                    No damage components match your search.
+                    {reports.length === 0 
+                      ? "No damaged components found. This is expected if all returned components are in good condition."
+                      : "No damage components match your search."}
                   </td>
                 </tr>
               )}
