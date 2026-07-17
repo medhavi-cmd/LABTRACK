@@ -1,6 +1,3 @@
-// ==========================================
-// 2. pages/student/Settings.jsx
-// ==========================================
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -149,7 +146,7 @@ export default function Settings() {
           </div>
 
           <section className="overflow-hidden rounded-xl border border-[#E5E7EB] bg-[#FFFFFF] shadow-[0_1px_3px_rgba(0,0,0,0.05)]">
-            {/* Card heading */}
+    
             <div className="flex items-center gap-4 border-b border-[#E5E7EB] px-5 py-5 sm:px-7">
               <div className="rounded-lg border border-[#2563EB]/20 bg-[#EFF6FF] p-3">
                 <User className="text-[#2563EB]" size={22} />

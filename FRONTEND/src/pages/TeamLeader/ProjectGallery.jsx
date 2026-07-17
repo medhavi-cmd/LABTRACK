@@ -83,7 +83,6 @@ const ProjectGallery = () => {
   return (
     <GroupLeaderLayout>
       <div className="space-y-6 sm:space-y-8 px-2 sm:px-4 max-w-7xl mx-auto text-slate-600 font-sans">
-        {/* ================= HEADER SECTION ================= */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-slate-200 pb-5 sm:pb-6">
           <div className="space-y-1">
             <p className="font-mono text-xs uppercase tracking-[0.18em] text-[#2563EB]">
@@ -107,9 +106,8 @@ const ProjectGallery = () => {
           </button>
         </div>
 
-        {/* ================= STATISTICS DISPLAY ================= */}
         <div className="grid gap-4 grid-cols-2">
-          {/* Card 1 */}
+     
           <div className="group rounded-xl border border-slate-200 bg-white p-4 sm:p-5 flex items-center justify-between transition-all duration-200 hover:shadow-md">
             <div className="space-y-0.5 min-w-0">
               <p className="font-mono text-[10px] font-bold uppercase tracking-widest text-slate-500 truncate">
@@ -124,7 +122,7 @@ const ProjectGallery = () => {
             </div>
           </div>
 
-          {/* Card 2 */}
+   
           <div className="group rounded-xl border border-slate-200 bg-white p-4 sm:p-5 flex items-center justify-between transition-all duration-200 hover:shadow-md">
             <div className="space-y-0.5 min-w-0">
               <p className="font-mono text-[10px] font-bold uppercase tracking-widest text-slate-500 truncate">
@@ -140,7 +138,6 @@ const ProjectGallery = () => {
           </div>
         </div>
 
-        {/* ================= SEARCH HUB ================= */}
         <div className="relative w-full max-w-md">
           <Search
             size={16}
@@ -158,7 +155,6 @@ const ProjectGallery = () => {
           />
         </div>
 
-        {/* ================= GRID CONTENT PANEL ================= */}
         {loading ? (
           <div className="flex flex-col items-center justify-center py-20 space-y-3">
             <Loader2 className="h-7 w-7 animate-spin text-cyan-600" />
@@ -188,7 +184,6 @@ const ProjectGallery = () => {
               ))}
             </div>
 
-            {/* ================= PAGINATION STEPS ================= */}
             {totalPages > 1 && (
               <div className="mt-8 flex items-center justify-between sm:justify-center gap-3 border-t border-slate-100 pt-5">
                 <button
@@ -220,7 +215,6 @@ const ProjectGallery = () => {
           </>
         )}
 
-        {/* ================= OVERLAY DIALOG MODALS ================= */}
         {showModal && (
           <AddProjectModal
             open={showModal}

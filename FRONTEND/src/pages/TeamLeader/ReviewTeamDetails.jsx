@@ -72,7 +72,6 @@ export default function ReviewTeamDetails() {
 
         <StepIndicator currentStep={3} />
 
-        {/* SECURITY BANNER */}
         <div className="w-full bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-start gap-3">
           <ShieldCheck className="text-[#2563EB] shrink-0 mt-0.5" size={18} />
           <div>
@@ -83,7 +82,6 @@ export default function ReviewTeamDetails() {
           </div>
         </div>
 
-        {/* PROJECT CORE SUMMARY CARD */}
         <div className="bg-[#FFFFFF] border border-[#E5E7EB] rounded-xl p-5 sm:p-6 shadow-sm space-y-5">
           <div className="flex items-center gap-2 border-b border-[#E5E7EB] pb-3">
             <FileText size={18} className="text-[#2563EB]" />
@@ -154,7 +152,6 @@ export default function ReviewTeamDetails() {
           </div>
         </div>
 
-        {/* ARCHITECTURE LEADER SUMMARY */}
         <div className="bg-[#FFFFFF] border border-[#E5E7EB] rounded-xl p-5 sm:p-6 shadow-sm space-y-5">
           <div className="flex items-center gap-2 border-b border-[#E5E7EB] pb-3">
             <Layers size={18} className="text-[#2563EB]" />
@@ -202,7 +199,6 @@ export default function ReviewTeamDetails() {
           </div>
         </div>
 
-        {/* MATRIX TEAM SUMMARY CARDS */}
         <div className="bg-[#FFFFFF] border border-[#E5E7EB] rounded-xl p-5 sm:p-6 shadow-sm space-y-4">
           <div className="flex items-center gap-2 border-b border-[#E5E7EB] pb-3">
             <Users size={18} className="text-[#2563EB]" />
@@ -242,7 +238,6 @@ export default function ReviewTeamDetails() {
           </div>
         </div>
 
-        {/* FINAL INTERACTION CONTROL FOOTER */}
         <div className="flex items-center justify-between bg-[#FFFFFF] border border-[#E5E7EB] rounded-xl p-4 shadow-sm">
           <button
             type="button"

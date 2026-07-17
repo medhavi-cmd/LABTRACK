@@ -68,7 +68,6 @@ const PurchaseRequestForm = ({ onSuccess }) => {
   return (
     <form onSubmit={handleSubmit} className="space-y-5 text-xs sm:text-sm text-[#4B5563]">
       
-      {/* Section 1: Team Info */}
       <div className="bg-[#F8FAFC]/60 rounded-xl border border-[#E5E7EB] p-4 sm:p-5 space-y-4">
         <h4 className="text-xs font-bold uppercase tracking-wider text-[#111827]">
           Team Information
@@ -102,7 +101,6 @@ const PurchaseRequestForm = ({ onSuccess }) => {
         </div>
       </div>
 
-      {/* Section 2: Component Specs */}
       <div className="bg-[#FFFFFF] rounded-xl border border-[#E5E7EB] p-4 sm:p-5 space-y-4 shadow-[0_1px_2px_rgba(0,0,0,0.02)]">
         <h4 className="text-xs font-bold uppercase tracking-wider text-[#111827]">
           Component Details

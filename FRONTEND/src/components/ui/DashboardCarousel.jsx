@@ -1,6 +1,3 @@
-// ==========================================
-// 1. components/ui/DashboardCarousel.jsx
-// ==========================================
 import { useEffect, useState } from "react";
 import {
   CalendarDays,
@@ -100,7 +97,6 @@ export default function DashboardCarousel({
         </motion.div>
       </AnimatePresence>
 
-      {/* Dots */}
       <div className="flex justify-center gap-2 pb-4">
         {slides.map((_, i) => (
           <button

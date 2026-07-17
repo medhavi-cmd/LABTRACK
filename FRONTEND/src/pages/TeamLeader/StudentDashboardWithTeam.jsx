@@ -1,6 +1,3 @@
-// ==========================================
-// 1. pages/student/StudentDashboardWithTeam.jsx
-// ==========================================
 import {
   Package,
   ClipboardList,
@@ -150,7 +147,6 @@ export default function StudentDashboardWithTeam() {
         key={stat.label}
         className="group relative rounded-xl border border-slate-200 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md flex flex-col justify-between min-h-[160px]"
       >
-        {/* Main Content Row */}
         <div className="flex items-start justify-between gap-4">
           <div className="space-y-1">
             <p className="text-xs font-bold uppercase tracking-wider text-slate-400">
@@ -161,13 +157,11 @@ export default function StudentDashboardWithTeam() {
             </p>
           </div>
           
-          {/* Balanced Icon Box on the Right */}
           <div className="rounded-xl bg-blue-50 border border-blue-100 p-3 text-blue-600 transition-colors duration-300 group-hover:bg-blue-600 group-hover:text-white shrink-0">
             <Icon size={22} />
           </div>
         </div>
 
-        {/* Bottom Description */}
         <p className="mt-4 text-xs text-slate-500 leading-relaxed border-t border-slate-50 pt-3">
           {stat.description}
         </p>

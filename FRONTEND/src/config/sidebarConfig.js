@@ -1,4 +1,3 @@
-// src/config/sidebarConfig.js
 
 import {
   LayoutDashboard,

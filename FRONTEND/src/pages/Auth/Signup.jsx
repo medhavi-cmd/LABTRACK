@@ -79,7 +79,7 @@ export default function SignupPage() {
 
   return (
     <div className="h-screen w-full flex bg-slate-50 text-slate-900 font-sans antialiased selection:bg-cyan-500/20 selection:text-cyan-600 overflow-hidden">
-      {/* LEFT SIDE: Clean High-Contrast Tech Panel */}
+
       <div className="relative hidden lg:flex lg:w-1/2 flex-col justify-between p-16 overflow-hidden bg-slate-950 text-white">
         <div
           className="absolute inset-0 pointer-events-none opacity-40"
@@ -118,7 +118,7 @@ export default function SignupPage() {
         <div className="h-10 w-full pointer-events-none" />
       </div>
 
-      {/* RIGHT SIDE: Minimal Light Workspace Form */}
+
       <div className="flex-1 lg:w-1/2 flex items-center justify-center p-6 sm:p-12 lg:p-16 bg-slate-50 overflow-y-auto">
         <motion.div
           className="w-full max-w-[440px] bg-white border border-slate-200/80 rounded-2xl p-8 sm:p-10 shadow-xl shadow-slate-200/40 relative my-auto max-h-[95vh] overflow-y-auto"

@@ -17,10 +17,8 @@ export const StepIndicator = ({ currentStep = 1 }) => {
         </span>
       </div>
 
-      {/* Divider */}
       <div className="w-12 h-[1px] bg-slate-200" />
 
-      {/* Step 2 */}
       <div className="flex items-center gap-2.5">
         <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-colors ${
           currentStep >= 2 ? 'bg-[#2563EB] text-white' : 'border border-slate-200 bg-slate-50 text-slate-400'
@@ -34,10 +32,8 @@ export const StepIndicator = ({ currentStep = 1 }) => {
         </span>
       </div>
 
-      {/* Divider */}
       <div className="w-12 h-[1px] bg-slate-200" />
 
-      {/* Step 3 */}
       <div className="flex items-center gap-2.5">
         <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-colors ${
           currentStep >= 3 ? 'bg-[#2563EB] text-white' : 'border border-slate-200 bg-slate-50 text-slate-400'

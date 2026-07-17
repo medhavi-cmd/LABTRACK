@@ -88,7 +88,6 @@ const ProjectSubmissionForm = ({ onSuccess }) => {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         
-        {/* Cover Image Upload */}
         <div className="rounded-xl border border-slate-200 bg-white p-5 flex flex-col justify-between shadow-sm">
           <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-slate-500 block mb-3">
             Cover Image
@@ -109,7 +108,6 @@ const ProjectSubmissionForm = ({ onSuccess }) => {
           </label>
         </div>
 
-        {/* Gallery Images Upload */}
         <div className="rounded-xl border border-slate-200 bg-white p-5 flex flex-col justify-between shadow-sm">
           <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-slate-500 block mb-3">
             Gallery Images
@@ -130,7 +128,6 @@ const ProjectSubmissionForm = ({ onSuccess }) => {
           </label>
         </div>
 
-        {/* Project Report Upload */}
         <div className="rounded-xl border border-slate-200 bg-white p-5 flex flex-col justify-between shadow-sm">
           <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-slate-500 block mb-3">
             Project Report

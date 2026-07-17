@@ -1,6 +1,3 @@
-// ==========================================
-// 2. pages/student/StudentDashboardNoTeam.jsx
-// ==========================================
 import { useNavigate } from "react-router-dom";
 import { UserCheck, Users } from "lucide-react";
 import GroupLeaderLayout from "../../layouts/GroupLeaderLayout";

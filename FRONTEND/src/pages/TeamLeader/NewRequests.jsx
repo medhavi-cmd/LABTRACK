@@ -1,6 +1,3 @@
-// ==========================================
-// 3. pages/student/NewRequests.jsx (Purchase Requests)
-// ==========================================
 import { useEffect, useState } from "react";
 import GroupLeaderLayout from "../../layouts/GroupLeaderLayout";
 import { getMyPurchaseRequests } from "../../services/purchaseRequestApi";
