@@ -1,10 +1,14 @@
-import React, { useState } from "react";
- 
+import React, { useEffect, useState } from "react";
+import {
+  getProfile,
+  updateProfile,
+} from "../../services/labStaffProfileApi";
+
 const initialProfile = {
-  firstName: "Admin",
-  lastName: "Staff",
-  email: "admin@labtrack.edu",
-  phone: "+1 (555) 123-4567",
+  firstName: "",
+  lastName: "",
+  email: "",
+  phone: "",
 };
  
 const initialToggles = {
@@ -27,7 +31,7 @@ const Toggle = ({ checked, onChange }) => {
       type="button"
       onClick={onChange}
       className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-        checked ? "bg-cyan-500" : "bg-slate-700"
+        checked ? "bg-cyan-500" : "bg-slate-300"
       }`}
     >
       <span
@@ -41,6 +45,10 @@ const Toggle = ({ checked, onChange }) => {
  
 const Settings = () => {
   const [profile, setProfile] = useState(initialProfile);
+  const [loading, setLoading] = useState(true);
+const [saving, setSaving] = useState(false);
+const [error, setError] = useState("");
+const [success, setSuccess] = useState("");
   const [toggles, setToggles] = useState(initialToggles);
   const [systemSettings, setSystemSettings] = useState(initialSystemSettings);
  
@@ -56,9 +64,32 @@ const Settings = () => {
     setSystemSettings((prev) => ({ ...prev, [field]: value }));
   };
  
-  const handleSaveProfile = () => {
-    alert("Profile updated successfully");
-  };
+  const handleSaveProfile = async () => {
+  try {
+    setSaving(true);
+    setError("");
+    setSuccess("");
+
+    const fullName = `${profile.firstName} ${profile.lastName}`.trim();
+
+    await updateProfile({
+      name: fullName,
+      phone_no: profile.phone,
+    });
+
+    setSuccess("Profile updated successfully.");
+
+    await loadProfile();
+  } catch (err) {
+    setError(
+      err?.response?.data?.message ||
+        "Failed to update profile."
+    );
+  } finally {
+    setSaving(false);
+  }
+};
+
  
   const handleUpdateSettings = () => {
     alert("Settings updated successfully");
@@ -91,28 +122,88 @@ const Settings = () => {
       description: "Receive notifications via email",
     },
   ];
- 
+ const splitName = (name = "") => {
+  const parts = name.trim().split(" ");
+
+  if (loading) {
   return (
-    <div className="text-white">
+    <div className="flex items-center justify-center py-20">
+      Loading profile...
+    </div>
+  );
+}
+
+  return {
+    firstName: parts[0] || "",
+    lastName: parts.slice(1).join(" "),
+  };
+};
+
+useEffect(() => {
+  loadProfile();
+}, []);
+const loadProfile = async () => {
+  try {
+    setLoading(true);
+    setError("");
+
+    const response = await getProfile();
+
+    const user = response.data;
+
+    const names = splitName(user.name);
+
+    setProfile({
+      firstName: names.firstName,
+      lastName: names.lastName,
+      email: user.email || "",
+      phone: user.phone_no || "",
+    });
+  } catch (err) {
+    setError(
+      err?.response?.data?.message ||
+        "Failed to load profile."
+    );
+  } finally {
+    setLoading(false);
+  }
+};
+
+
+  return (
+    <div className="">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold">Settings</h1>
-        <p className="text-slate-400 mt-1">
+        <h1 className="ls-title-main">Settings</h1>
+        <p className="ls-text-secondary mt-1">
           Configure system preferences and notifications
         </p>
       </div>
  
       <div className="space-y-6">
         {/* Profile Settings */}
-        <div className="bg-[#0b1730] border border-cyan-900/30 rounded-xl p-5">
-          <h2 className="text-xl font-semibold">Profile Settings</h2>
-          <p className="text-slate-400 mt-1 mb-5">
+        <div className="ls-card">
+          <h2 className="ls-title-card">Profile Settings</h2>
+          <p className="ls-text-secondary mt-1 mb-5">
             Update your account information
           </p>
- 
+
+          {error && (
+  <div className="mb-4 rounded-lg bg-red-100 px-4 py-3 text-red-700">
+    {error}
+  </div>
+)}
+
+{success && (
+  <div className="mb-4 rounded-lg bg-green-100 px-4 py-3 text-green-700">
+    {success}
+  </div>
+)}
+
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div>
-              <label className="block text-sm text-slate-400 mb-2">
+              <label className="block text-sm ls-text-secondary mb-2">
                 First Name
               </label>
               <input
@@ -121,12 +212,12 @@ const Settings = () => {
                 onChange={(e) =>
                   handleProfileChange("firstName", e.target.value)
                 }
-                className="w-full bg-[#0f172a] border border-slate-800 rounded-lg px-4 py-2.5 outline-none focus:border-cyan-500"
+                className="ls-input"
               />
             </div>
  
             <div>
-              <label className="block text-sm text-slate-400 mb-2">
+              <label className="block text-sm ls-text-secondary mb-2">
                 Last Name
               </label>
               <input
@@ -135,26 +226,24 @@ const Settings = () => {
                 onChange={(e) =>
                   handleProfileChange("lastName", e.target.value)
                 }
-                className="w-full bg-[#0f172a] border border-slate-800 rounded-lg px-4 py-2.5 outline-none focus:border-cyan-500"
+                className="ls-input"
               />
             </div>
  
             <div>
-              <label className="block text-sm text-slate-400 mb-2">
+              <label className="block text-sm ls-text-secondary mb-2">
                 Email Address
               </label>
               <input
                 type="email"
                 value={profile.email}
-                onChange={(e) =>
-                  handleProfileChange("email", e.target.value)
-                }
-                className="w-full bg-[#0f172a] border border-slate-800 rounded-lg px-4 py-2.5 outline-none focus:border-cyan-500"
-              />
+                readOnly
+                className="ls-input bg-slate-100 cursor-not-allowed"
+                />
             </div>
  
             <div>
-              <label className="block text-sm text-slate-400 mb-2">
+              <label className="block text-sm ls-text-secondary mb-2">
                 Phone Number
               </label>
               <input
@@ -163,27 +252,28 @@ const Settings = () => {
                 onChange={(e) =>
                   handleProfileChange("phone", e.target.value)
                 }
-                className="w-full bg-[#0f172a] border border-slate-800 rounded-lg px-4 py-2.5 outline-none focus:border-cyan-500"
+                className="ls-input"
               />
             </div>
           </div>
  
-          <button
-            onClick={handleSaveProfile}
-            className="mt-5 bg-cyan-500 hover:bg-cyan-600 px-4 py-2 rounded-lg font-medium transition-colors"
+         <button
+          onClick={handleSaveProfile}
+          disabled={saving}
+          className="mt-5 ls-btn-primary px-4 py-2 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Save Changes
-          </button>
+          {saving ? "Saving..." : "Save Changes"}
+        </button>     
         </div>
  
         {/* Notification Preferences */}
-        <div className="bg-[#0b1730] border border-cyan-900/30 rounded-xl p-5">
-          <h2 className="text-xl font-semibold">Notification Preferences</h2>
-          <p className="text-slate-400 mt-1 mb-5">
+        <div className="ls-card">
+          <h2 className="ls-title-card">Notification Preferences</h2>
+          <p className="ls-text-secondary mt-1 mb-5">
             Manage how you receive notifications
           </p>
  
-          <div className="divide-y divide-slate-800">
+          <div className="divide-y divide-slate-100">
             {notificationItems.map((item) => (
               <div
                 key={item.key}
@@ -191,7 +281,7 @@ const Settings = () => {
               >
                 <div>
                   <h3 className="font-medium">{item.title}</h3>
-                  <p className="text-slate-400 text-sm mt-1">
+                  <p className="ls-text-secondary text-sm mt-1">
                     {item.description}
                   </p>
                 </div>
@@ -205,15 +295,15 @@ const Settings = () => {
         </div>
  
         {/* System Settings */}
-        <div className="bg-[#0b1730] border border-cyan-900/30 rounded-xl p-5">
-          <h2 className="text-xl font-semibold">System Settings</h2>
-          <p className="text-slate-400 mt-1 mb-5">
+        <div className="ls-card">
+          <h2 className="ls-title-card">System Settings</h2>
+          <p className="ls-text-secondary mt-1 mb-5">
             Configure system preferences
           </p>
  
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             <div>
-              <label className="block text-sm text-slate-400 mb-2">
+              <label className="block text-sm ls-text-secondary mb-2">
                 Auto-Approve Threshold (Days)
               </label>
               <input
@@ -222,15 +312,15 @@ const Settings = () => {
                 onChange={(e) =>
                   handleSystemChange("autoApproveThreshold", e.target.value)
                 }
-                className="w-full bg-[#0f172a] border border-slate-800 rounded-lg px-4 py-2.5 outline-none focus:border-cyan-500"
+                className="ls-input"
               />
-              <p className="text-slate-500 text-xs mt-2">
+              <p className="ls-text-secondary text-xs mt-2">
                 Maximum days before pending requests are auto-rejected
               </p>
             </div>
  
             <div>
-              <label className="block text-sm text-slate-400 mb-2">
+              <label className="block text-sm ls-text-secondary mb-2">
                 Default Minimum Stock Level
               </label>
               <input
@@ -239,15 +329,15 @@ const Settings = () => {
                 onChange={(e) =>
                   handleSystemChange("defaultMinStock", e.target.value)
                 }
-                className="w-full bg-[#0f172a] border border-slate-800 rounded-lg px-4 py-2.5 outline-none focus:border-cyan-500"
+                className="ls-input"
               />
-              <p className="text-slate-500 text-xs mt-2">
+              <p className="ls-text-secondary text-xs mt-2">
                 Default minimum quantity for new components
               </p>
             </div>
  
             <div>
-              <label className="block text-sm text-slate-400 mb-2">
+              <label className="block text-sm ls-text-secondary mb-2">
                 Default Return Period (Days)
               </label>
               <input
@@ -256,9 +346,9 @@ const Settings = () => {
                 onChange={(e) =>
                   handleSystemChange("defaultReturnPeriod", e.target.value)
                 }
-                className="w-full bg-[#0f172a] border border-slate-800 rounded-lg px-4 py-2.5 outline-none focus:border-cyan-500"
+                className="ls-input"
               />
-              <p className="text-slate-500 text-xs mt-2">
+              <p className="ls-text-secondary text-xs mt-2">
                 Default return deadline for issued components
               </p>
             </div>
@@ -266,7 +356,7 @@ const Settings = () => {
  
           <button
             onClick={handleUpdateSettings}
-            className="mt-5 bg-cyan-500 hover:bg-cyan-600 px-4 py-2 rounded-lg font-medium transition-colors"
+            className="mt-5 ls-btn-primary px-4 py-2 rounded-lg font-medium transition-colors"
           >
             Update Settings
           </button>

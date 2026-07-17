@@ -16,15 +16,15 @@ const capitalizeCondition = (value) => {
 const getConditionStyle = (condition) => {
   const normalized = condition?.toLowerCase();
   if (normalized === "good") {
-    return "bg-green-500/10 text-green-400 border border-green-500/30";
+    return "bg-green-50 text-green-600 border border-green-200";
   }
   if (normalized === "fair") {
-    return "bg-amber-500/10 text-amber-400 border border-amber-500/30";
+    return "bg-amber-50 text-amber-600 border border-amber-200";
   }
   if (normalized === "damaged") {
-    return "bg-red-500/10 text-red-400 border border-red-500/30";
+    return "bg-red-50 text-red-600 border border-red-200";
   }
-  return "bg-slate-500/10 text-slate-400 border border-slate-500/30";
+  return "bg-slate-100 ls-text-secondary border border-slate-200";
 };
  
 const calculateDuration = (issueDate, returnDate) => {
@@ -63,11 +63,11 @@ const mapReturnRecord = (record) => ({
 // ─── Modal shell ──────────────────────────────────────────────────────────────
 const Modal = ({ children, onClose, maxWidth = "max-w-md" }) => (
   <div
-    className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 px-4 transition-opacity duration-200"
+    className="ls-modal-overlay"
     onClick={onClose}
   >
     <div
-      className={`bg-[#0f172a] border border-slate-800 rounded-xl w-full ${maxWidth} p-6 shadow-xl transition-transform duration-200 scale-100 max-h-[90vh] overflow-y-auto`}
+      className={`ls-card w-full ${maxWidth} p-6 shadow-xl transition-transform duration-200 scale-100 max-h-[90vh] overflow-y-auto`}
       onClick={(e) => e.stopPropagation()}
     >
       {children}
@@ -89,11 +89,11 @@ const StudentInfoModal = ({ student, onClose }) => {
  
   return (
     <Modal onClose={onClose}>
-      <div className="flex items-center justify-between mb-5">
-        <h3 className="text-xl font-semibold">Student Information</h3>
+      <div className="ls-modal-header">
+        <h3 className="ls-title-card">Student Information</h3>
         <button
           onClick={onClose}
-          className="text-slate-400 hover:text-white hover:bg-slate-800 p-1.5 rounded-lg transition-colors"
+          className="ls-text-secondary hover:text-slate-900 hover:bg-slate-100 p-1.5 rounded-lg transition-colors"
         >
           <FiX className="w-5 h-5" />
         </button>
@@ -103,9 +103,9 @@ const StudentInfoModal = ({ student, onClose }) => {
         {fields.map((field) => (
           <div
             key={field.label}
-            className="flex justify-between gap-4 border-b border-slate-800 pb-3 last:border-0 last:pb-0"
+            className="flex justify-between gap-4 border-b border-slate-200 pb-3 last:border-0 last:pb-0"
           >
-            <span className="text-slate-400">{field.label}</span>
+            <span className="ls-text-secondary">{field.label}</span>
             <span className="text-right font-medium">{field.value ?? "—"}</span>
           </div>
         ))}
@@ -113,7 +113,7 @@ const StudentInfoModal = ({ student, onClose }) => {
  
       <button
         onClick={onClose}
-        className="mt-6 w-full bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-lg font-medium transition-colors"
+        className="mt-6 w-full ls-btn-secondary px-4 py-2 rounded-lg font-medium transition-colors"
       >
         Close
       </button>
@@ -137,11 +137,11 @@ const ReturnDetailsModal = ({ returnItem, onClose }) => {
  
   return (
     <Modal onClose={onClose} maxWidth="max-w-lg">
-      <div className="flex items-center justify-between mb-5">
-        <h3 className="text-xl font-semibold">Return Details</h3>
+      <div className="ls-modal-header">
+        <h3 className="ls-title-card">Return Details</h3>
         <button
           onClick={onClose}
-          className="text-slate-400 hover:text-white hover:bg-slate-800 p-1.5 rounded-lg transition-colors"
+          className="ls-text-secondary hover:text-slate-900 hover:bg-slate-100 p-1.5 rounded-lg transition-colors"
         >
           <FiX className="w-5 h-5" />
         </button>
@@ -151,15 +151,15 @@ const ReturnDetailsModal = ({ returnItem, onClose }) => {
         {fields.map((field) => (
           <div
             key={field.label}
-            className="flex justify-between gap-4 border-b border-slate-800 pb-3"
+            className="flex justify-between gap-4 border-b border-slate-200 pb-3"
           >
-            <span className="text-slate-400">{field.label}</span>
+            <span className="ls-text-secondary">{field.label}</span>
             <span className="text-right font-medium">{field.value ?? "—"}</span>
           </div>
         ))}
  
-        <div className="flex justify-between gap-4 border-b border-slate-800 pb-3">
-          <span className="text-slate-400">Condition</span>
+        <div className="flex justify-between gap-4 border-b border-slate-200 pb-3">
+          <span className="ls-text-secondary">Condition</span>
           <span
             className={`px-3 py-1 rounded-full text-sm ${getConditionStyle(
               returnItem?.condition
@@ -169,16 +169,16 @@ const ReturnDetailsModal = ({ returnItem, onClose }) => {
           </span>
         </div>
  
-        <div className="flex justify-between gap-4 border-b border-slate-800 pb-3">
-          <span className="text-slate-400">Return Duration</span>
+        <div className="flex justify-between gap-4 border-b border-slate-200 pb-3">
+          <span className="ls-text-secondary">Return Duration</span>
           <span className="font-medium">
             {duration !== null ? `${duration} Days` : "—"}
           </span>
         </div>
  
         <div className="pt-1">
-          <span className="text-slate-400 block mb-1">Full Notes</span>
-          <p className="text-slate-200 leading-relaxed">
+          <span className="ls-text-secondary block mb-1">Full Notes</span>
+          <p className="text-slate-600 leading-relaxed">
             {returnItem?.notes ?? "—"}
           </p>
         </div>
@@ -186,7 +186,7 @@ const ReturnDetailsModal = ({ returnItem, onClose }) => {
  
       <button
         onClick={onClose}
-        className="mt-6 w-full bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-lg font-medium transition-colors"
+        className="mt-6 w-full ls-btn-secondary px-4 py-2 rounded-lg font-medium transition-colors"
       >
         Close
       </button>
@@ -301,54 +301,54 @@ const ReturnManagement = () => {
  
   // ── Render ─────────────────────────────────────────────────────────────────
   return (
-    <div className="text-white">
+    <div className="">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold">Return Management</h1>
-        <p className="text-slate-400 mt-1">
+        <h1 className="ls-title-main">Return Management</h1>
+        <p className="ls-text-secondary mt-1">
           Track component returns and condition assessments
         </p>
       </div>
  
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
-        <div className="bg-[#0f172a] border border-slate-800 rounded-xl p-5">
-          <p className="text-slate-400">Total Returns This Week</p>
-          <h2 className="text-3xl font-bold mt-2">{loading ? "—" : stats.total}</h2>
+        <div className="ls-stat-card">
+          <p className="ls-text-secondary">Total Returns This Week</p>
+          <h2 className="ls-stat-value">{loading ? "—" : stats.total}</h2>
         </div>
  
-        <div className="bg-[#0f172a] border border-slate-800 rounded-xl p-5">
-          <p className="text-slate-400">Good Condition</p>
-          <h2 className="text-3xl font-bold text-green-400 mt-2">
+        <div className="ls-stat-card">
+          <p className="ls-text-secondary">Good Condition</p>
+          <h2 className="ls-stat-value text-green-600">
             {loading ? "—" : stats.good}
           </h2>
         </div>
  
-        <div className="bg-[#0f172a] border border-slate-800 rounded-xl p-5">
-          <p className="text-slate-400">Fair Condition</p>
-          <h2 className="text-3xl font-bold text-amber-400 mt-2">
+        <div className="ls-stat-card">
+          <p className="ls-text-secondary">Fair Condition</p>
+          <h2 className="ls-title-main text-amber-600 mt-2">
             {loading ? "—" : stats.fair}
           </h2>
         </div>
  
-        <div className="bg-[#0f172a] border border-slate-800 rounded-xl p-5">
-          <p className="text-slate-400">Damaged Returns</p>
-          <h2 className="text-3xl font-bold text-red-400 mt-2">
+        <div className="ls-stat-card">
+          <p className="ls-text-secondary">Damaged Returns</p>
+          <h2 className="ls-stat-value text-red-600">
             {loading ? "—" : stats.damaged}
           </h2>
         </div>
       </div>
  
       {/* Return Condition Summary */}
-      <div className="bg-[#0f172a] border border-slate-800 rounded-xl p-5 mb-8">
+      <div className="ls-stat-card mb-8">
         <h2 className="text-lg font-semibold mb-4">Return Condition Summary</h2>
         <div className="space-y-4">
           <div>
             <div className="flex justify-between text-sm mb-1.5">
               <span>Good Returns</span>
-              <span className="text-slate-400">{loading ? "—" : `${stats.goodPercent}%`}</span>
+              <span className="ls-text-secondary">{loading ? "—" : `${stats.goodPercent}%`}</span>
             </div>
-            <div className="w-full bg-slate-800 rounded-full h-2">
+            <div className="w-full bg-slate-100 rounded-full h-2">
               <div
                 className="bg-green-500 h-2 rounded-full"
                 style={{ width: `${loading ? 0 : stats.goodPercent}%` }}
@@ -359,9 +359,9 @@ const ReturnManagement = () => {
           <div>
             <div className="flex justify-between text-sm mb-1.5">
               <span>Fair Returns</span>
-              <span className="text-slate-400">{loading ? "—" : `${stats.fairPercent}%`}</span>
+              <span className="ls-text-secondary">{loading ? "—" : `${stats.fairPercent}%`}</span>
             </div>
-            <div className="w-full bg-slate-800 rounded-full h-2">
+            <div className="w-full bg-slate-100 rounded-full h-2">
               <div
                 className="bg-amber-500 h-2 rounded-full"
                 style={{ width: `${loading ? 0 : stats.fairPercent}%` }}
@@ -372,9 +372,9 @@ const ReturnManagement = () => {
           <div>
             <div className="flex justify-between text-sm mb-1.5">
               <span>Damaged Returns</span>
-              <span className="text-slate-400">{loading ? "—" : `${stats.damagedPercent}%`}</span>
+              <span className="ls-text-secondary">{loading ? "—" : `${stats.damagedPercent}%`}</span>
             </div>
-            <div className="w-full bg-slate-800 rounded-full h-2">
+            <div className="w-full bg-slate-100 rounded-full h-2">
               <div
                 className="bg-red-500 h-2 rounded-full"
                 style={{ width: `${loading ? 0 : stats.damagedPercent}%` }}
@@ -386,33 +386,33 @@ const ReturnManagement = () => {
  
       {/* Search */}
       <div className="relative mb-6">
-        <FiSearch className="absolute left-4 top-3.5 text-slate-400" />
+        <FiSearch className="absolute left-4 top-3.5 ls-text-secondary" />
         <input
           type="text"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           placeholder="Search by Return ID, Component, or Enrollment No..."
-          className="w-full bg-[#0f172a] border border-slate-800 rounded-lg pl-12 pr-4 py-3 outline-none focus:border-cyan-500"
+          className="ls-input ls-input-search"
         />
       </div>
  
       {/* Table */}
-      <div className="bg-[#0f172a] border border-slate-800 rounded-xl overflow-hidden">
-        <div className="p-5 border-b border-slate-800">
-          <h2 className="text-xl font-semibold">Return History</h2>
+      <div className="ls-card overflow-hidden">
+        <div className="ls-table-header">
+          <h2 className="ls-title-card">Return History</h2>
         </div>
  
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-[#111827]">
+            <thead>
               <tr>
-                <th className="text-left px-6 py-4">Return ID</th>
-                <th className="text-left px-6 py-4">Component</th>
-                <th className="text-left px-6 py-4">Quantity</th>
-                <th className="text-left px-6 py-4">Issue Date</th>
-                <th className="text-left px-6 py-4">Return Date</th>
-                <th className="text-left px-6 py-4">Condition</th>
-                <th className="text-left px-6 py-4">Details</th>
+                <th className="ls-table-th">Return ID</th>
+                <th className="ls-table-th">Component</th>
+                <th className="ls-table-th">Quantity</th>
+                <th className="ls-table-th">Issue Date</th>
+                <th className="ls-table-th">Return Date</th>
+                <th className="ls-table-th">Condition</th>
+                <th className="ls-table-th">Details</th>
               </tr>
             </thead>
  
@@ -421,7 +421,7 @@ const ReturnManagement = () => {
               {loading && (
                 <tr>
                   <td colSpan={7} className="px-6 py-16">
-                    <div className="flex items-center justify-center text-slate-400 gap-3">
+                    <div className="flex items-center justify-center ls-text-secondary gap-3">
                       <svg
                         className="animate-spin w-5 h-5 text-cyan-500"
                         xmlns="http://www.w3.org/2000/svg"
@@ -453,8 +453,8 @@ const ReturnManagement = () => {
                 <tr>
                   <td colSpan={7} className="px-6 py-16">
                     <div className="flex flex-col items-center justify-center gap-2 text-center">
-                      <FiAlertTriangle className="w-6 h-6 text-red-400" />
-                      <p className="text-red-400 font-medium">{error}</p>
+                      <FiAlertTriangle className="w-6 h-6 text-red-600" />
+                      <p className="text-red-600 font-medium">{error}</p>
                     </div>
                   </td>
                 </tr>
@@ -463,7 +463,7 @@ const ReturnManagement = () => {
               {/* Empty — no returns at all */}
               {!loading && !error && returns.length === 0 && (
                 <tr>
-                  <td colSpan={7} className="px-6 py-8 text-center text-slate-500">
+                  <td colSpan={7} className="px-6 py-8 text-center ls-text-secondary">
                     No returned components found.
                   </td>
                 </tr>
@@ -472,7 +472,7 @@ const ReturnManagement = () => {
               {/* Empty — search yielded nothing */}
               {!loading && !error && returns.length > 0 && filteredReturns.length === 0 && (
                 <tr>
-                  <td colSpan={7} className="px-6 py-8 text-center text-slate-500">
+                  <td colSpan={7} className="px-6 py-8 text-center ls-text-secondary">
                     No return records match your search.
                   </td>
                 </tr>
@@ -484,25 +484,25 @@ const ReturnManagement = () => {
                 filteredReturns.map((item) => (
                   <tr
                     key={item.returnId}
-                    className="border-t border-slate-800 hover:bg-slate-900/40"
+                    className="ls-table-tr"
                   >
-                    <td className="px-6 py-4">
+                    <td className="ls-table-td">
                       <div className="flex items-center gap-2">
-                        <span className="text-slate-300">{item.returnId}</span>
+                        <span className="text-slate-600">{item.returnId}</span>
                         <button
                           onClick={() => openStudentModal(item.student)}
-                          className="text-slate-500 hover:text-cyan-400 cursor-pointer transition-colors"
+                          className="ls-text-secondary hover:text-cyan-600 cursor-pointer transition-colors"
                           title="View student details"
                         >
                           <FiInfo className="w-3.5 h-3.5" />
                         </button>
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-slate-300">{item.component}</td>
-                    <td className="px-6 py-4">{item.quantity}</td>
-                    <td className="px-6 py-4 text-slate-300">{item.issueDate ?? "—"}</td>
-                    <td className="px-6 py-4 text-slate-300">{item.returnDate ?? "—"}</td>
-                    <td className="px-6 py-4">
+                    <td className="ls-table-td text-slate-600">{item.component}</td>
+                    <td className="ls-table-td">{item.quantity}</td>
+                    <td className="ls-table-td text-slate-600">{item.issueDate ?? "—"}</td>
+                    <td className="ls-table-td text-slate-600">{item.returnDate ?? "—"}</td>
+                    <td className="ls-table-td">
                       <span
                         className={`px-3 py-1 rounded-full text-sm ${getConditionStyle(
                           item.condition
@@ -511,10 +511,10 @@ const ReturnManagement = () => {
                         {item.condition}
                       </span>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="ls-table-td">
                       <button
                         onClick={() => openDetailsModal(item)}
-                        className="text-cyan-400 hover:text-cyan-300 cursor-pointer transition-colors"
+                        className="text-cyan-600 hover:text-cyan-300 cursor-pointer transition-colors"
                         title="View return details"
                       >
                         <FiEye size={18} />

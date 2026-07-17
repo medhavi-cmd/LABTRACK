@@ -17,22 +17,22 @@ const API_BASE = "http://localhost:5000/api/inventory";
 const STATUS_CONFIG = {
   available: {
     label: "Available",
-    style: "bg-green-500/10 text-green-400 border border-green-500/30",
+    style: "bg-green-50 text-green-600 border border-green-200",
   },
   low_stock: {
     label: "Low Stock",
-    style: "bg-yellow-500/10 text-yellow-400 border border-yellow-500/30",
+    style: "bg-amber-50 text-amber-500 border border-amber-200",
   },
   out_of_stock: {
     label: "Out of Stock",
-    style: "bg-red-500/10 text-red-400 border border-red-500/30",
+    style: "bg-red-50 text-red-600 border border-red-200",
   },
 };
  
 const getStatusConfig = (status) =>
   STATUS_CONFIG[status] ?? {
     label: status ?? "Unknown",
-    style: "bg-slate-500/10 text-slate-400 border border-slate-500/30",
+    style: "bg-slate-100 ls-text-secondary border border-slate-200",
   };
  
 // ─── Empty form state ─────────────────────────────────────────────────────────
@@ -72,11 +72,11 @@ const validateForm = (form) => {
 // ─── Reusable overlay modal wrapper ──────────────────────────────────────────
 const Modal = ({ children, onClose, maxWidth = "max-w-lg" }) => (
   <div
-    className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 px-4"
+    className="ls-modal-overlay"
     onClick={onClose}
   >
     <div
-      className={`bg-[#0f172a] border border-slate-800 rounded-xl w-full ${maxWidth} p-6 shadow-xl max-h-[90vh] overflow-y-auto`}
+      className={`ls-card w-full ${maxWidth} p-6 shadow-xl max-h-[90vh] overflow-y-auto`}
       onClick={(e) => e.stopPropagation()}
     >
       {children}
@@ -87,18 +87,18 @@ const Modal = ({ children, onClose, maxWidth = "max-w-lg" }) => (
 // ─── Field component ──────────────────────────────────────────────────────────
 const Field = ({ label, required, error, children }) => (
   <div>
-    <label className="block text-sm text-slate-400 mb-2">
-      {label} {required && <span className="text-red-400">*</span>}
+    <label className="block text-sm ls-text-secondary mb-2">
+      {label} {required && <span className="text-red-600">*</span>}
     </label>
     {children}
-    {error && <p className="text-red-400 text-xs mt-1">{error}</p>}
+    {error && <p className="text-red-600 text-xs mt-1">{error}</p>}
   </div>
 );
  
 const inputClass =
-  "w-full bg-[#111827] border rounded-lg px-4 py-2.5 outline-none transition-colors";
+  "w-full bg-slate-50 border rounded-lg px-4 py-2.5 outline-none transition-colors";
 const inputStyle = (hasError) =>
-  `${inputClass} ${hasError ? "border-red-500 focus:border-red-400" : "border-slate-800 focus:border-cyan-500"}`;
+  `${inputClass} ${hasError ? "border-red-500 focus:border-red-400" : "border-slate-200 focus:border-cyan-500"}`;
  
 // ─── Add / Edit Form Modal ────────────────────────────────────────────────────
 const ComponentFormModal = ({ initialData, onClose, onSuccess }) => {
@@ -168,12 +168,12 @@ const ComponentFormModal = ({ initialData, onClose, onSuccess }) => {
   return (
     <Modal onClose={onClose}>
       <div className="flex items-center justify-between mb-6">
-        <h3 className="text-xl font-semibold">
+        <h3 className="ls-title-card">
           {isEdit ? "Edit Component" : "Add Component"}
         </h3>
         <button
           onClick={onClose}
-          className="text-slate-400 hover:text-white hover:bg-slate-800 p-1.5 rounded-lg transition-colors"
+          className="ls-text-secondary hover:text-slate-900 hover:bg-slate-100 p-1.5 rounded-lg transition-colors"
         >
           <FiX className="w-5 h-5" />
         </button>
@@ -234,12 +234,12 @@ const ComponentFormModal = ({ initialData, onClose, onSuccess }) => {
           </Field>
         </div>
  
-        <p className="text-slate-500 text-xs">
+        <p className="ls-text-secondary text-xs">
           Status is calculated automatically based on available quantity.
         </p>
  
         {apiError && (
-          <div className="flex items-start gap-2 bg-red-500/10 border border-red-500/30 rounded-lg px-4 py-3 text-red-400 text-sm">
+          <div className="flex items-start gap-2 bg-red-50 border border-red-200 rounded-lg px-4 py-3 text-red-600 text-sm">
             <FiAlertCircle className="w-4 h-4 mt-0.5 shrink-0" />
             {apiError}
           </div>
@@ -250,7 +250,7 @@ const ComponentFormModal = ({ initialData, onClose, onSuccess }) => {
         <button
           onClick={handleSubmit}
           disabled={submitting}
-          className="flex-1 bg-cyan-500 hover:bg-cyan-600 disabled:opacity-50 disabled:cursor-not-allowed px-4 py-2 rounded-lg font-medium transition-colors"
+          className="flex-1 ls-btn-primary disabled:opacity-50 disabled:cursor-not-allowed px-4 py-2 rounded-lg font-medium transition-colors"
         >
           {submitting
             ? isEdit
@@ -263,7 +263,7 @@ const ComponentFormModal = ({ initialData, onClose, onSuccess }) => {
         <button
           onClick={onClose}
           disabled={submitting}
-          className="flex-1 bg-slate-800 hover:bg-slate-700 disabled:opacity-50 px-4 py-2 rounded-lg font-medium transition-colors"
+          className="flex-1 ls-btn-secondary disabled:opacity-50 px-4 py-2 rounded-lg font-medium transition-colors"
         >
           Cancel
         </button>
@@ -297,21 +297,21 @@ const DeleteConfirmModal = ({ component, onClose, onSuccess }) => {
  
   return (
     <Modal onClose={onClose} maxWidth="max-w-md">
-      <div className="flex items-center justify-between mb-5">
-        <h3 className="text-xl font-semibold">Delete Component</h3>
+      <div className="ls-modal-header">
+        <h3 className="ls-title-card">Delete Component</h3>
         <button
           onClick={onClose}
-          className="text-slate-400 hover:text-white hover:bg-slate-800 p-1.5 rounded-lg transition-colors"
+          className="ls-text-secondary hover:text-slate-900 hover:bg-slate-100 p-1.5 rounded-lg transition-colors"
         >
           <FiX className="w-5 h-5" />
         </button>
       </div>
  
-      <div className="flex items-start gap-3 bg-red-500/10 border border-red-500/30 rounded-lg px-4 py-3 mb-5">
-        <FiAlertCircle className="w-5 h-5 text-red-400 mt-0.5 shrink-0" />
-        <p className="text-sm text-slate-300">
+      <div className="flex items-start gap-3 bg-red-50 border border-red-200 rounded-lg px-4 py-3 mb-5">
+        <FiAlertCircle className="w-5 h-5 text-red-600 mt-0.5 shrink-0" />
+        <p className="text-sm text-slate-600">
           Are you sure you want to delete{" "}
-          <span className="font-semibold text-white">
+          <span className="font-semibold text-slate-900">
             {component.component_name}
           </span>
           ? This action cannot be undone.
@@ -319,21 +319,21 @@ const DeleteConfirmModal = ({ component, onClose, onSuccess }) => {
       </div>
  
       {apiError && (
-        <p className="text-red-400 text-sm mb-4">{apiError}</p>
+        <p className="text-red-600 text-sm mb-4">{apiError}</p>
       )}
  
       <div className="flex gap-3">
         <button
           onClick={handleDelete}
           disabled={deleting}
-          className="flex-1 bg-red-500 hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed px-4 py-2 rounded-lg font-medium transition-colors"
+          className="flex-1 ls-btn-danger disabled:opacity-50 disabled:cursor-not-allowed px-4 py-2 rounded-lg font-medium transition-colors"
         >
           {deleting ? "Deleting..." : "Yes, Delete"}
         </button>
         <button
           onClick={onClose}
           disabled={deleting}
-          className="flex-1 bg-slate-800 hover:bg-slate-700 disabled:opacity-50 px-4 py-2 rounded-lg font-medium transition-colors"
+          className="flex-1 ls-btn-secondary disabled:opacity-50 px-4 py-2 rounded-lg font-medium transition-colors"
         >
           Cancel
         </button>
@@ -350,7 +350,7 @@ const Toast = ({ message, onDone }) => {
   }, [onDone]);
  
   return (
-    <div className="fixed bottom-6 right-6 z-50 flex items-center gap-3 bg-[#0f172a] border border-green-500/40 text-green-400 px-5 py-3 rounded-xl shadow-xl text-sm font-medium">
+    <div className="fixed bottom-6 right-6 z-50 flex items-center gap-3 bg-white border border-green-200 text-green-600 px-5 py-3 rounded-xl shadow-xl text-sm font-medium">
       <FiCheckCircle className="w-5 h-5" />
       {message}
     </div>
@@ -442,19 +442,19 @@ const InventoryManagement = () => {
  
   // ── Render ─────────────────────────────────────────────────────────────────
   return (
-    <div className="text-white">
+    <div className="">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-3xl font-bold">Inventory Management</h1>
-          <p className="text-slate-400 mt-1">
+          <h1 className="ls-title-main">Inventory Management</h1>
+          <p className="ls-text-secondary mt-1">
             Manage and monitor laboratory components
           </p>
         </div>
  
         <button
           onClick={() => setShowAddModal(true)}
-          className="flex items-center gap-2 bg-cyan-500 hover:bg-cyan-600 px-4 py-2 rounded-lg font-medium transition-colors"
+          className="flex items-center gap-2 ls-btn-primary px-4 py-2 rounded-lg font-medium transition-colors"
         >
           <FiPlus />
           Add Component
@@ -463,53 +463,53 @@ const InventoryManagement = () => {
  
       {/* Search */}
       <div className="relative mb-8">
-        <FiSearch className="absolute left-4 top-3.5 text-slate-400" />
+        <FiSearch className="absolute left-4 top-3.5 ls-text-secondary" />
         <input
           type="text"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           placeholder="Search by component name or category..."
-          className="w-full bg-[#0f172a] border border-slate-800 rounded-lg pl-12 pr-4 py-3 outline-none focus:border-cyan-500"
+          className="ls-input ls-input-search"
         />
       </div>
  
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
-        <div className="bg-[#0f172a] border border-slate-800 rounded-xl p-5">
-          <p className="text-slate-400">Total Components</p>
-          <h2 className="text-3xl font-bold mt-2">
+        <div className="ls-stat-card">
+          <p className="ls-text-secondary">Total Components</p>
+          <h2 className="ls-stat-value">
             {loading ? "—" : stats.total}
           </h2>
         </div>
-        <div className="bg-[#0f172a] border border-slate-800 rounded-xl p-5">
-          <p className="text-slate-400">Available</p>
-          <h2 className="text-3xl font-bold text-green-400 mt-2">
+        <div className="ls-stat-card">
+          <p className="ls-text-secondary">Available</p>
+          <h2 className="ls-stat-value text-green-600">
             {loading ? "—" : stats.available}
           </h2>
         </div>
-        <div className="bg-[#0f172a] border border-slate-800 rounded-xl p-5">
-          <p className="text-slate-400">Low Stock</p>
-          <h2 className="text-3xl font-bold text-yellow-400 mt-2">
+        <div className="ls-stat-card">
+          <p className="ls-text-secondary">Low Stock</p>
+          <h2 className="ls-stat-value text-amber-500 mt-2">
             {loading ? "—" : stats.lowStock}
           </h2>
         </div>
-        <div className="bg-[#0f172a] border border-slate-800 rounded-xl p-5">
-          <p className="text-slate-400">Out of Stock</p>
-          <h2 className="text-3xl font-bold text-red-400 mt-2">
+        <div className="ls-stat-card">
+          <p className="ls-text-secondary">Out of Stock</p>
+          <h2 className="ls-stat-value text-red-600">
             {loading ? "—" : stats.outOfStock}
           </h2>
         </div>
       </div>
  
       {/* Table Card */}
-      <div className="bg-[#0f172a] border border-slate-800 rounded-xl overflow-hidden">
-        <div className="p-5 border-b border-slate-800">
-          <h2 className="text-xl font-semibold">Components List</h2>
+      <div className="ls-card overflow-hidden">
+        <div className="ls-table-header">
+          <h2 className="ls-title-card">Components List</h2>
         </div>
  
         {/* Loading */}
         {loading && (
-          <div className="flex items-center justify-center py-16 text-slate-400">
+          <div className="flex items-center justify-center py-16 ls-text-secondary">
             <svg
               className="animate-spin w-6 h-6 mr-3 text-cyan-500"
               xmlns="http://www.w3.org/2000/svg"
@@ -528,9 +528,9 @@ const InventoryManagement = () => {
         {/* Error */}
         {!loading && error && (
           <div className="flex flex-col items-center justify-center py-16 gap-3 text-center px-6">
-            <FiAlertCircle className="w-10 h-10 text-red-400" />
-            <p className="text-red-400 font-medium">Failed to load inventory</p>
-            <p className="text-slate-500 text-sm">{error}</p>
+            <FiAlertCircle className="w-10 h-10 text-red-600" />
+            <p className="text-red-600 font-medium">Failed to load inventory</p>
+            <p className="ls-text-secondary text-sm">{error}</p>
           </div>
         )}
  
@@ -538,9 +538,9 @@ const InventoryManagement = () => {
         {!loading && !error && filteredComponents.length === 0 && (
           <div className="flex flex-col items-center justify-center py-16 gap-3 text-center px-6">
             <FiPackage className="w-10 h-10 text-slate-600" />
-            <p className="text-slate-400 font-medium">No components found.</p>
+            <p className="ls-text-secondary font-medium">No components found.</p>
             {searchTerm && (
-              <p className="text-slate-500 text-sm">
+              <p className="ls-text-secondary text-sm">
                 No results for "{searchTerm}". Try a different search term.
               </p>
             )}
@@ -551,14 +551,14 @@ const InventoryManagement = () => {
         {!loading && !error && filteredComponents.length > 0 && (
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-[#111827]">
+              <thead>
                 <tr>
-                  <th className="text-left px-6 py-4">Component</th>
-                  <th className="text-left px-6 py-4">Category</th>
-                  <th className="text-left px-6 py-4">Total Qty</th>
-                  <th className="text-left px-6 py-4">Available Qty</th>
-                  <th className="text-left px-6 py-4">Status</th>
-                  <th className="text-left px-6 py-4">Actions</th>
+                  <th className="ls-table-th">Component</th>
+                  <th className="ls-table-th">Category</th>
+                  <th className="ls-table-th">Total Qty</th>
+                  <th className="ls-table-th">Available Qty</th>
+                  <th className="ls-table-th">Status</th>
+                  <th className="ls-table-th">Actions</th>
                 </tr>
               </thead>
  
@@ -568,39 +568,39 @@ const InventoryManagement = () => {
                   return (
                     <tr
                       key={item.component_id}
-                      className="border-t border-slate-800 hover:bg-slate-900/40"
+                      className="ls-table-tr"
                     >
-                      <td className="px-6 py-4 font-medium">
+                      <td className="ls-table-td font-medium">
                         <div>
                           {item.component_name}
                           {item.description && (
-                            <p className="text-slate-500 text-xs mt-0.5 truncate max-w-[180px]"
+                            <p className="ls-text-secondary text-xs mt-0.5 truncate max-w-[180px]"
                                title={item.description}>
                               {item.description}
                             </p>
                           )}
                         </div>
                       </td>
-                      <td className="px-6 py-4 text-slate-300">{item.category}</td>
-                      <td className="px-6 py-4">{item.total_quantity}</td>
-                      <td className="px-6 py-4">{item.available_quantity}</td>
-                      <td className="px-6 py-4">
+                      <td className="ls-table-td text-slate-600">{item.category}</td>
+                      <td className="ls-table-td">{item.total_quantity}</td>
+                      <td className="ls-table-td">{item.available_quantity}</td>
+                      <td className="ls-table-td">
                         <span className={`px-3 py-1 rounded-full text-sm ${statusConfig.style}`}>
                           {statusConfig.label}
                         </span>
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="ls-table-td">
                         <div className="flex items-center gap-3">
                           <button
                             onClick={() => setEditTarget(item)}
-                            className="text-cyan-400 hover:text-cyan-300 transition-colors"
+                            className="text-cyan-600 hover:text-cyan-300 transition-colors"
                             title="Edit component"
                           >
                             <FiEdit2 className="w-4 h-4" />
                           </button>
                           <button
                             onClick={() => setDeleteTarget(item)}
-                            className="text-red-400 hover:text-red-300 transition-colors"
+                            className="text-red-600 hover:text-red-300 transition-colors"
                             title="Delete component"
                           >
                             <FiTrash2 className="w-4 h-4" />

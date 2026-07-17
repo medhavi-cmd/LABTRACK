@@ -7,28 +7,28 @@ import { authFetch } from "../../services/api";
  
 const getStatusStyle = (status) => {
   if (status === "Resolved") {
-    return "bg-green-500/10 text-green-400 border border-green-500/30";
+    return "bg-green-50 text-green-600 border border-green-200";
   }
-  return "bg-amber-500/10 text-amber-400 border border-amber-500/30";
+  return "bg-amber-50 text-amber-600 border border-amber-200";
 };
  
 const getSeverityStyle = (severity) => {
   if (severity === "High") {
-    return "bg-red-500/10 text-red-400 border border-red-500/30";
+    return "bg-red-50 text-red-600 border border-red-200";
   }
   if (severity === "Medium") {
-    return "bg-yellow-500/10 text-yellow-400 border border-yellow-500/30";
+    return "bg-amber-50 text-amber-500 border border-amber-200";
   }
   return "bg-blue-500/10 text-blue-400 border border-blue-500/30";
 };
  
 const Modal = ({ children, onClose, maxWidth = "max-w-md" }) => (
   <div
-    className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 px-4 transition-opacity duration-200"
+    className="ls-modal-overlay"
     onClick={onClose}
   >
     <div
-      className={`bg-[#0f172a] border border-slate-800 rounded-xl w-full ${maxWidth} p-6 shadow-xl transition-transform duration-200 scale-100 max-h-[90vh] overflow-y-auto`}
+      className={`ls-card w-full ${maxWidth} p-6 shadow-xl transition-transform duration-200 scale-100 max-h-[90vh] overflow-y-auto`}
       onClick={(e) => e.stopPropagation()}
     >
       {children}
@@ -48,11 +48,11 @@ const StudentInfoModal = ({ student, onClose }) => {
  
   return (
     <Modal onClose={onClose}>
-      <div className="flex items-center justify-between mb-5">
-        <h3 className="text-xl font-semibold">Student Information</h3>
+      <div className="ls-modal-header">
+        <h3 className="ls-title-card">Student Information</h3>
         <button
           onClick={onClose}
-          className="text-slate-400 hover:text-white hover:bg-slate-800 p-1.5 rounded-lg transition-colors"
+          className="ls-text-secondary hover:text-slate-900 hover:bg-slate-100 p-1.5 rounded-lg transition-colors"
         >
           <FiX className="w-5 h-5" />
         </button>
@@ -62,9 +62,9 @@ const StudentInfoModal = ({ student, onClose }) => {
         {fields.map((field) => (
           <div
             key={field.label}
-            className="flex justify-between gap-4 border-b border-slate-800 pb-3 last:border-0 last:pb-0"
+            className="flex justify-between gap-4 border-b border-slate-200 pb-3 last:border-0 last:pb-0"
           >
-            <span className="text-slate-400">{field.label}</span>
+            <span className="ls-text-secondary">{field.label}</span>
             <span className="text-right font-medium">{field.value}</span>
           </div>
         ))}
@@ -72,7 +72,7 @@ const StudentInfoModal = ({ student, onClose }) => {
  
       <button
         onClick={onClose}
-        className="mt-6 w-full bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-lg font-medium transition-colors"
+        className="mt-6 w-full ls-btn-secondary px-4 py-2 rounded-lg font-medium transition-colors"
       >
         Close
       </button>
@@ -85,11 +85,11 @@ const DamageReportModal = ({ report, onClose, onMarkResolved }) => {
  
   return (
     <Modal onClose={onClose} maxWidth="max-w-lg">
-      <div className="flex items-center justify-between mb-5">
-        <h3 className="text-xl font-semibold">Damage Components Details</h3>
+      <div className="ls-modal-header">
+        <h3 className="ls-title-card">Damage Components Details</h3>
         <button
           onClick={onClose}
-          className="text-slate-400 hover:text-white hover:bg-slate-800 p-1.5 rounded-lg transition-colors"
+          className="ls-text-secondary hover:text-slate-900 hover:bg-slate-100 p-1.5 rounded-lg transition-colors"
         >
           <FiX className="w-5 h-5" />
         </button>
@@ -98,29 +98,29 @@ const DamageReportModal = ({ report, onClose, onMarkResolved }) => {
       <div className="space-y-4 text-sm">
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <p className="text-slate-400 mb-1">Report ID</p>
+            <p className="ls-text-secondary mb-1">Report ID</p>
             <p className="font-medium">{report.reportId}</p>
           </div>
           <div>
-            <p className="text-slate-400 mb-1">Component</p>
+            <p className="ls-text-secondary mb-1">Component</p>
             <p className="font-medium">{report.component}</p>
           </div>
           <div>
-            <p className="text-slate-400 mb-1">Damage Type</p>
+            <p className="ls-text-secondary mb-1">Damage Type</p>
             <p className="font-medium">{report.damageType}</p>
           </div>
           <div>
-            <p className="text-slate-400 mb-1">Report Date</p>
+            <p className="ls-text-secondary mb-1">Report Date</p>
             <p className="font-medium">{report.reportDate}</p>
           </div>
           <div>
-            <p className="text-slate-400 mb-1">Penalty</p>
-            <p className="font-medium text-red-400">
+            <p className="ls-text-secondary mb-1">Penalty</p>
+            <p className="font-medium text-red-600">
               ₹{report.penalty.toLocaleString()}
             </p>
           </div>
           <div>
-            <p className="text-slate-400 mb-1">Status</p>
+            <p className="ls-text-secondary mb-1">Status</p>
             <span
               className={`inline-block px-3 py-1 rounded-full text-sm ${getStatusStyle(
                 report.status
@@ -132,7 +132,7 @@ const DamageReportModal = ({ report, onClose, onMarkResolved }) => {
         </div>
  
         <div>
-          <p className="text-slate-400 mb-1">Severity Level</p>
+          <p className="ls-text-secondary mb-1">Severity Level</p>
           <span
             className={`inline-block px-3 py-1 rounded-full text-sm ${getSeverityStyle(
               report.severity
@@ -142,16 +142,16 @@ const DamageReportModal = ({ report, onClose, onMarkResolved }) => {
           </span>
         </div>
  
-        <div className="border-t border-slate-800 pt-4">
-          <p className="text-slate-400 mb-1">Damage Description</p>
-          <p className="text-slate-200 leading-relaxed">
+        <div className="border-t border-slate-200 pt-4">
+          <p className="ls-text-secondary mb-1">Damage Description</p>
+          <p className="text-slate-600 leading-relaxed">
             {report.description}
           </p>
         </div>
  
-        <div className="border-t border-slate-800 pt-4">
-          <p className="text-slate-400 mb-1">Resolution Notes</p>
-          <p className="text-slate-200 leading-relaxed">
+        <div className="border-t border-slate-200 pt-4">
+          <p className="ls-text-secondary mb-1">Resolution Notes</p>
+          <p className="text-slate-600 leading-relaxed">
             {report.resolutionNotes || "No resolution notes yet."}
           </p>
         </div>
@@ -161,14 +161,14 @@ const DamageReportModal = ({ report, onClose, onMarkResolved }) => {
         {report.status === "Pending" && (
           <button
             onClick={() => onMarkResolved(report.reportId)}
-            className="flex-1 bg-cyan-500 hover:bg-cyan-600 px-4 py-2 rounded-lg font-medium transition-colors"
+            className="flex-1 ls-btn-primary px-4 py-2 rounded-lg font-medium transition-colors"
           >
             Mark as Resolved
           </button>
         )}
         <button
           onClick={onClose}
-          className="flex-1 bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-lg font-medium transition-colors"
+          className="flex-1 ls-btn-secondary px-4 py-2 rounded-lg font-medium transition-colors"
         >
           Close
         </button>
@@ -197,11 +197,11 @@ const AddDamageReportModal = ({ onClose, onAdd }) => {
  
   return (
     <Modal onClose={onClose} maxWidth="max-w-lg">
-      <div className="flex items-center justify-between mb-5">
-        <h3 className="text-xl font-semibold">New Damage Component</h3>
+      <div className="ls-modal-header">
+        <h3 className="ls-title-card">New Damage Component</h3>
         <button
           onClick={onClose}
-          className="text-slate-400 hover:text-white hover:bg-slate-800 p-1.5 rounded-lg transition-colors"
+          className="ls-text-secondary hover:text-slate-900 hover:bg-slate-100 p-1.5 rounded-lg transition-colors"
         >
           <FiX className="w-5 h-5" />
         </button>
@@ -209,7 +209,7 @@ const AddDamageReportModal = ({ onClose, onAdd }) => {
  
       <div className="space-y-4">
         <div>
-          <label className="block text-sm text-slate-400 mb-2">
+          <label className="block text-sm ls-text-secondary mb-2">
             Component Name
           </label>
           <input
@@ -217,12 +217,12 @@ const AddDamageReportModal = ({ onClose, onAdd }) => {
             value={form.component}
             onChange={(e) => handleChange("component", e.target.value)}
             placeholder="e.g. Arduino Mega 2560"
-            className="w-full bg-[#111827] border border-slate-800 rounded-lg px-4 py-2.5 outline-none focus:border-cyan-500"
+            className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 outline-none focus:border-cyan-500"
           />
         </div>
  
         <div>
-          <label className="block text-sm text-slate-400 mb-2">
+          <label className="block text-sm ls-text-secondary mb-2">
             Damage Type
           </label>
           <input
@@ -230,19 +230,19 @@ const AddDamageReportModal = ({ onClose, onAdd }) => {
             value={form.damageType}
             onChange={(e) => handleChange("damageType", e.target.value)}
             placeholder="e.g. Short Circuit"
-            className="w-full bg-[#111827] border border-slate-800 rounded-lg px-4 py-2.5 outline-none focus:border-cyan-500"
+            className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 outline-none focus:border-cyan-500"
           />
         </div>
  
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm text-slate-400 mb-2">
+            <label className="block text-sm ls-text-secondary mb-2">
               Severity
             </label>
             <select
               value={form.severity}
               onChange={(e) => handleChange("severity", e.target.value)}
-              className="w-full bg-[#111827] border border-slate-800 rounded-lg px-4 py-2.5 outline-none focus:border-cyan-500"
+              className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 outline-none focus:border-cyan-500"
             >
               <option value="Low">Low</option>
               <option value="Medium">Medium</option>
@@ -251,7 +251,7 @@ const AddDamageReportModal = ({ onClose, onAdd }) => {
           </div>
  
           <div>
-            <label className="block text-sm text-slate-400 mb-2">
+            <label className="block text-sm ls-text-secondary mb-2">
               Penalty (₹)
             </label>
             <input
@@ -259,13 +259,13 @@ const AddDamageReportModal = ({ onClose, onAdd }) => {
               value={form.penalty}
               onChange={(e) => handleChange("penalty", e.target.value)}
               placeholder="0"
-              className="w-full bg-[#111827] border border-slate-800 rounded-lg px-4 py-2.5 outline-none focus:border-cyan-500"
+              className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 outline-none focus:border-cyan-500"
             />
           </div>
         </div>
  
         <div>
-          <label className="block text-sm text-slate-400 mb-2">
+          <label className="block text-sm ls-text-secondary mb-2">
             Description
           </label>
           <textarea
@@ -273,7 +273,7 @@ const AddDamageReportModal = ({ onClose, onAdd }) => {
             onChange={(e) => handleChange("description", e.target.value)}
             placeholder="Describe the damage..."
             rows={3}
-            className="w-full bg-[#111827] border border-slate-800 rounded-lg px-4 py-2.5 outline-none focus:border-cyan-500 resize-none"
+            className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 outline-none focus:border-cyan-500 resize-none"
           />
         </div>
       </div>
@@ -281,13 +281,13 @@ const AddDamageReportModal = ({ onClose, onAdd }) => {
       <div className="flex gap-3 mt-6">
         <button
           onClick={handleSubmit}
-          className="flex-1 bg-cyan-500 hover:bg-cyan-600 px-4 py-2 rounded-lg font-medium transition-colors"
+          className="flex-1 ls-btn-primary px-4 py-2 rounded-lg font-medium transition-colors"
         >
           Submit Report
         </button>
         <button
           onClick={onClose}
-          className="flex-1 bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-lg font-medium transition-colors"
+          className="flex-1 ls-btn-secondary px-4 py-2 rounded-lg font-medium transition-colors"
         >
           Cancel
         </button>
@@ -418,19 +418,19 @@ const DamageReports = () => {
   });
  
   return (
-    <div className="text-white">
+    <div className="">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-3xl font-bold">Damage Components</h1>
-          <p className="text-slate-400 mt-1">
+          <h1 className="ls-title-main">Damage Components</h1>
+          <p className="ls-text-secondary mt-1">
             Manage damaged components and their associated penalties
           </p>
         </div>
  
         <button
           onClick={() => setIsAddModalOpen(true)}
-          className="flex items-center gap-2 bg-cyan-500 hover:bg-cyan-600 px-4 py-2 rounded-lg font-medium transition-colors"
+          className="flex items-center gap-2 ls-btn-primary px-4 py-2 rounded-lg font-medium transition-colors"
         >
           <FiPlus />
           New Damage Component
@@ -439,35 +439,35 @@ const DamageReports = () => {
  
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
-        <div className="bg-[#0f172a] border border-slate-800 rounded-xl p-5">
-          <p className="text-slate-400">Total Reports</p>
-          <h2 className="text-3xl font-bold mt-2">{totalReports}</h2>
+        <div className="ls-stat-card">
+          <p className="ls-text-secondary">Total Reports</p>
+          <h2 className="ls-stat-value">{totalReports}</h2>
         </div>
  
-        <div className="bg-[#0f172a] border border-slate-800 rounded-xl p-5">
-          <p className="text-slate-400">Pending Resolution</p>
-          <h2 className="text-3xl font-bold text-amber-400 mt-2">
+        <div className="ls-stat-card">
+          <p className="ls-text-secondary">Pending Resolution</p>
+          <h2 className="ls-title-main text-amber-600 mt-2">
             {pendingResolution}
           </h2>
         </div>
  
-        <div className="bg-[#0f172a] border border-slate-800 rounded-xl p-5">
-          <p className="text-slate-400">Total Penalties</p>
-          <h2 className="text-3xl font-bold text-red-400 mt-2">
+        <div className="ls-stat-card">
+          <p className="ls-text-secondary">Total Penalties</p>
+          <h2 className="ls-stat-value text-red-600">
             ₹{totalPenalties.toLocaleString()}
           </h2>
         </div>
  
-        <div className="bg-[#0f172a] border border-slate-800 rounded-xl p-5">
-          <p className="text-slate-400">High Severity Cases</p>
-          <h2 className="text-3xl font-bold text-red-400 mt-2">
+        <div className="ls-stat-card">
+          <p className="ls-text-secondary">High Severity Cases</p>
+          <h2 className="ls-stat-value text-red-600">
             {highSeverityCases}
           </h2>
         </div>
       </div>
  
       {/* Damage Analytics */}
-      <div className="bg-[#0f172a] border border-slate-800 rounded-xl p-5 mb-8">
+      <div className="ls-stat-card mb-8">
         <h2 className="text-lg font-semibold mb-4">
           Most Common Damage Types
         </h2>
@@ -476,9 +476,9 @@ const DamageReports = () => {
             <div key={item.type}>
               <div className="flex justify-between text-sm mb-1.5">
                 <span>{item.type}</span>
-                <span className="text-slate-400">{item.count}</span>
+                <span className="ls-text-secondary">{item.count}</span>
               </div>
-              <div className="w-full bg-slate-800 rounded-full h-2">
+              <div className="w-full bg-slate-100 rounded-full h-2">
                 <div
                   className="bg-cyan-500 h-2 rounded-full"
                   style={{
@@ -493,48 +493,48 @@ const DamageReports = () => {
  
       {/* Search */}
       <div className="relative mb-6">
-        <FiSearch className="absolute left-4 top-3.5 text-slate-400" />
+        <FiSearch className="absolute left-4 top-3.5 ls-text-secondary" />
         <input
           type="text"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           placeholder="Search by Report ID, Component, or Damage Type..."
-          className="w-full bg-[#0f172a] border border-slate-800 rounded-lg pl-12 pr-4 py-3 outline-none focus:border-cyan-500"
+          className="ls-input ls-input-search"
         />
       </div>
  
       {/* Table */}
-      <div className="bg-[#0f172a] border border-slate-800 rounded-xl overflow-hidden">
-        <div className="p-5 border-b border-slate-800">
-          <h2 className="text-xl font-semibold">All Damage Components</h2>
+      <div className="ls-card overflow-hidden">
+        <div className="ls-table-header">
+          <h2 className="ls-title-card">All Damage Components</h2>
         </div>
  
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-[#111827]">
+            <thead>
               <tr>
-                <th className="text-left px-6 py-4">Report ID</th>
-                <th className="text-left px-6 py-4">Component</th>
-                <th className="text-left px-6 py-4">Damage Type</th>
-                <th className="text-left px-6 py-4">Severity</th>
-                <th className="text-left px-6 py-4">Report Date</th>
-                <th className="text-left px-6 py-4">Penalty</th>
-                <th className="text-left px-6 py-4">Status</th>
-                <th className="text-left px-6 py-4">Actions</th>
+                <th className="ls-table-th">Report ID</th>
+                <th className="ls-table-th">Component</th>
+                <th className="ls-table-th">Damage Type</th>
+                <th className="ls-table-th">Severity</th>
+                <th className="ls-table-th">Report Date</th>
+                <th className="ls-table-th">Penalty</th>
+                <th className="ls-table-th">Status</th>
+                <th className="ls-table-th">Actions</th>
               </tr>
             </thead>
  
             <tbody>
               {loading && (
                 <tr>
-                  <td colSpan={8} className="px-6 py-16 text-center text-slate-400">
+                  <td colSpan={8} className="px-6 py-16 text-center ls-text-secondary">
                     Loading damage components...
                   </td>
                 </tr>
               )}
               {!loading && error && (
                 <tr>
-                  <td colSpan={8} className="px-6 py-16 text-center text-red-400">
+                  <td colSpan={8} className="px-6 py-16 text-center text-red-600">
                     <FiAlertTriangle className="mx-auto mb-2 w-6 h-6" />
                     {error}
                   </td>
@@ -543,23 +543,23 @@ const DamageReports = () => {
               {!loading && !error && filteredReports.map((item) => (
                 <tr
                   key={item.reportId}
-                  className="border-t border-slate-800 hover:bg-slate-900/40"
+                  className="ls-table-tr"
                 >
-                  <td className="px-6 py-4">
+                  <td className="ls-table-td">
                     <div className="flex items-center gap-2">
-                      <span className="text-slate-300">{item.reportId}</span>
+                      <span className="text-slate-600">{item.reportId}</span>
                       <button
                         onClick={() => openStudentModal(item.student)}
-                        className="text-slate-500 hover:text-cyan-400 cursor-pointer transition-colors"
+                        className="ls-text-secondary hover:text-cyan-600 cursor-pointer transition-colors"
                         title="View student details"
                       >
                         <FiInfo className="w-3.5 h-3.5" />
                       </button>
                     </div>
                   </td>
-                  <td className="px-6 py-4">{item.component}</td>
-                  <td className="px-6 py-4 text-slate-300">{item.damageType}</td>
-                  <td className="px-6 py-4">
+                  <td className="ls-table-td">{item.component}</td>
+                  <td className="ls-table-td text-slate-600">{item.damageType}</td>
+                  <td className="ls-table-td">
                     <span
                       className={`px-3 py-1 rounded-full text-sm ${getSeverityStyle(
                         item.severity
@@ -568,11 +568,11 @@ const DamageReports = () => {
                       {item.severity}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-slate-300">{item.reportDate}</td>
-                  <td className="px-6 py-4 text-red-400 font-medium">
+                  <td className="ls-table-td text-slate-600">{item.reportDate}</td>
+                  <td className="ls-table-td text-red-600 font-medium">
                     ₹{item.penalty.toLocaleString()}
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="ls-table-td">
                     <span
                       className={`px-3 py-1 rounded-full text-sm ${getStatusStyle(
                         item.status
@@ -581,10 +581,10 @@ const DamageReports = () => {
                       {item.status}
                     </span>
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="ls-table-td">
                     <button
                       onClick={() => openReportModal(item)}
-                      className="flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors"
+                      className="flex items-center gap-1.5 ls-btn-secondary px-3 py-1.5 rounded-lg text-sm font-medium transition-colors"
                     >
                       <FiEye className="w-4 h-4" />
                       View
@@ -597,7 +597,7 @@ const DamageReports = () => {
                 <tr>
                   <td
                     colSpan={8}
-                    className="px-6 py-8 text-center text-slate-500"
+                    className="px-6 py-8 text-center ls-text-secondary"
                   >
                     {reports.length === 0 
                       ? "No damaged components found. This is expected if all returned components are in good condition."
