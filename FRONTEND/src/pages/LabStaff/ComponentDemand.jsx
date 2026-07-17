@@ -1,321 +1,200 @@
-import { useState } from "react";
-import { FiInfo, FiEye, FiX, FiSearch } from "react-icons/fi";
- 
-const initialData = [
-  {
-    returnId: "RET-001",
-    component: "Arduino Uno R3",
-    quantity: 2,
-    issueDate: "2025-06-01",
-    returnDate: "2025-06-08",
-    condition: "Good",
-    notes: "Returned in original condition.",
-    student: {
-      name: "Aarav Sharma",
-      enrollmentNo: "EME2024001",
-      batch: "2024",
-      group: "Group 1",
-      email: "aarav@bmu.edu.in",
-    },
-  },
-  {
-    returnId: "RET-002",
-    component: "Ultrasonic Sensor HC-SR04",
-    quantity: 1,
-    issueDate: "2025-06-03",
-    returnDate: "2025-06-10",
-    condition: "Fair",
-    notes: "Minor scratches on casing.",
-    student: {
-      name: "Priya Mehta",
-      enrollmentNo: "EME2024014",
-      batch: "2024",
-      group: "Group 2",
-      email: "priya@bmu.edu.in",
-    },
-  },
-  {
-    returnId: "RET-003",
-    component: "16x2 LCD Display",
-    quantity: 1,
-    issueDate: "2025-05-28",
-    returnDate: "2025-06-04",
-    condition: "Damaged",
-    notes: "One pin bent, display partially unresponsive.",
-    student: {
-      name: "Rohan Verma",
-      enrollmentNo: "EME2023027",
-      batch: "2023",
-      group: "Group 1",
-      email: "rohan@bmu.edu.in",
-    },
-  },
-  {
-    returnId: "RET-004",
-    component: "Servo Motor SG90",
-    quantity: 3,
-    issueDate: "2025-06-05",
-    returnDate: "2025-06-12",
-    condition: "Good",
-    notes: "All units working correctly.",
-    student: {
-      name: "Sneha Kapoor",
-      enrollmentNo: "EME2024039",
-      batch: "2024",
-      group: "Group 3",
-      email: "sneha@bmu.edu.in",
-    },
-  },
-  {
-    returnId: "RET-005",
-    component: "Raspberry Pi 4 Model B",
-    quantity: 1,
-    issueDate: "2025-05-30",
-    returnDate: "2025-06-09",
-    condition: "Fair",
-    notes: "SD card slot slightly worn.",
-    student: {
-      name: "Karan Singh",
-      enrollmentNo: "EME2023052",
-      batch: "2023",
-      group: "Group 2",
-      email: "karan@bmu.edu.in",
-    },
-  },
-  {
-    returnId: "RET-006",
-    component: "DHT11 Temperature Sensor",
-    quantity: 2,
-    issueDate: "2025-06-04",
-    returnDate: "2025-06-11",
-    condition: "Damaged",
-    notes: "One sensor not functioning after use.",
-    student: {
-      name: "Anjali Rao",
-      enrollmentNo: "EME2024061",
-      batch: "2024",
-      group: "Group 1",
-      email: "anjali@bmu.edu.in",
-    },
-  },
-];
- 
-const getConditionStyle = (condition) => {
-  if (condition === "Good") {
+import { useEffect, useMemo, useState } from "react";
+import { FiSearch, FiAlertTriangle } from "react-icons/fi";
+import { authFetch } from "../../services/api";
+
+const getDemandStyle = (status) => {
+  const normalized = status?.toLowerCase();
+  if (normalized === "low") {
     return "bg-green-500/10 text-green-400 border border-green-500/30";
   }
-  if (condition === "Fair") {
+  if (normalized === "medium") {
     return "bg-amber-500/10 text-amber-400 border border-amber-500/30";
   }
-  return "bg-red-500/10 text-red-400 border border-red-500/30";
+  if (normalized === "high") {
+    return "bg-orange-500/10 text-orange-400 border border-orange-500/30";
+  }
+  if (normalized === "critical") {
+    return "bg-red-500/10 text-red-400 border border-red-500/30";
+  }
+  return "bg-slate-500/10 text-slate-400 border border-slate-500/30";
 };
- 
-const StudentInfoModal = ({ student, onClose }) => {
-  if (!student) return null;
- 
-  const fields = [
-    { label: "Student Name", value: student.name },
-    { label: "Enrollment Number", value: student.enrollmentNo },
-    { label: "Batch", value: student.batch },
-    { label: "Group", value: student.group },
-    { label: "Email", value: student.email },
-  ];
- 
-  return (
-    <div
-      className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 px-4 transition-opacity duration-200"
-      onClick={onClose}
-    >
-      <div
-        className="bg-[#0f172a] border border-slate-800 rounded-xl w-full max-w-md p-6 shadow-xl transition-transform duration-200 scale-100"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="flex items-center justify-between mb-5">
-          <h3 className="text-xl font-semibold">Student Information</h3>
-          <button
-            onClick={onClose}
-            className="text-slate-400 hover:text-white hover:bg-slate-800 p-1.5 rounded-lg transition-colors"
-          >
-            <FiX className="w-5 h-5" />
-          </button>
-        </div>
- 
-        <div className="space-y-3 text-sm">
-          {fields.map((field) => (
-            <div
-              key={field.label}
-              className="flex justify-between gap-4 border-b border-slate-800 pb-3 last:border-0 last:pb-0"
-            >
-              <span className="text-slate-400">{field.label}</span>
-              <span className="text-right font-medium">{field.value}</span>
-            </div>
-          ))}
-        </div>
- 
-        <button
-          onClick={onClose}
-          className="mt-6 w-full bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-lg font-medium transition-colors"
-        >
-          Close
-        </button>
-      </div>
-    </div>
-  );
-};
- 
-const ReturnDetailsModal = ({ returnItem, onClose }) => {
-  if (!returnItem) return null;
- 
-  const fields = [
-    { label: "Return ID", value: returnItem.returnId },
-    { label: "Component Name", value: returnItem.component },
-    { label: "Quantity", value: returnItem.quantity },
-    { label: "Issue Date", value: returnItem.issueDate },
-    { label: "Return Date", value: returnItem.returnDate },
-  ];
- 
-  return (
-    <div
-      className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 px-4 transition-opacity duration-200"
-      onClick={onClose}
-    >
-      <div
-        className="bg-[#0f172a] border border-slate-800 rounded-xl w-full max-w-md p-6 shadow-xl transition-transform duration-200 scale-100"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="flex items-center justify-between mb-5">
-          <h3 className="text-xl font-semibold">Return Details</h3>
-          <button
-            onClick={onClose}
-            className="text-slate-400 hover:text-white hover:bg-slate-800 p-1.5 rounded-lg transition-colors"
-          >
-            <FiX className="w-5 h-5" />
-          </button>
-        </div>
- 
-        <div className="space-y-3 text-sm">
-          {fields.map((field) => (
-            <div
-              key={field.label}
-              className="flex justify-between gap-4 border-b border-slate-800 pb-3"
-            >
-              <span className="text-slate-400">{field.label}</span>
-              <span className="text-right font-medium">{field.value}</span>
-            </div>
-          ))}
- 
-          <div>
-            <span className="text-slate-400 block mb-2">Condition</span>
-            <span
-              className={`inline-block px-3 py-1 rounded-full text-sm ${getConditionStyle(
-                returnItem.condition
-              )}`}
-            >
-              {returnItem.condition}
-            </span>
-          </div>
- 
-          <div className="border-t border-slate-800 pt-3">
-            <span className="text-slate-400 block mb-1">Notes</span>
-            <p className="text-slate-200 leading-relaxed">
-              {returnItem.notes}
-            </p>
-          </div>
-        </div>
- 
-        <button
-          onClick={onClose}
-          className="mt-6 w-full bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-lg font-medium transition-colors"
-        >
-          Close
-        </button>
-      </div>
-    </div>
-  );
-};
- 
-const ReturnManagement = () => {
-  const [returns] = useState(initialData);
+
+const ComponentDemand = () => {
+  const [demandData, setDemandData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
- 
-  const [selectedStudent, setSelectedStudent] = useState(null);
-  const [selectedReturn, setSelectedReturn] = useState(null);
-  const [isStudentModalOpen, setIsStudentModalOpen] = useState(false);
-  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
- 
-  const totalReturns = returns.length;
-  const goodCondition = returns.filter((r) => r.condition === "Good").length;
-  const fairCondition = returns.filter((r) => r.condition === "Fair").length;
-  const damagedReturns = returns.filter((r) => r.condition === "Damaged").length;
- 
-  const openStudentModal = (student) => {
-    setSelectedStudent(student);
-    setIsStudentModalOpen(true);
-  };
- 
-  const closeStudentModal = () => {
-    setIsStudentModalOpen(false);
-    setSelectedStudent(null);
-  };
- 
-  const openDetailsModal = (returnItem) => {
-    setSelectedReturn(returnItem);
-    setIsDetailsModalOpen(true);
-  };
- 
-  const closeDetailsModal = () => {
-    setIsDetailsModalOpen(false);
-    setSelectedReturn(null);
-  };
- 
-  const filteredReturns = returns.filter((item) => {
-    const term = searchTerm.toLowerCase();
-    return (
-      item.returnId.toLowerCase().includes(term) ||
-      item.component.toLowerCase().includes(term) ||
-      item.student.enrollmentNo.toLowerCase().includes(term)
+
+  // ── Fetch ──────────────────────────────────────────────────────────────────
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadDemand = async () => {
+      try {
+        setLoading(true);
+        setError("");
+
+        const res = await authFetch("http://localhost:5000/api/component-demand");
+        const result = await res.json();
+
+        if (!res.ok || !result?.success) {
+          throw new Error(result?.message || "Failed to load component demand.");
+        }
+
+        if (isMounted) {
+          setDemandData(result.data || []);
+        }
+      } catch (err) {
+        if (isMounted) {
+          setError(err?.message || "Failed to load component demand.");
+          setDemandData([]);
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    loadDemand();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  // ── Stats ──────────────────────────────────────────────────────────────────
+  const stats = useMemo(() => {
+    const total = demandData.length;
+    const critical = demandData.filter((r) => r.demandStatus === "Critical").length;
+    const high = demandData.filter((r) => r.demandStatus === "High").length;
+    const medium = demandData.filter((r) => r.demandStatus === "Medium").length;
+    const low = demandData.filter((r) => r.demandStatus === "Low").length;
+
+    const percentOf = (count) => (total > 0 ? Math.round((count / total) * 100) : 0);
+
+    return {
+      total,
+      critical,
+      high,
+      medium,
+      low,
+      criticalPercent: percentOf(critical),
+      highPercent: percentOf(high),
+      mediumPercent: percentOf(medium),
+      lowPercent: percentOf(low),
+    };
+  }, [demandData]);
+
+  // ── Search ─────────────────────────────────────────────────────────────────
+  const filteredData = useMemo(() => {
+    const term = searchTerm.toLowerCase().trim();
+    if (!term) return demandData;
+    return demandData.filter((item) =>
+      [item?.componentId, item?.componentName, item?.category].some(
+        (field) => field?.toLowerCase().includes(term)
+      )
     );
-  });
- 
+  }, [demandData, searchTerm]);
+
+  // ── Render ─────────────────────────────────────────────────────────────────
   return (
     <div className="text-white">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold">Return Management</h1>
+        <h1 className="text-3xl font-bold">Component Demand</h1>
         <p className="text-slate-400 mt-1">
-          Track component returns and condition assessments
+          Monitor component stock levels and demand status
         </p>
       </div>
- 
+
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
         <div className="bg-[#0f172a] border border-slate-800 rounded-xl p-5">
-          <p className="text-slate-400">Total Returns This Week</p>
-          <h2 className="text-3xl font-bold mt-2">{totalReturns}</h2>
+          <p className="text-slate-400">Total Components</p>
+          <h2 className="text-3xl font-bold mt-2">{loading ? "—" : stats.total}</h2>
         </div>
- 
+
         <div className="bg-[#0f172a] border border-slate-800 rounded-xl p-5">
-          <p className="text-slate-400">Good Condition</p>
+          <p className="text-slate-400">Low Demand</p>
           <h2 className="text-3xl font-bold text-green-400 mt-2">
-            {goodCondition}
+            {loading ? "—" : stats.low}
           </h2>
         </div>
- 
+
         <div className="bg-[#0f172a] border border-slate-800 rounded-xl p-5">
-          <p className="text-slate-400">Fair Condition</p>
-          <h2 className="text-3xl font-bold text-amber-400 mt-2">
-            {fairCondition}
+          <p className="text-slate-400">High Demand</p>
+          <h2 className="text-3xl font-bold text-orange-400 mt-2">
+            {loading ? "—" : stats.high}
           </h2>
         </div>
- 
+
         <div className="bg-[#0f172a] border border-slate-800 rounded-xl p-5">
-          <p className="text-slate-400">Damaged Returns</p>
+          <p className="text-slate-400">Critical (Out of Stock)</p>
           <h2 className="text-3xl font-bold text-red-400 mt-2">
-            {damagedReturns}
+            {loading ? "—" : stats.critical}
           </h2>
         </div>
       </div>
- 
+
+      {/* Demand Status Summary */}
+      <div className="bg-[#0f172a] border border-slate-800 rounded-xl p-5 mb-8">
+        <h2 className="text-lg font-semibold mb-4">Demand Status Summary</h2>
+        <div className="space-y-4">
+          <div>
+            <div className="flex justify-between text-sm mb-1.5">
+              <span>Low Demand</span>
+              <span className="text-slate-400">{loading ? "—" : `${stats.lowPercent}%`}</span>
+            </div>
+            <div className="w-full bg-slate-800 rounded-full h-2">
+              <div
+                className="bg-green-500 h-2 rounded-full"
+                style={{ width: `${loading ? 0 : stats.lowPercent}%` }}
+              ></div>
+            </div>
+          </div>
+
+          <div>
+            <div className="flex justify-between text-sm mb-1.5">
+              <span>Medium Demand</span>
+              <span className="text-slate-400">{loading ? "—" : `${stats.mediumPercent}%`}</span>
+            </div>
+            <div className="w-full bg-slate-800 rounded-full h-2">
+              <div
+                className="bg-amber-500 h-2 rounded-full"
+                style={{ width: `${loading ? 0 : stats.mediumPercent}%` }}
+              ></div>
+            </div>
+          </div>
+
+          <div>
+            <div className="flex justify-between text-sm mb-1.5">
+              <span>High Demand</span>
+              <span className="text-slate-400">{loading ? "—" : `${stats.highPercent}%`}</span>
+            </div>
+            <div className="w-full bg-slate-800 rounded-full h-2">
+              <div
+                className="bg-orange-500 h-2 rounded-full"
+                style={{ width: `${loading ? 0 : stats.highPercent}%` }}
+              ></div>
+            </div>
+          </div>
+
+          <div>
+            <div className="flex justify-between text-sm mb-1.5">
+              <span>Critical Demand</span>
+              <span className="text-slate-400">{loading ? "—" : `${stats.criticalPercent}%`}</span>
+            </div>
+            <div className="w-full bg-slate-800 rounded-full h-2">
+              <div
+                className="bg-red-500 h-2 rounded-full"
+                style={{ width: `${loading ? 0 : stats.criticalPercent}%` }}
+              ></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Search */}
       <div className="relative mb-6">
         <FiSearch className="absolute left-4 top-3.5 text-slate-400" />
@@ -323,81 +202,105 @@ const ReturnManagement = () => {
           type="text"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          placeholder="Search by Return ID, Component, or Enrollment No..."
+          placeholder="Search by Component ID, Name, or Category..."
           className="w-full bg-[#0f172a] border border-slate-800 rounded-lg pl-12 pr-4 py-3 outline-none focus:border-cyan-500"
         />
       </div>
- 
+
       {/* Table */}
       <div className="bg-[#0f172a] border border-slate-800 rounded-xl overflow-hidden">
         <div className="p-5 border-b border-slate-800">
-          <h2 className="text-xl font-semibold">Return History</h2>
+          <h2 className="text-xl font-semibold">Demand Analysis</h2>
         </div>
- 
+
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead className="bg-[#111827]">
               <tr>
-                <th className="text-left px-6 py-4">Return ID</th>
+                <th className="text-left px-6 py-4">Component ID</th>
                 <th className="text-left px-6 py-4">Component</th>
-                <th className="text-left px-6 py-4">Quantity</th>
-                <th className="text-left px-6 py-4">Issue Date</th>
-                <th className="text-left px-6 py-4">Return Date</th>
-                <th className="text-left px-6 py-4">Condition</th>
-                <th className="text-left px-6 py-4">Details</th>
+                <th className="text-left px-6 py-4">Category</th>
+                <th className="text-left px-6 py-4">Total Stock</th>
+                <th className="text-left px-6 py-4">Available Stock</th>
+                <th className="text-left px-6 py-4">Total Requested (All Time)</th>
+                <th className="text-left px-6 py-4">Demand Status</th>
               </tr>
             </thead>
- 
+
             <tbody>
-              {filteredReturns.map((item) => (
-                <tr
-                  key={item.returnId}
-                  className="border-t border-slate-800 hover:bg-slate-900/40"
-                >
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-2">
-                      <span className="text-slate-300">{item.returnId}</span>
-                      <button
-                        onClick={() => openStudentModal(item.student)}
-                        className="text-slate-500 hover:text-cyan-400 cursor-pointer transition-colors"
-                        title="View student details"
+              {/* Loading */}
+              {loading && (
+                <tr>
+                  <td colSpan={7} className="px-6 py-16">
+                    <div className="flex items-center justify-center text-slate-400 gap-3">
+                      <svg
+                        className="animate-spin w-5 h-5 text-cyan-500"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
                       >
-                        <FiInfo className="w-3.5 h-3.5" />
-                      </button>
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        ></circle>
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        ></path>
+                      </svg>
+                      Loading component demand...
                     </div>
                   </td>
-                  <td className="px-6 py-4 text-slate-300">{item.component}</td>
-                  <td className="px-6 py-4">{item.quantity}</td>
-                  <td className="px-6 py-4 text-slate-300">{item.issueDate}</td>
-                  <td className="px-6 py-4 text-slate-300">{item.returnDate}</td>
+                </tr>
+              )}
+
+              {/* Error */}
+              {!loading && error && (
+                <tr>
+                  <td colSpan={7} className="px-6 py-16 text-center text-red-400">
+                    <FiAlertTriangle className="mx-auto mb-2 w-6 h-6" />
+                    {error}
+                  </td>
+                </tr>
+              )}
+
+              {/* Data Rows */}
+              {!loading && !error && filteredData.map((item) => (
+                <tr
+                  key={item.componentId}
+                  className="border-t border-slate-800 hover:bg-slate-900/40"
+                >
+                  <td className="px-6 py-4 text-slate-300">{item.componentId}</td>
+                  <td className="px-6 py-4 font-medium">{item.componentName}</td>
+                  <td className="px-6 py-4 text-slate-300">{item.category}</td>
+                  <td className="px-6 py-4 text-slate-300">{item.totalStock}</td>
+                  <td className="px-6 py-4 text-slate-300">{item.availableStock}</td>
+                  <td className="px-6 py-4 text-slate-300">{item.totalRequested}</td>
                   <td className="px-6 py-4">
                     <span
-                      className={`px-3 py-1 rounded-full text-sm ${getConditionStyle(
-                        item.condition
+                      className={`px-3 py-1 rounded-full text-sm ${getDemandStyle(
+                        item.demandStatus
                       )}`}
                     >
-                      {item.condition}
+                      {item.demandStatus}
                     </span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <button
-                      onClick={() => openDetailsModal(item)}
-                      className="text-cyan-400 hover:text-cyan-300 cursor-pointer transition-colors"
-                      title="View return details"
-                    >
-                      <FiEye size={18} />
-                    </button>
                   </td>
                 </tr>
               ))}
- 
-              {filteredReturns.length === 0 && (
+
+              {/* Empty state */}
+              {!loading && !error && filteredData.length === 0 && (
                 <tr>
                   <td
                     colSpan={7}
                     className="px-6 py-8 text-center text-slate-500"
                   >
-                    No return records match your search.
+                    No component demand records match your search.
                   </td>
                 </tr>
               )}
@@ -405,24 +308,8 @@ const ReturnManagement = () => {
           </table>
         </div>
       </div>
- 
-      {/* Modals */}
-      {isStudentModalOpen && (
-        <StudentInfoModal
-          student={selectedStudent}
-          onClose={closeStudentModal}
-        />
-      )}
- 
-      {isDetailsModalOpen && (
-        <ReturnDetailsModal
-          returnItem={selectedReturn}
-          onClose={closeDetailsModal}
-        />
-      )}
     </div>
   );
 };
- 
-export default ReturnManagement;
- 
+
+export default ComponentDemand;
