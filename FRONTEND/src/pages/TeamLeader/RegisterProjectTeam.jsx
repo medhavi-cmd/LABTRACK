@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FolderPlus, Info, CheckCircle2, Circle, ArrowRight, ChevronDown, Search } from "lucide-react";
-
+import {toast} from "sonner";
 import { StepIndicator } from "../../components/ui/StepIndicator";
 import { ContentCard } from "../../components/ui/ContentCard";
 import { Button } from "../../components/ui/Button";
@@ -67,7 +67,7 @@ export default function RegisterProjectTeam() {
   const handleFormSubmit = (e) => {
     e.preventDefault();
     if (selectedFaculty.length === 0) {
-      alert("Please select at least one faculty mentor.");
+      toast.error("Please select at least one faculty mentor.");
       return;
     }
 

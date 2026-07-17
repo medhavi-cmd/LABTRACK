@@ -1,9 +1,5 @@
-// ==========================================
-// 1. pages/student/StudentDashboard.jsx
-// ==========================================
 import { useEffect, useState } from "react";
 import { Loader2, AlertCircle } from "lucide-react";
-
 import GroupLeaderLayout from "../../layouts/GroupLeaderLayout";
 import StudentDashboardNoTeam from "./StudentDashboardNoTeam";
 import StudentDashboardWithTeam from "./StudentDashboardWithTeam";

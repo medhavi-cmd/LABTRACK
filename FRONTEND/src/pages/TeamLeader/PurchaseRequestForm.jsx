@@ -1,6 +1,4 @@
-// ==========================================
-// 2. pages/student/PurchaseRequestForm.jsx
-// ==========================================
+import {toast} from "sonner";
 import { useEffect, useState } from "react";
 import {
   getRequestFormDetails,
@@ -47,13 +45,13 @@ const PurchaseRequestForm = ({ onSuccess }) => {
     try {
       setSubmitting(true);
       await submitPurchaseRequest(form);
-      alert("Purchase request submitted successfully.");
+      toast.success("Purchase request submitted successfully.");
       setForm(initialForm);
       if (onSuccess) {
         onSuccess();
       }
     } catch (err) {
-      alert(err.message);
+      toast.error(err.message);
     } finally {
       setSubmitting(false);
     }

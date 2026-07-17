@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import GroupLeaderLayout from "../../layouts/GroupLeaderLayout";
 import { completeProfile } from "../../services/studentService";
+import {toast} from "sonner";
 
 export default function CompleteProfile() {
   const navigate = useNavigate();
@@ -33,12 +34,12 @@ export default function CompleteProfile() {
         !formData.year ||
         !formData.semester
       ) {
-        alert("Please fill all required fields");
+        toast.error("Please fill all required fields");
         return;
       }
 
       if (!/^[1-9]\d{9}$/.test(formData.phone_no)) {
-        alert("Phone number must be exactly 10 digits.");
+        toast.error("Phone number must be exactly 10 digits.");
         return;
       }
 
@@ -53,11 +54,11 @@ export default function CompleteProfile() {
         phone_no: formData.phone_no,
       });
 
-      alert("Profile Completed Successfully");
+      toast.success("Profile Completed Successfully");
       navigate("/student/student-dashboard");
     } catch (error) {
       console.log(error);
-      alert(error.response?.data?.message || error.message || "Failed");
+      toast.error(error.response?.data?.message || error.message || "Failed");
     }
   };
 

@@ -5,7 +5,7 @@ import GroupLeaderLayout from "../../layouts/GroupLeaderLayout";
 import GalleryCard from "../../components/ui/GalleryCard";
 import AddProjectModal from "../../components/ui/AddProjectModal";
 import ProjectDetailsModal from "../../components/ui/ProjectDetailsModal";
-
+import {toast} from "sonner";
 import {
   getGalleryProjects,
   getGalleryStatistics,
@@ -74,7 +74,7 @@ const ProjectGallery = () => {
       setSelectedProject(details);
     } catch (error) {
       console.error(error);
-      alert("Unable to load project details.");
+      toast.error("Unable to load project details.");
     } finally {
       setDetailsLoading(false);
     }

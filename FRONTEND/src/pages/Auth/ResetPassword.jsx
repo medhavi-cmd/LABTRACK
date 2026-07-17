@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { useLocation, useNavigate, Link } from "react-router-dom";
-
+import {toast} from "sonner";
 import {
   Lock,
   ArrowLeft,
@@ -36,7 +36,7 @@ export default function ResetPassword() {
     e.preventDefault();
 
     if (password !== confirmPassword) {
-      alert("Passwords do not match.");
+      toast.error("Passwords do not match.");
       return;
     }
 
@@ -49,11 +49,11 @@ export default function ResetPassword() {
         resetToken
       );
 
-      alert(response.message);
+      toast.success(response.message);
 
       navigate("/login");
     } catch (error) {
-      alert(
+      toast.error(
         error.response?.data?.message ||
           "Unable to reset password."
       );

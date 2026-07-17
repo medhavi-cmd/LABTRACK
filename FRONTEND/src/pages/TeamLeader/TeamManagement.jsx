@@ -1,6 +1,3 @@
-// ==========================================
-// 2. pages/student/TeamManagement.jsx
-// ==========================================
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {

@@ -1,10 +1,8 @@
-// ==========================================
-// 3. pages/student/ReviewTeamDetails.jsx
-// ==========================================
+
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Users, ArrowLeft, ShieldCheck, FileText, Layers, Sparkles } from "lucide-react";
-
+import {toast} from "sonner";
 import { StepIndicator } from "../../components/ui/StepIndicator";
 import GroupLeaderLayout from "../../layouts/GroupLeaderLayout";
 import { registerTeam } from "../../services/teamApi";
@@ -48,10 +46,10 @@ export default function ReviewTeamDetails() {
         memberEnrollmentNumbers,
       });
 
-      alert("Team registered successfully!");
+      toast.success("Team registered successfully!");
       navigate("/student/team-management", { replace: true });
     } catch (error) {
-      alert(error.message || "Failed to register team");
+      toast.error(error.message || "Failed to register team");
     } finally {
       setIsSubmitting(false);
     }

@@ -14,8 +14,7 @@ import {
   ArrowRight,
   Briefcase,
 } from "lucide-react";
-
-// Component Imports
+import {toast} from "sonner";
 import { Button } from "../../components/ui/Button";
 import { Input } from "../../components/ui/Input";
 import { RoleSelector } from "../../components/ui/RoleSelector";
@@ -34,28 +33,28 @@ export default function SignupPage() {
     e.preventDefault();
 
     if (!name.trim() || !email.trim() || !password.trim()) {
-      alert("Please fill all required fields");
+      toast.error("Please fill all required fields");
       return;
     }
 
     if (accessRole === "student") {
       if (!enrollmentNo.trim()) {
-        alert("Enrollment number is required");
+        toast.error("Enrollment number is required");
         return;
       }
       if (!/^\d{6}$/.test(enrollmentNo)) {
-  alert("Enrollment number must be exactly 6 digits.");
+        toast.error("Enrollment number must be exactly 6 digits.");
   return;
 }
     }
 
     if (accessRole !== "student") {
       if (!employeeId.trim()) {
-        alert("Employee ID is required");
+        toast.error("Employee ID is required");
         return;
       }
       if (!/^\d+$/.test(employeeId)) {
-        alert("Employee ID must contain numbers only");
+        toast.error("Employee ID must contain numbers only");
         return;
       }
     }
@@ -71,10 +70,10 @@ export default function SignupPage() {
       });
 
       localStorage.setItem("token", response.token);
-      alert("Registration Successful");
+      toast.success("Registration Successful");
       navigate("/login");
     } catch (error) {
-      alert(error.response?.data?.message || "Registration Failed");
+      toast.error(error.response?.data?.message || "Registration Failed");
     }
   };
 

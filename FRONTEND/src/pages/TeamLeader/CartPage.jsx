@@ -1,6 +1,4 @@
-// ==========================================
-// 1. pages/student/CartPage.jsx
-// ==========================================
+import {toast} from "sonner";
 import { useEffect, useState } from "react";
 import {
   Trash2,
@@ -65,11 +63,11 @@ export default function CartPage() {
   const handleSubmit = async () => {
     try {
       await submitRequest("Project Components", cart);
-      alert("Request Submitted Successfully");
+      toast.success("Request Submitted Successfully");
       localStorage.removeItem("cart");
       navigate("/student/student-dashboard");
     } catch (error) {
-      alert(error.message);
+      toast.error(error.message);
     }
   };
 

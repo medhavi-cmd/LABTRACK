@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { useLocation, useNavigate, Link } from "react-router-dom";
-
+import {toast} from "sonner";
 import {
   KeyRound,
   ArrowLeft,
@@ -44,7 +44,7 @@ export default function VerifyOTP() {
         },
       });
     } catch (error) {
-      alert(error.response?.data?.message || "Invalid OTP");
+      toast.error(error.response?.data?.message || "Invalid OTP");
     } finally {
       setLoading(false);
     }

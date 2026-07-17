@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-
+import {toast} from "sonner";
 import { supabase } from "../../lib/supabase";
 import { getProfile } from "../../services/studentService";
 
@@ -65,7 +65,7 @@ export default function AuthCallback() {
       } catch (err) {
         console.error(err);
 
-        alert(
+        toast.error(
           err.response?.data?.message ||
             "Google login failed."
         );

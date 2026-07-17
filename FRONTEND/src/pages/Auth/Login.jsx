@@ -18,6 +18,8 @@ import { Input } from "../../components/ui/Input";
 import { RoleSelector } from "../../components/ui/RoleSelector";
 import { getProfile } from "../../services/studentService";
 import logo from "../../assets/logo.png";
+import {toast} from "sonner";
+
 
 export default function LoginPage() {
   const [accessRole, setAccessRole] = useState("student");
@@ -31,7 +33,7 @@ export default function LoginPage() {
       const response = await loginUser({ email, password });
 
       if (response.user.role !== accessRole) {
-        alert(
+        toast.error(
           `This account belongs to ${response.user.role}. Please select the correct access role.`,
         );
         return;
@@ -50,7 +52,7 @@ export default function LoginPage() {
           }
         } catch (err) {
           console.error("Profile fetch error:", err);
-          alert("Unable to fetch profile");
+          toast.error("Unable to fetch profile");
         }
       } else if (response.user.role === "faculty") {
         navigate("/faculty/dashboard");
@@ -58,7 +60,7 @@ export default function LoginPage() {
         navigate("/lab-staff/dashboard");
       }
     } catch (error) {
-      alert(error.response?.data?.message || "Login Failed");
+      toast.error(error.response?.data?.message || "Login Failed");
     }
   };
 
