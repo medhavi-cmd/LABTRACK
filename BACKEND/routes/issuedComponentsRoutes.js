@@ -1,5 +1,5 @@
 import express from "express";
-import { fetchIssuedComponents } from "../controllers/issuedComponentsController.js";
+import { fetchIssuedComponents, markAsReturned } from "../controllers/issuedComponentsController.js";
 import { requireAuth } from "../middleware/authMiddleware.js";
 import { requireRole } from "../middleware/roleMiddleware.js";
 
@@ -8,5 +8,6 @@ router.use(requireAuth);
 router.use(requireRole("lab_staff"));
 
 router.get("/", fetchIssuedComponents);
+router.patch("/:id/return", markAsReturned);
 
 export default router;
