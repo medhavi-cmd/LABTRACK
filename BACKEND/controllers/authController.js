@@ -360,3 +360,45 @@ export const resetUserPassword = async (req, res) => {
     });
   }
 };
+
+export const googleLogin = async (req, res) => {
+  try {
+    const email = req.googleUser.email;
+
+    const result = await pool.query(
+      `
+      SELECT
+        user_id,
+        role,
+        full_name,
+        email,
+        enrollment_number,
+        employee_id,
+        profile_completed
+      FROM users
+      WHERE email = $1
+      `,
+      [email]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        message:
+          "No LabTrack account exists with this Google email. Please sign up first.",
+      });
+    }
+
+    const user = result.rows[0];
+
+    res.json({
+      token: generateToken(user.user_id, user.role),
+      user,
+    });
+  } catch (error) {
+    console.error("GOOGLE LOGIN ERROR:", error);
+
+    res.status(500).json({
+      message: "Server Error",
+    });
+  }
+};

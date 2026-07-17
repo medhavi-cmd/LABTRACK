@@ -162,7 +162,7 @@ export default function CompleteProfile() {
             <div className="pt-3">
               <button
                 type="submit"
-                className="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-3 px-6 rounded-md shadow-sm transition-all duration-200 text-xs uppercase tracking-wider font-mono active:scale-95"
+                className="w-full bg-[#2563EB] hover:bg-[#1d4ed8] text-white font-bold py-3 px-6 rounded-md shadow-sm transition-all duration-200 text-xs uppercase tracking-wider font-mono active:scale-95"
               >
                 Save Profile Matrix
               </button>

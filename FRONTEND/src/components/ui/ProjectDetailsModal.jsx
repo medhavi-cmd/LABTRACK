@@ -8,7 +8,6 @@ const ProjectDetailsModal = ({ open, onClose, project }) => {
       
       <div className="relative h-[90vh] w-full max-w-6xl overflow-y-auto rounded-xl border border-slate-200 bg-white shadow-xl transition-all duration-300">
         
-        {/* ================= STICKY HEADER ================= */}
         <div className="sticky top-0 z-20 flex items-center justify-between border-b border-slate-200 bg-white/95 backdrop-blur px-6 py-5 md:px-8">
           <div>
             <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-slate-900 tracking-tight">
@@ -28,13 +27,10 @@ const ProjectDetailsModal = ({ open, onClose, project }) => {
           </button>
         </div>
 
-        {/* ================= MAIN CONTENT GRID ================= */}
         <div className="p-6 md:p-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
           
-          {/* LEFT COLUMN: MAIN DETAILS */}
           <div className="lg:col-span-2 space-y-6 sm:space-y-8">
             
-            {/* Cover Image */}
             <div className="overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
               <img
                 src={project.cover_image || "https://placehold.co/800x450?text=Project"}
@@ -43,7 +39,6 @@ const ProjectDetailsModal = ({ open, onClose, project }) => {
               />
             </div>
 
-            {/* Description Card */}
             <section className="bg-slate-50 border border-slate-200 rounded-xl p-5 md:p-6">
               <h3 className="mb-3 text-base sm:text-lg font-bold text-slate-900">
                 Description
@@ -53,7 +48,6 @@ const ProjectDetailsModal = ({ open, onClose, project }) => {
               </p>
             </section>
 
-            {/* Objective Card */}
             <section className="bg-slate-50 border border-slate-200 rounded-xl p-5 md:p-6">
               <h3 className="mb-3 text-base sm:text-lg font-bold text-slate-900">
                 Objective
@@ -63,7 +57,6 @@ const ProjectDetailsModal = ({ open, onClose, project }) => {
               </p>
             </section>
 
-            {/* Sub-Gallery Grid */}
             {project.images && project.images.length > 0 && (
               <section className="space-y-4">
                 <h3 className="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
@@ -86,10 +79,8 @@ const ProjectDetailsModal = ({ open, onClose, project }) => {
             )}
           </div>
 
-          {/* RIGHT COLUMN: SIDEBAR DETAILS */}
           <div className="space-y-6">
             
-            {/* Documents Action Card */}
             <div className="rounded-xl border border-slate-200 bg-slate-50 p-5 space-y-4">
               <h4 className="text-[10px] font-mono font-bold uppercase tracking-widest text-slate-500 flex items-center gap-2">
                 <FileText size={15} /> Documents
@@ -98,14 +89,13 @@ const ProjectDetailsModal = ({ open, onClose, project }) => {
                 href={project.report_file}
                 target="_blank"
                 rel="noreferrer"
-                className="flex items-center justify-center gap-2 w-full rounded-md bg-cyan-600 hover:bg-cyan-700 py-3 px-4 text-xs font-mono font-bold uppercase tracking-wider text-white shadow-sm transition duration-200 active:scale-95"
+                className="flex items-center justify-center gap-2 w-full rounded-md bg-[#2563EB] hover:bg-[#1d4ed8] py-3 px-4 text-xs font-mono font-bold uppercase tracking-wider text-white shadow-sm transition duration-200 active:scale-95"
               >
                 <Download size={15} />
                 Download Report
               </a>
             </div>
 
-            {/* Faculty Guides List */}
             {project.faculty_names && project.faculty_names.length > 0 && (
               <div className="rounded-xl border border-slate-200 bg-slate-50 p-5">
                 <h4 className="mb-3 text-[10px] font-mono font-bold uppercase tracking-widest text-slate-500 flex items-center gap-2">
@@ -122,7 +112,6 @@ const ProjectDetailsModal = ({ open, onClose, project }) => {
               </div>
             )}
 
-            {/* Team Members List */}
             {project.teamMembers && project.teamMembers.length > 0 && (
               <div className="rounded-xl border border-slate-200 bg-slate-50 p-5">
                 <h4 className="mb-3 text-[10px] font-mono font-bold uppercase tracking-widest text-slate-500 flex items-center gap-2">
