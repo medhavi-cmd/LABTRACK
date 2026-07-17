@@ -1,8 +1,6 @@
 import { pool } from "../config/db.js";
 
-export const createStudentProfile =
-async(data)=>{
-
+export const createStudentProfile = async (data) => {
   const {
     user_id,
     enrollment_no,
@@ -11,42 +9,65 @@ async(data)=>{
     section,
     year,
     semester,
-    phone_no
+    phone_no,
   } = data;
 
-  const result = await pool.query(
-    `
-    INSERT INTO students
-    (
-      user_id,
-      enrollment_no,
-      name,
-      branch,
-      section,
-      year,
-      semester,
-      phone_no
-    )
-    VALUES
-    (
-      $1,$2,$3,$4,$5,$6,$7,$8
-    )
-    RETURNING *
-    `,
-    [
-      user_id,
-      enrollment_no,
-      name,
-      branch,
-      section,
-      year,
-      semester,
-      phone_no
-    ]
-  );
+  const client = await pool.connect();
 
-  return result.rows[0];
+  try {
+    await client.query("BEGIN");
+
+    const result = await client.query(
+      `
+      INSERT INTO students
+      (
+        user_id,
+        enrollment_no,
+        name,
+        branch,
+        section,
+        year,
+        semester,
+        phone_no
+      )
+      VALUES
+      (
+        $1,$2,$3,$4,$5,$6,$7,$8
+      )
+      RETURNING *
+      `,
+      [
+        user_id,
+        enrollment_no,
+        name,
+        branch,
+        section,
+        year,
+        semester,
+        phone_no,
+      ]
+    );
+
+    await client.query(
+      `
+      UPDATE users
+      SET profile_completed = true
+      WHERE user_id = $1
+      `,
+      [user_id]
+    );
+
+    await client.query("COMMIT");
+
+    return result.rows[0];
+  } catch (error) {
+    await client.query("ROLLBACK");
+    throw error;
+  } finally {
+    client.release();
+  }
 };
+
 
 export const getStudentProfile =
 async(userId)=>{
