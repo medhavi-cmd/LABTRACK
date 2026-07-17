@@ -1,6 +1,46 @@
-import React from "react";
+import { useEffect, useState } from "react";
+import { getDashboard } from "../../services/dashboardApi";
 
 const Dashboard = () => {
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [dashboardData, setDashboardData] = useState(null);
+
+  useEffect(() => {
+    const fetchDashboard = async () => {
+      try {
+        setLoading(true);
+        setError("");
+        const data = await getDashboard();
+        setDashboardData(data);
+      } catch (_err) {
+        setError("Failed to load dashboard.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDashboard();
+  }, []);
+
+  const getRequestBadgeClass = (status) => {
+    const normalizedStatus = status?.toLowerCase();
+
+    if (normalizedStatus === "pending") return "ls-badge-warning";
+    if (normalizedStatus === "approved") return "ls-badge-success";
+    if (normalizedStatus === "rejected") return "ls-badge-error";
+
+    return "ls-badge-warning";
+  };
+
+  if (loading) {
+    return <div className="">Loading dashboard...</div>;
+  }
+
+  if (error) {
+    return <div className="">{error}</div>;
+  }
+
   return (
     <div className="">
       <div className="mb-8">
@@ -13,22 +53,22 @@ const Dashboard = () => {
       <div className="grid md:grid-cols-4 gap-6 mb-8">
         <div className="ls-stat-card">
           <p className="ls-text-secondary font-medium">Total Components</p>
-          <h2 className="ls-stat-value">245</h2>
+          <h2 className="ls-stat-value">{dashboardData?.stats?.totalComponents ?? 0}</h2>
         </div>
 
         <div className="ls-stat-card">
           <p className="ls-text-secondary font-medium">Pending Requests</p>
-          <h2 className="ls-stat-value text-amber-500">18</h2>
+          <h2 className="ls-stat-value text-amber-500">{dashboardData?.stats?.pendingRequests ?? 0}</h2>
         </div>
 
         <div className="ls-stat-card">
           <p className="ls-text-secondary font-medium">Issued Components</p>
-          <h2 className="ls-stat-value text-cyan-600">324</h2>
+          <h2 className="ls-stat-value text-cyan-600">{dashboardData?.stats?.issuedComponents ?? 0}</h2>
         </div>
 
         <div className="ls-stat-card">
           <p className="ls-text-secondary font-medium">Damage Components</p>
-          <h2 className="ls-stat-value text-red-600">4</h2>
+          <h2 className="ls-stat-value text-red-600">{dashboardData?.stats?.damagedComponents ?? 0}</h2>
         </div>
       </div>
 
@@ -39,20 +79,23 @@ const Dashboard = () => {
           </h2>
 
           <div className="space-y-4">
-            <div className="flex justify-between border-b border-slate-100 pb-3">
-              <span className="ls-text-primary font-medium">Arduino Uno R3</span>
-              <span className="ls-badge-warning">Pending</span>
-            </div>
-
-            <div className="flex justify-between border-b border-slate-100 pb-3">
-              <span className="ls-text-primary font-medium">Raspberry Pi 4</span>
-              <span className="ls-badge-success">Approved</span>
-            </div>
-
-            <div className="flex justify-between">
-              <span className="ls-text-primary font-medium">LED Strip 5m</span>
-              <span className="ls-badge-success">Approved</span>
-            </div>
+            {dashboardData?.recentRequests?.length ? (
+              dashboardData.recentRequests.map((request, index) => (
+                <div
+                  key={`${request.request_id}-${index}`}
+                  className={`flex justify-between ${index !== dashboardData.recentRequests.length - 1 ? "border-b border-slate-100 pb-3" : ""}`}
+                >
+                  <span className="ls-text-primary font-medium">
+                    {request.component_name} ({request.quantity})
+                  </span>
+                  <span className={getRequestBadgeClass(request.status)}>
+                    {request.status}
+                  </span>
+                </div>
+              ))
+            ) : (
+              <div className="ls-text-secondary">No recent requests found.</div>
+            )}
           </div>
         </div>
 
@@ -62,20 +105,19 @@ const Dashboard = () => {
           </h2>
 
           <div className="space-y-4">
-            <div className="flex justify-between border-b border-slate-100 pb-3">
-              <span className="ls-text-primary font-medium">Breadboard</span>
-              <span className="ls-badge-error">2 Left</span>
-            </div>
-
-            <div className="flex justify-between border-b border-slate-100 pb-3">
-              <span className="ls-text-primary font-medium">Servo Motor</span>
-              <span className="ls-badge-error">1 Left</span>
-            </div>
-
-            <div className="flex justify-between">
-              <span className="ls-text-primary font-medium">Temperature Sensor</span>
-              <span className="ls-badge-error">3 Left</span>
-            </div>
+            {dashboardData?.lowStockComponents?.length ? (
+              dashboardData.lowStockComponents.map((component, index) => (
+                <div
+                  key={`${component.component_id}-${index}`}
+                  className={`flex justify-between ${index !== dashboardData.lowStockComponents.length - 1 ? "border-b border-slate-100 pb-3" : ""}`}
+                >
+                  <span className="ls-text-primary font-medium">{component.component_name}</span>
+                  <span className="ls-badge-error">{component.available_quantity} Left</span>
+                </div>
+              ))
+            ) : (
+              <div className="ls-text-secondary">No low stock components.</div>
+            )}
           </div>
         </div>
       </div>

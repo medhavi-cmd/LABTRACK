@@ -122,20 +122,12 @@ const [success, setSuccess] = useState("");
       description: "Receive notifications via email",
     },
   ];
- const splitName = (name = "") => {
-  const parts = name.trim().split(" ");
-
-  if (loading) {
-  return (
-    <div className="flex items-center justify-center py-20">
-      Loading profile...
-    </div>
-  );
-}
+const splitName = (name = "") => {
+  const parts = (name || "").trim().split(" ");
 
   return {
-    firstName: parts[0] || "",
-    lastName: parts.slice(1).join(" "),
+    firstName: parts[0] ?? "",
+    lastName: parts.slice(1).join(" ") ?? "",
   };
 };
 
