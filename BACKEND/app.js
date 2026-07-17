@@ -20,10 +20,8 @@ import returnManagementRoutes from "./routes/returnManagementRoutes.js";
 import damageComponentsRoutes from "./routes/damageComponentsRoutes.js";
 import componentDemandRoutes from "./routes/componentDemandRoutes.js";
 import labStaffProfileRoutes from "./routes/labStaffProfileRoutes.js";
-
+import dashboardRoutes from "./routes/dashboardRoutes.js";
 const app = express();
-
-
 app.use(express.json());
 app.use(
   cors({
@@ -58,6 +56,7 @@ app.use("/api/returns", returnManagementRoutes);
 app.use("/api/damage-components", damageComponentsRoutes);
 app.use("/api/component-demand", componentDemandRoutes);
 app.use("/api/lab-staff/profile", labStaffProfileRoutes);
+app.use("/api/lab-staff", dashboardRoutes);
 
 app.get("/", (_req, res) => {
   res.json({
