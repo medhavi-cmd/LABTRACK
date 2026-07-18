@@ -12,7 +12,6 @@ export default function Sidebar({ items, isOpen, onClose }) {
       }`}
     >
       <div className="h-full flex flex-col">
-
         <div className="h-20 sm:h-28 border-b border-[#E5E7EB] flex items-center justify-between lg:justify-center px-4 shrink-0">
           <img
             src={logo}
@@ -49,7 +48,10 @@ export default function Sidebar({ items, isOpen, onClose }) {
           <button
             type="button"
             onClick={() => {
+              localStorage.removeItem("token");
+              localStorage.removeItem("user");
               onClose();
+
               navigate("/login");
             }}
             className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-semibold text-[#4B5563] hover:bg-[#F1F5F9] transition"
