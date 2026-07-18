@@ -1,6 +1,3 @@
-// ==========================================
-// 2. components/layout/Topbar.jsx
-// ==========================================
 import { useEffect, useState } from "react";
 import { Bell, UserCircle, Menu } from "lucide-react";
 import { useNavigate } from "react-router-dom";

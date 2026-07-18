@@ -1,6 +1,3 @@
-// ==========================================
-// 3. layouts/GroupLeaderLayout.jsx
-// ==========================================
 import { useState } from "react";
 import Sidebar from "../components/layout/Sidebar";
 import Topbar from "../components/layout/Topbar";

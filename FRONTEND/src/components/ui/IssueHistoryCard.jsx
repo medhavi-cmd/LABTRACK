@@ -1,6 +1,3 @@
-// ==========================================
-// 1. components/ui/IssueHistoryCard.jsx
-// ==========================================
 import { ChevronDown, ChevronUp } from "lucide-react";
 
 const statusColors = {

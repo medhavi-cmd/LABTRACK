@@ -1,6 +1,3 @@
-// ==========================================
-// 1. components/layout/Sidebar.jsx
-// ==========================================
 import { NavLink, useNavigate } from "react-router-dom";
 import { LogOut, X } from "lucide-react";
 import logo from "../../assets/logo.png";

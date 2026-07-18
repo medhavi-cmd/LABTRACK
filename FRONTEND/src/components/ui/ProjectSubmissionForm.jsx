@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Upload, FileText, Image, Loader2, FileUp } from "lucide-react";
 import { submitProjectToGallery } from "../../services/galleryApi";
+import {toast} from "sonner";
 
 const ProjectSubmissionForm = ({ onSuccess }) => {
   const navigate = useNavigate();
@@ -34,11 +35,11 @@ const ProjectSubmissionForm = ({ onSuccess }) => {
         report,
       });
 
-      alert("Project submitted successfully!");
+      toast.success("Project submitted successfully!");
       if (onSuccess) onSuccess();
       navigate("/student/gallery");
     } catch (error) {
-      alert(error.message);
+      toast.error(error.message || "Failed to submit project.");
     } finally {
       setLoading(false);
     }
@@ -87,7 +88,6 @@ const ProjectSubmissionForm = ({ onSuccess }) => {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         
-        {/* Cover Image Upload */}
         <div className="rounded-xl border border-slate-200 bg-white p-5 flex flex-col justify-between shadow-sm">
           <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-slate-500 block mb-3">
             Cover Image
@@ -108,7 +108,6 @@ const ProjectSubmissionForm = ({ onSuccess }) => {
           </label>
         </div>
 
-        {/* Gallery Images Upload */}
         <div className="rounded-xl border border-slate-200 bg-white p-5 flex flex-col justify-between shadow-sm">
           <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-slate-500 block mb-3">
             Gallery Images
@@ -129,7 +128,6 @@ const ProjectSubmissionForm = ({ onSuccess }) => {
           </label>
         </div>
 
-        {/* Project Report Upload */}
         <div className="rounded-xl border border-slate-200 bg-white p-5 flex flex-col justify-between shadow-sm">
           <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-slate-500 block mb-3">
             Project Report

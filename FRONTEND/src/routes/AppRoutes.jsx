@@ -41,6 +41,7 @@ import ForgotPassword from "../pages/Auth/ForgotPassword";
 import VerifyOTP from "../pages/Auth/VerifyOTP";
 import ResetPassword from "../pages/Auth/ResetPassword";
 import AuthCallback from "../pages/Auth/AuthCallback";
+import NotFound from "../pages/TeamLeader/NotFound";
 
 const AppRoutes = () => {
   return (
@@ -60,6 +61,8 @@ const AppRoutes = () => {
       <Route path="/about-labtrack" element={<AboutLabtrack />} />
 
       <Route path="/auth/callback" element={<AuthCallback />} />
+
+      <Route path="*" element={<NotFound />} />
 
       {/* GROUP LEADER */}
 
@@ -320,7 +323,7 @@ const AppRoutes = () => {
         />
       </Route>
 
-      <Route path="*" element={<div>Page Not Found</div>} />
+      
     </Routes>
   );
 };

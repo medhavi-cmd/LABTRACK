@@ -14,8 +14,7 @@ import {
   ArrowRight,
   Briefcase,
 } from "lucide-react";
-
-// Component Imports
+import {toast} from "sonner";
 import { Button } from "../../components/ui/Button";
 import { Input } from "../../components/ui/Input";
 import { RoleSelector } from "../../components/ui/RoleSelector";
@@ -34,28 +33,28 @@ export default function SignupPage() {
     e.preventDefault();
 
     if (!name.trim() || !email.trim() || !password.trim()) {
-      alert("Please fill all required fields");
+      toast.error("Please fill all required fields");
       return;
     }
 
     if (accessRole === "student") {
       if (!enrollmentNo.trim()) {
-        alert("Enrollment number is required");
+        toast.error("Enrollment number is required");
         return;
       }
-      if (!/^\d+$/.test(enrollmentNo)) {
-        alert("Enrollment number must contain numbers only");
-        return;
-      }
+      if (!/^\d{6}$/.test(enrollmentNo)) {
+        toast.error("Enrollment number must be exactly 6 digits.");
+  return;
+}
     }
 
     if (accessRole !== "student") {
       if (!employeeId.trim()) {
-        alert("Employee ID is required");
+        toast.error("Employee ID is required");
         return;
       }
       if (!/^\d+$/.test(employeeId)) {
-        alert("Employee ID must contain numbers only");
+        toast.error("Employee ID must contain numbers only");
         return;
       }
     }
@@ -71,16 +70,16 @@ export default function SignupPage() {
       });
 
       localStorage.setItem("token", response.token);
-      alert("Registration Successful");
+      toast.success("Registration Successful");
       navigate("/login");
     } catch (error) {
-      alert(error.response?.data?.message || "Registration Failed");
+      toast.error(error.response?.data?.message || "Registration Failed");
     }
   };
 
   return (
     <div className="h-screen w-full flex bg-slate-50 text-slate-900 font-sans antialiased selection:bg-cyan-500/20 selection:text-cyan-600 overflow-hidden">
-      {/* LEFT SIDE: Clean High-Contrast Tech Panel */}
+
       <div className="relative hidden lg:flex lg:w-1/2 flex-col justify-between p-16 overflow-hidden bg-slate-950 text-white">
         <div
           className="absolute inset-0 pointer-events-none opacity-40"
@@ -119,7 +118,7 @@ export default function SignupPage() {
         <div className="h-10 w-full pointer-events-none" />
       </div>
 
-      {/* RIGHT SIDE: Minimal Light Workspace Form */}
+
       <div className="flex-1 lg:w-1/2 flex items-center justify-center p-6 sm:p-12 lg:p-16 bg-slate-50 overflow-y-auto">
         <motion.div
           className="w-full max-w-[440px] bg-white border border-slate-200/80 rounded-2xl p-8 sm:p-10 shadow-xl shadow-slate-200/40 relative my-auto max-h-[95vh] overflow-y-auto"
@@ -193,9 +192,12 @@ export default function SignupPage() {
                     type="text"
                     inputMode="numeric"
                     placeholder="Enter numeric enrollment number"
+                    maxLength={6}
                     value={enrollmentNo}
                     onChange={(e) =>
-                      setEnrollmentNo(e.target.value.replace(/\D/g, ""))
+                      setEnrollmentNo(
+                        e.target.value.replace(/\D/g, "").slice(0, 6)
+                      )
                     }
                     icon={Hash}
                     className="font-mono"

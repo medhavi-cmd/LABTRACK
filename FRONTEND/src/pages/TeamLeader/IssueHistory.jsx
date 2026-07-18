@@ -1,6 +1,3 @@
-// ==========================================
-// 2. pages/student/IssueHistory.jsx
-// ==========================================
 import { useEffect, useMemo, useState } from "react";
 import GroupLeaderLayout from "../../layouts/GroupLeaderLayout";
 import IssueHistoryCard from "../../components/ui/IssueHistoryCard";
@@ -71,9 +68,6 @@ export default function IssueHistory() {
       <div className="min-h-screen bg-[#F8FAFC] text-[#4B5563] p-5 sm:p-8 font-sans">
         
         <div className="max-w-6xl mx-auto mb-8 pb-5 border-b border-[#E5E7EB] flex items-center gap-3">
-          {/* <div className="rounded-lg border border-[#2563EB]/20 bg-[#EFF6FF] p-2 text-[#2563EB]"> */}
-            {/* <History className="h-5 w-5 sm:h-6 sm:w-6" /> */}
-          {/* </div> */}
           <div>
             <p className="font-mono text-xs uppercase tracking-[0.18em] text-[#2563EB] mb-0.5">
               Workspace Logs

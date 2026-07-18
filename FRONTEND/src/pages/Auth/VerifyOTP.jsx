@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { useLocation, useNavigate, Link } from "react-router-dom";
-
+import {toast} from "sonner";
 import {
   KeyRound,
   ArrowLeft,
@@ -44,7 +44,7 @@ export default function VerifyOTP() {
         },
       });
     } catch (error) {
-      alert(error.response?.data?.message || "Invalid OTP");
+      toast.error(error.response?.data?.message || "Invalid OTP");
     } finally {
       setLoading(false);
     }
@@ -52,8 +52,6 @@ export default function VerifyOTP() {
 
   return (
     <div className="h-screen w-full flex bg-slate-50 text-slate-900 font-sans antialiased overflow-hidden">
-
-      {/* LEFT PANEL */}
 
       <div className="relative hidden lg:flex lg:w-1/2 flex-col justify-between p-16 overflow-hidden bg-slate-950 text-white">
 
@@ -97,7 +95,6 @@ export default function VerifyOTP() {
 
       </div>
 
-      {/* RIGHT PANEL */}
 
       <div className="flex-1 lg:w-1/2 flex items-center justify-center p-6 sm:p-12 lg:p-16 bg-slate-50">
 

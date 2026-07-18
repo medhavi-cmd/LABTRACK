@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
-
+import {toast} from "sonner";
 import bgImage from "../../assets/login-bg.jpg";
 import logo from "../../assets/logo.png";
 
@@ -29,7 +29,7 @@ export default function ForgotPassword() {
 
       const response = await forgotPassword(email);
 
-      alert(response.message);
+      toast.success(response.message);
 
       navigate("/verify-otp", {
         state: {
@@ -37,7 +37,7 @@ export default function ForgotPassword() {
         },
       });
     } catch (error) {
-      alert(
+      toast.error(
         error.response?.data?.message ||
           "Something went wrong."
       );

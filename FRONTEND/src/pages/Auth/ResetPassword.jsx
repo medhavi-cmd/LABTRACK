@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { useLocation, useNavigate, Link } from "react-router-dom";
-
+import {toast} from "sonner";
 import {
   Lock,
   ArrowLeft,
@@ -36,7 +36,7 @@ export default function ResetPassword() {
     e.preventDefault();
 
     if (password !== confirmPassword) {
-      alert("Passwords do not match.");
+      toast.error("Passwords do not match.");
       return;
     }
 
@@ -49,11 +49,11 @@ export default function ResetPassword() {
         resetToken
       );
 
-      alert(response.message);
+      toast.success(response.message);
 
       navigate("/login");
     } catch (error) {
-      alert(
+      toast.error(
         error.response?.data?.message ||
           "Unable to reset password."
       );
@@ -65,8 +65,7 @@ export default function ResetPassword() {
   return (
     <div className="h-screen w-full flex bg-slate-50 text-slate-900 font-sans antialiased overflow-hidden">
 
-      {/* LEFT PANEL */}
-
+   
       <div className="relative hidden lg:flex lg:w-1/2 flex-col justify-between p-16 overflow-hidden bg-slate-950 text-white">
 
         <div
@@ -110,7 +109,7 @@ export default function ResetPassword() {
 
       </div>
 
-      {/* RIGHT PANEL */}
+    
 
       <div className="flex-1 lg:w-1/2 flex items-center justify-center p-6 sm:p-12 lg:p-16 bg-slate-50">
 
