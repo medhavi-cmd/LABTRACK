@@ -78,11 +78,11 @@ const initialNotifications = [
 ];
  
 const typeStyles = {
-  Success: "bg-green-500/10 text-green-400 border border-green-500/30",
-  Warning: "bg-yellow-500/10 text-yellow-400 border border-yellow-500/30",
-  Inventory: "bg-cyan-500/10 text-cyan-400 border border-cyan-500/30",
+  Success: "bg-green-50 text-green-600 border border-green-200",
+  Warning: "bg-amber-50 text-amber-500 border border-amber-200",
+  Inventory: "bg-cyan-50 text-cyan-600 border border-cyan-200",
   Request: "bg-blue-500/10 text-blue-400 border border-blue-500/30",
-  Rejected: "bg-red-500/10 text-red-400 border border-red-500/30",
+  Rejected: "bg-red-50 text-red-600 border border-red-200",
 };
  
 const typeIcons = {
@@ -105,19 +105,19 @@ const Notifications = () => {
   };
  
   return (
-    <div className="text-white">
+    <div className="">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-3xl font-bold">Notifications</h1>
-          <p className="text-slate-400 mt-1">
+          <h1 className="ls-title-main">Notifications</h1>
+          <p className="ls-text-secondary mt-1">
             Stay updated with lab activities and alerts
           </p>
         </div>
  
         <button
           onClick={markAllAsRead}
-          className="flex items-center gap-2 bg-cyan-500 hover:bg-cyan-600 px-4 py-2 rounded-lg font-medium transition-colors"
+          className="flex items-center gap-2 ls-btn-primary px-4 py-2 rounded-lg font-medium transition-colors"
         >
           Mark All as Read
         </button>
@@ -125,40 +125,40 @@ const Notifications = () => {
  
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="bg-[#0b1730] border border-cyan-900/30 rounded-xl p-5">
-          <p className="text-slate-400">Unread</p>
-          <h2 className="text-3xl font-bold text-cyan-400 mt-2">
+        <div className="ls-card">
+          <p className="ls-text-secondary">Unread</p>
+          <h2 className="ls-stat-value text-cyan-600 mt-2">
             {unreadCount}
           </h2>
         </div>
  
-        <div className="bg-[#0b1730] border border-cyan-900/30 rounded-xl p-5">
-          <p className="text-slate-400">Today</p>
-          <h2 className="text-3xl font-bold mt-2">{todayCount}</h2>
+        <div className="ls-card">
+          <p className="ls-text-secondary">Today</p>
+          <h2 className="ls-stat-value">{todayCount}</h2>
         </div>
  
-        <div className="bg-[#0b1730] border border-cyan-900/30 rounded-xl p-5">
-          <p className="text-slate-400">Urgent</p>
-          <h2 className="text-3xl font-bold text-red-400 mt-2">
+        <div className="ls-card">
+          <p className="ls-text-secondary">Urgent</p>
+          <h2 className="ls-stat-value text-red-600">
             {urgentCount}
           </h2>
         </div>
       </div>
  
       {/* Notifications List */}
-      <div className="bg-[#0b1730] border border-cyan-900/30 rounded-xl overflow-hidden">
-        <div className="p-5 border-b border-cyan-900/30">
-          <h2 className="text-xl font-semibold">All Notifications</h2>
+      <div className="bg-white border border-cyan-200 rounded-xl overflow-hidden">
+        <div className="p-5 border-b border-cyan-200">
+          <h2 className="ls-title-card">All Notifications</h2>
         </div>
  
-        <div className="divide-y divide-slate-800">
+        <div className="divide-y divide-slate-100">
           {notifications.map((item) => {
             const Icon = typeIcons[item.type];
  
             return (
               <div
                 key={item.id}
-                className="flex items-start gap-4 p-5 hover:bg-slate-900/40"
+                className="flex items-start gap-4 p-5 hover:bg-slate-50"
               >
                 <div
                   className={`p-2.5 rounded-lg ${typeStyles[item.type]}`}
@@ -170,17 +170,17 @@ const Notifications = () => {
                   <div className="flex flex-wrap items-center gap-2">
                     <h3 className="font-semibold">{item.title}</h3>
                     {item.unread && (
-                      <span className="bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 px-2 py-0.5 rounded-full text-xs">
+                      <span className="bg-cyan-50 text-cyan-600 border border-cyan-200 px-2 py-0.5 rounded-full text-xs">
                         New
                       </span>
                     )}
                   </div>
-                  <p className="text-slate-400 text-sm mt-1">
+                  <p className="ls-text-secondary text-sm mt-1">
                     {item.description}
                   </p>
                 </div>
  
-                <span className="text-slate-500 text-sm whitespace-nowrap">
+                <span className="ls-text-secondary text-sm whitespace-nowrap">
                   {item.time}
                 </span>
               </div>
