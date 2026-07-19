@@ -1,270 +1,610 @@
-let projects = [
-  {
-    id: 1,
-    title: "Smart Attendance",
-    team: "Team Alpha",
-    guide: "Dr. Sharma",
-    status: "Pending",
-  },
-  {
-    id: 2,
-    title: "AI Lab Assistant",
-    team: "Team Beta",
-    guide: "Dr. Singh",
-    status: "Approved",
-  },
-];
+import {
+  getAllProjects,
+  updateProjectApprovalStatus,
+} from "../services/projectApprovalService.js";
+import {
+  getFacultyComponentRequests,
+} from "../services/facultyComponentService.js";
+import {
+  getFacultyDashboardData,
+} from "../services/facultyDashboardService.js";
+import {
+  getFacultyEvents,
+  createFacultyEvent,
+  removeFacultyEvent,
+} from "../services/facultyEventService.js";
+import {
+  getFacultyGalleryRequests,
+  getFacultyIdByUserId,
+  updateFacultyGalleryRequestStatus,
+} from "../services/facultyGalleryService.js";
+import {
+  getFacultyNotifications,
+  getFacultyNotificationStats,
+  createFacultyNotification,
+  archiveFacultyNotification,
+  deleteFacultyNotification,
+} from "../services/facultyNotificationService.js";
+/* =========================================================
+   FACULTY DASHBOARD — CONNECTED TO POSTGRES/SUPABASE
+========================================================= */
+
+export const getFacultyDashboard = async (req, res) => {
+  try {
+    const dashboard = await getFacultyDashboardData();
+
+    return res.status(200).json(dashboard);
+  } catch (error) {
+    console.error("Error fetching faculty dashboard:", error);
+
+    return res.status(500).json({
+      message: "Failed to fetch faculty dashboard",
+      error:
+        process.env.NODE_ENV === "development"
+          ? error.message
+          : undefined,
+    });
+  }
+};
+
+/* =========================================================
+   PROJECT APPROVALS — CONNECTED TO POSTGRES/SUPABASE
+========================================================= */
 
 export const getProjects = async (req, res) => {
-  res.status(200).json(projects);
+  try {
+    const projects = await getAllProjects();
+
+    return res.status(200).json(projects);
+  } catch (error) {
+    console.error("Error fetching faculty projects:", error);
+
+    return res.status(500).json({
+      message: "Failed to fetch projects",
+      error:
+        process.env.NODE_ENV === "development"
+          ? error.message
+          : undefined,
+    });
+  }
 };
 
 export const updateProjectStatus = async (req, res) => {
   try {
     const { id } = req.params;
-    const { status } = req.body;
+    const { status, remarks } = req.body;
 
-    const project = projects.find((p) => p.id === Number(id));
+    const projectId = Number(id);
 
-    if (!project) {
-      return res.status(404).json({ message: "Project not found" });
-    }
-
-    project.status = status;
-
-    res.status(200).json(project);
-  } catch (error) {
-    res.status(500).json({ message: "Failed to update project" });
-  }
-};
-
-let componentRequests = [
-  {
-    id: 1,
-    component: "Arduino Uno",
-    quantity: 5,
-    team: "Team Alpha",
-    requestedBy: "Rahul Kumar",
-    date: "07-06-2026",
-    purpose: "Attendance Device Prototype",
-    status: "Pending",
-  },
-  {
-    id: 2,
-    component: "Raspberry Pi",
-    quantity: 2,
-    team: "Team Beta",
-    requestedBy: "Aryan Mehta",
-    date: "07-06-2026",
-    purpose: "AI Processing Unit",
-    status: "Pending",
-  },
-  {
-    id: 3,
-    component: "Ultrasonic Sensor",
-    quantity: 10,
-    team: "Team Gamma",
-    requestedBy: "Aman Gupta",
-    date: "07-06-2026",
-    purpose: "Inventory Detection",
-    status: "Approved",
-  },
-];
-
-export const getComponentRequests = async (req, res) => {
-  res.status(200).json(componentRequests);
-};
-
-export const updateComponentRequestStatus = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { status } = req.body;
-
-    const request = componentRequests.find(
-      (item) => item.id === Number(id)
-    );
-
-    if (!request) {
-      return res.status(404).json({
-        message: "Component request not found",
+    if (!Number.isInteger(projectId) || projectId <= 0) {
+      return res.status(400).json({
+        message: "Invalid project ID",
       });
     }
 
-    request.status = status;
+    if (!status) {
+      return res.status(400).json({
+        message: "Status is required",
+      });
+    }
 
-    res.status(200).json(request);
+    const normalizedStatus = String(status).trim().toLowerCase();
+
+    const allowedStatuses = [
+      "pending",
+      "approved",
+      "rejected",
+    ];
+
+    if (!allowedStatuses.includes(normalizedStatus)) {
+      return res.status(400).json({
+        message:
+          "Status must be pending, approved, or rejected",
+      });
+    }
+
+    /*
+      This will work when faculty_id is included in the
+      authenticated user's token/session.
+
+      Until that mapping is implemented, approved_by will
+      safely remain NULL instead of using a fake faculty ID.
+    */
+    const facultyId =
+      req.user?.faculty_id ??
+      req.user?.facultyId ??
+      null;
+
+    const project = await updateProjectApprovalStatus({
+      projectId,
+      status: normalizedStatus,
+      facultyId,
+      remarks:
+        typeof remarks === "string" && remarks.trim()
+          ? remarks.trim()
+          : null,
+    });
+
+    if (!project) {
+      return res.status(404).json({
+        message: "Project not found",
+      });
+    }
+
+    return res.status(200).json(project);
   } catch (error) {
-    res.status(500).json({
-      message: "Failed to update component request",
+    console.error(
+      "Error updating project approval status:",
+      error
+    );
+
+    return res.status(500).json({
+      message: "Failed to update project status",
+      error:
+        process.env.NODE_ENV === "development"
+          ? error.message
+          : undefined,
     });
   }
 };
-let events = [
-  {
-    id: 1,
-    title: "Project Expo",
-    venue: "Lab 1",
-    date: "15-06-2026",
-    description: "Annual project exhibition.",
-  },
-  {
-    id: 2,
-    title: "Mid Project Review",
-    venue: "Seminar Hall",
-    date: "20-06-2026",
-    description: "Mid-semester project review.",
-  },
-  {
-    id: 3,
-    title: "Final Evaluation",
-    venue: "Conference Room",
-    date: "30-06-2026",
-    description: "Final project assessment.",
-  },
-];
+
+/* =========================================================
+   COMPONENT REQUESTS — CONNECTED TO POSTGRES/SUPABASE
+   READ-ONLY FOR FACULTY
+========================================================= */
+
+export const getComponentRequests = async (req, res) => {
+  try {
+    const requests = await getFacultyComponentRequests();
+
+    return res.status(200).json(requests);
+  } catch (error) {
+    console.error(
+      "Error fetching faculty component requests:",
+      error
+    );
+
+    return res.status(500).json({
+      message: "Failed to fetch component requests",
+      error:
+        process.env.NODE_ENV === "development"
+          ? error.message
+          : undefined,
+    });
+  }
+};
+/* =========================================================
+   EVENTS — CONNECTED TO POSTGRES/SUPABASE
+========================================================= */
 
 export const getEvents = async (req, res) => {
-  res.status(200).json(events);
+  try {
+    const events = await getFacultyEvents();
+
+    return res.status(200).json(events);
+  } catch (error) {
+    console.error("Error fetching faculty events:", error);
+
+    return res.status(500).json({
+      message: "Failed to fetch events",
+      error:
+        process.env.NODE_ENV === "development"
+          ? error.message
+          : undefined,
+    });
+  }
 };
 
 export const addEvent = async (req, res) => {
   try {
-    const newEvent = {
-      id: Date.now(),
-      ...req.body,
-    };
+    const {
+      title,
+      description,
+      date,
+      time,
+      eventDatetime,
+    } = req.body;
 
-    events.push(newEvent);
-    res.status(201).json(newEvent);
+    if (!title) {
+      return res.status(400).json({
+        message: "Event title is required",
+      });
+    }
+
+    let finalEventDatetime = eventDatetime;
+
+    if (!finalEventDatetime && date) {
+      const normalizedTime = time || "00:00";
+      finalEventDatetime = `${date}T${normalizedTime}:00`;
+    }
+
+    if (!finalEventDatetime) {
+      return res.status(400).json({
+        message: "Event date and time are required",
+      });
+    }
+
+    const facultyId =
+      req.user?.faculty_id ??
+      req.user?.facultyId ??
+      null;
+
+    const event = await createFacultyEvent({
+      title: title.trim(),
+      description:
+        typeof description === "string" && description.trim()
+          ? description.trim()
+          : null,
+      eventDatetime: finalEventDatetime,
+      facultyId,
+    });
+
+    return res.status(201).json(event);
   } catch (error) {
-    res.status(500).json({
-      message: "Failed to add event",
+    console.error("Error creating faculty event:", error);
+
+    return res.status(500).json({
+      message: "Failed to create event",
+      error:
+        process.env.NODE_ENV === "development"
+          ? error.message
+          : undefined,
     });
   }
 };
 
 export const deleteEvent = async (req, res) => {
   try {
-    const { id } = req.params;
+    const eventId = Number(req.params.id);
 
-    events = events.filter((event) => event.id !== Number(id));
+    if (!Number.isInteger(eventId) || eventId <= 0) {
+      return res.status(400).json({
+        message: "Invalid event ID",
+      });
+    }
 
-    res.status(200).json({
+    const deletedEvent = await removeFacultyEvent(eventId);
+
+    if (!deletedEvent) {
+      return res.status(404).json({
+        message: "Event not found",
+      });
+    }
+
+    return res.status(200).json({
       message: "Event deleted successfully",
+      id: deletedEvent.id,
     });
   } catch (error) {
-    res.status(500).json({
+    console.error("Error deleting faculty event:", error);
+
+    return res.status(500).json({
       message: "Failed to delete event",
+      error:
+        process.env.NODE_ENV === "development"
+          ? error.message
+          : undefined,
     });
   }
 };
-let notifications = [
-  {
-    id: 1,
-    title: "Project Review Meeting",
-    message: "All teams must attend the review meeting on 20 June.",
-    date: "18-06-2026",
-  },
-  {
-    id: 2,
-    title: "Lab Closed",
-    message: "Joe Lab will remain closed on Sunday.",
-    date: "19-06-2026",
-  },
-];
+/* =========================================================
+   NOTIFICATIONS
+========================================================= */
+
+const getAuthenticatedUserId = (req) =>
+  req.user?.user_id ??
+  req.user?.userId ??
+  req.user?.id;
 
 export const getNotifications = async (req, res) => {
-  res.status(200).json(notifications);
+  try {
+    const userId = getAuthenticatedUserId(req);
+
+    if (!userId) {
+      return res.status(401).json({
+        message: "Authenticated user ID is missing.",
+      });
+    }
+
+    const [notifications, stats] = await Promise.all([
+      getFacultyNotifications(userId),
+      getFacultyNotificationStats(userId),
+    ]);
+
+    return res.status(200).json({
+      stats,
+      notifications,
+    });
+  } catch (error) {
+    console.error("Error fetching faculty notifications:", error);
+
+    return res.status(500).json({
+      message: "Failed to fetch notifications.",
+      ...(process.env.NODE_ENV === "development" && {
+        error: error.message,
+      }),
+    });
+  }
 };
 
 export const addNotification = async (req, res) => {
   try {
-    const { title, message, date } = req.body;
+    const userId = getAuthenticatedUserId(req);
 
-    const notification = {
-      id: notifications.length + 1,
+    if (!userId) {
+      return res.status(401).json({
+        message: "Authenticated user ID is missing.",
+      });
+    }
+
+    const {
       title,
       message,
-      date,
-    };
+      sourceType,
+      sourceId = null,
+    } = req.body;
 
-    notifications.push(notification);
+    if (!title?.trim() || !message?.trim()) {
+      return res.status(400).json({
+        message: "Title and message are required.",
+      });
+    }
 
-    res.status(201).json(notification);
+    const allowedSourceTypes = [
+      "all_students",
+      "faculty_teams",
+      "team",
+    ];
+
+    if (!allowedSourceTypes.includes(sourceType)) {
+      return res.status(400).json({
+        message: "Invalid notification audience.",
+      });
+    }
+
+    if (sourceType === "team") {
+      const parsedSourceId = Number(sourceId);
+
+      if (!Number.isInteger(parsedSourceId) || parsedSourceId <= 0) {
+        return res.status(400).json({
+          message: "A valid team must be selected.",
+        });
+      }
+    }
+
+    const created = await createFacultyNotification({
+      userId,
+      title: title.trim(),
+      message: message.trim(),
+      sourceType,
+      sourceId:
+        sourceType === "team"
+          ? Number(sourceId)
+          : sourceId,
+    });
+
+    return res.status(201).json(created);
   } catch (error) {
-    res.status(500).json({
-      message: "Failed to create notification",
+    console.error("Error creating faculty notification:", error);
+
+    return res.status(500).json({
+      message: "Failed to create notification.",
+      ...(process.env.NODE_ENV === "development" && {
+        error: error.message,
+      }),
+    });
+  }
+};
+
+export const archiveNotification = async (req, res) => {
+  try {
+    const userId = getAuthenticatedUserId(req);
+    const notificationId = Number(req.params.id);
+
+    if (!userId) {
+      return res.status(401).json({
+        message: "Authenticated user ID is missing.",
+      });
+    }
+
+    if (
+      !Number.isInteger(notificationId) ||
+      notificationId <= 0
+    ) {
+      return res.status(400).json({
+        message: "Invalid notification ID.",
+      });
+    }
+
+    const archived = await archiveFacultyNotification({
+      notificationId,
+      userId,
+    });
+
+    if (!archived) {
+      return res.status(404).json({
+        message: "Notification not found.",
+      });
+    }
+
+    return res.status(200).json(archived);
+  } catch (error) {
+    console.error("Error archiving faculty notification:", error);
+
+    return res.status(500).json({
+      message: "Failed to archive notification.",
+      ...(process.env.NODE_ENV === "development" && {
+        error: error.message,
+      }),
     });
   }
 };
 
 export const deleteNotification = async (req, res) => {
   try {
-    const { id } = req.params;
+    const userId = getAuthenticatedUserId(req);
+    const notificationId = Number(req.params.id);
 
-    notifications = notifications.filter(
-      (item) => item.id !== Number(id)
-    );
+    if (!userId) {
+      return res.status(401).json({
+        message: "Authenticated user ID is missing.",
+      });
+    }
 
-    res.status(200).json({
-      message: "Notification deleted",
+    if (
+      !Number.isInteger(notificationId) ||
+      notificationId <= 0
+    ) {
+      return res.status(400).json({
+        message: "Invalid notification ID.",
+      });
+    }
+
+    const deleted = await deleteFacultyNotification({
+      notificationId,
+      userId,
+    });
+
+    if (!deleted) {
+      return res.status(404).json({
+        message: "Notification not found.",
+      });
+    }
+
+    return res.status(200).json({
+      message: "Notification deleted successfully.",
+      id: deleted.id,
     });
   } catch (error) {
-    res.status(500).json({
-      message: "Failed to delete notification",
+    console.error("Error deleting faculty notification:", error);
+
+    return res.status(500).json({
+      message: "Failed to delete notification.",
+      ...(process.env.NODE_ENV === "development" && {
+        error: error.message,
+      }),
     });
   }
 };
 
-let galleryItems = [
-  {
-    id: 1,
-    title: "Project Expo Day 1",
-    uploadedBy: "Rahul Kumar",
-    team: "Team Alpha",
-    image: "expo1.jpg",
-    status: "Pending",
-  },
-  {
-    id: 2,
-    title: "Prototype Demo",
-    uploadedBy: "Aryan Mehta",
-    team: "Team Beta",
-    image: "demo.jpg",
-    status: "Approved",
-  },
-];
-
+/* =========================================================
+   GALLERY APPROVALS — CONNECTED TO POSTGRES/SUPABASE
+========================================================= */
 export const getGalleryItems = async (req, res) => {
-  res.status(200).json(galleryItems);
+  console.log("Authenticated user:", req.user);
+
+  try {
+    const galleryRequests = await getFacultyGalleryRequests();
+
+    return res.status(200).json(galleryRequests);
+  } catch (error) {
+    console.error(
+      "Error fetching gallery requests:",
+      error
+    );
+
+    return res.status(500).json({
+      message: "Failed to fetch gallery requests",
+      error:
+        process.env.NODE_ENV === "development"
+          ? error.message
+          : undefined,
+    });
+  }
 };
 
 export const updateGalleryStatus = async (req, res) => {
   try {
-    const { id } = req.params;
-    const { status } = req.body;
+    const requestId = Number(req.params.id);
+    const { status, remarks } = req.body;
 
-    const item = galleryItems.find(
-      (g) => g.id === Number(id)
-    );
-
-    if (!item) {
-      return res.status(404).json({
-        message: "Gallery item not found",
+    if (!Number.isInteger(requestId) || requestId <= 0) {
+      return res.status(400).json({
+        message: "Invalid gallery request ID",
       });
     }
 
-    item.status = status;
+    if (!status) {
+      return res.status(400).json({
+        message: "Status is required",
+      });
+    }
 
-    res.status(200).json(item);
+    const normalizedStatus = String(status).trim().toLowerCase();
+
+    const allowedStatuses = ["approved", "rejected"];
+
+    if (!allowedStatuses.includes(normalizedStatus)) {
+      return res.status(400).json({
+        message: "Status must be approved or rejected",
+      });
+    }
+
+    /*
+      JWT only carries the authenticated user's id, not
+      faculty_id. Resolve it from faculty.user_id — never
+      fabricate this value.
+    */
+    const authenticatedUserId =
+      req.user?.user_id ??
+      req.user?.userId ??
+      req.user?.id;
+
+    if (authenticatedUserId === undefined || authenticatedUserId === null) {
+      return res.status(401).json({
+        message: "Authenticated user ID is missing.",
+      });
+    }
+
+    const facultyId = await getFacultyIdByUserId(
+      authenticatedUserId
+    );
+
+    if (!facultyId) {
+      return res.status(403).json({
+        message:
+          "No faculty profile is linked to this account.",
+      });
+    }
+
+    const updatedRequest = await updateFacultyGalleryRequestStatus({
+      requestId,
+      status: normalizedStatus,
+      facultyId,
+      remarks:
+        typeof remarks === "string" && remarks.trim()
+          ? remarks.trim()
+          : null,
+    });
+
+    if (!updatedRequest) {
+      return res.status(404).json({
+        message: "Gallery request not found",
+      });
+    }
+
+    return res.status(200).json(updatedRequest);
   } catch (error) {
-    res.status(500).json({
-      message: "Failed to update gallery item",
+    console.error(
+      "Error updating gallery request status:",
+      error
+    );
+
+    return res.status(500).json({
+      message: "Failed to update gallery request",
+      error:
+        process.env.NODE_ENV === "development"
+          ? error.message
+          : undefined,
     });
   }
 };
 
-let studentProgress = [
+/* =========================================================
+   STUDENT PROGRESS — TEMPORARY MOCK DATA
+========================================================= */
+
+const studentProgress = [
   {
     id: 1,
     student: "Rahul Kumar",
@@ -295,5 +635,5 @@ let studentProgress = [
 ];
 
 export const getStudentProgress = async (req, res) => {
-  res.status(200).json(studentProgress);
+  return res.status(200).json(studentProgress);
 };

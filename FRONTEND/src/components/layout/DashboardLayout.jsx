@@ -4,7 +4,7 @@ import { SIDEBAR_CONFIG } from "../../config/sidebarConfig";
 
 function DashboardLayout({ children }) {
   return (
-    <div className="min-h-screen bg-[#020617] flex">
+    <div className="min-h-screen bg-[#F8FAFC] flex">
       <Sidebar
         items={SIDEBAR_CONFIG.faculty}
         title="LABTRACK"

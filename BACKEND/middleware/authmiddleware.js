@@ -14,11 +14,22 @@ export const requireAuth = (req, res, next) => {
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    req.user = decoded;
+    req.user = {
+    id: decoded.id,
+    role: decoded.role,
+};
     next();
-  } catch (error) {
+  } 
+  catch (error) {
+
+    if (error.name === "TokenExpiredError") {
+        return res.status(401).json({
+            message: "Session expired. Please login again."
+        });
+    }
+
     return res.status(401).json({
-      message: "Invalid or expired authentication token",
+        message: "Invalid authentication token."
     });
-  }
+}
 };

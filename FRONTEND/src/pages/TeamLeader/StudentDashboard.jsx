@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { Loader2, AlertCircle } from "lucide-react";
-
 import GroupLeaderLayout from "../../layouts/GroupLeaderLayout";
 import StudentDashboardNoTeam from "./StudentDashboardNoTeam";
 import StudentDashboardWithTeam from "./StudentDashboardWithTeam";
@@ -14,9 +13,7 @@ export default function StudentDashboard() {
     const checkTeamStatus = async () => {
       try {
         setError("");
-
         const response = await getMyTeamStatus();
-
         setHasTeam(response.hasTeam);
       } catch (err) {
         console.error("Failed to check team status:", err);
@@ -30,9 +27,9 @@ export default function StudentDashboard() {
   if (hasTeam === null && !error) {
     return (
       <GroupLeaderLayout>
-        <div className="min-h-[80vh] flex items-center justify-center text-[#dae2fd]">
-          <div className="flex items-center gap-3 text-[#bbc9cd]">
-            <Loader2 className="animate-spin text-[#22d3ee]" size={22} />
+        <div className="min-h-[80vh] flex items-center justify-center text-[#4B5563]">
+          <div className="flex items-center gap-3 text-[#6B7280] text-xs sm:text-sm font-medium">
+            <Loader2 className="animate-spin text-[#2563EB]" size={22} />
             Loading dashboard...
           </div>
         </div>
@@ -42,18 +39,19 @@ export default function StudentDashboard() {
 
   if (error) {
     return (
-      <>
-        <div className="p-8 text-[#dae2fd]">
-          <div className="max-w-2xl rounded-xl border border-red-500/30 bg-[#171f33] p-6">
+      <GroupLeaderLayout>
+        <div className="p-4 sm:p-8">
+          <div className="max-w-2xl rounded-xl border border-red-200 bg-red-50 p-5 sm:p-6">
             <div className="mb-3 flex items-center gap-3">
-              <AlertCircle className="text-red-400" size={22} />
-              <h1 className="text-xl font-semibold">Unable to Load Dashboard</h1>
+              <AlertCircle className="text-red-600" size={22} />
+              <h1 className="text-xs font-bold uppercase tracking-wider text-red-700">
+                Unable to Load Dashboard
+              </h1>
             </div>
-
-            <p className="text-[#bbc9cd]">{error}</p>
+            <p className="text-red-600 text-xs sm:text-sm">{error}</p>
           </div>
         </div>
-      </>
+      </GroupLeaderLayout>
     );
   }
 

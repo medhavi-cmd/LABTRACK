@@ -6,7 +6,6 @@ import ActionButton from "../../components/ui/ActionButton";
 import StatCard from "../../components/ui/StatCard";
 import {
   getComponentRequests,
-  updateComponentStatus,
 } from "../../services/componentService";
 
 function ComponentsRequests() {
@@ -26,38 +25,22 @@ function ComponentsRequests() {
     }
   };
 
-  const updateStatus = async (requestToUpdate, newStatus) => {
-    try {
-      await updateComponentStatus(requestToUpdate.id, newStatus);
-
-      const updatedRequests = requests.map((request) =>
-        request.id === requestToUpdate.id
-          ? { ...request, status: newStatus }
-          : request
-      );
-
-      setRequests(updatedRequests);
-      setSelectedRequest({ ...requestToUpdate, status: newStatus });
-    } catch (error) {
-      console.error("Error updating component request:", error);
-    }
-  };
 
   const tableData = requests.map((request) => ({
     Component: request.component,
     Quantity: request.quantity,
     Team: request.team,
-    "Requested By": request.requestedBy,
+    "Requested By": request.requested_by,
     Purpose: request.purpose,
     Date: request.date,
     Status: (
       <span
-        className={`font-semibold ${
+        className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border ${
           request.status === "Approved"
-            ? "text-green-400"
+            ? "bg-green-50 border-green-200 text-green-700"
             : request.status === "Rejected"
-            ? "text-red-400"
-            : "text-yellow-400"
+            ? "bg-red-50 border-red-200 text-red-700"
+            : "bg-amber-50 border-amber-200 text-amber-700"
         }`}
       >
         {request.status}
@@ -88,7 +71,7 @@ function ComponentsRequests() {
       <div className="space-y-8">
         <SectionHeader
           title="Component Requests"
-          subtitle="Review lab component requests submitted by students"
+          subtitle="Monitor lab component requests submitted by student teams"
         />
 
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
@@ -100,7 +83,7 @@ function ComponentsRequests() {
           <StatCard
             title="Pending"
             value={pendingCount}
-            change="Awaiting approval"
+            change="Awaiting Lab Staff approval"
           />
           <StatCard
             title="Approved"
@@ -129,61 +112,61 @@ function ComponentsRequests() {
         />
 
         {selectedRequest && (
-          <div className="rounded-2xl border border-cyan-500/20 bg-[#081122] p-6 space-y-5">
+          <div className="rounded-2xl border border-[#E5E7EB] bg-white shadow-sm p-6 space-y-5">
             <div>
-              <h2 className="text-2xl font-bold text-white">
+              <h2 className="text-2xl font-bold text-[#111827]">
                 Component Request Details
               </h2>
-              <p className="text-slate-400 mt-1">
+              <p className="text-[#6B7280] mt-1">
                 Detailed view of selected component request
               </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
               <div>
-                <p className="text-slate-400">Component Name</p>
-                <p className="text-white font-medium">
+                <p className="text-[#6B7280]">Component Name</p>
+                <p className="text-[#111827] font-medium">
                   {selectedRequest.component}
                 </p>
               </div>
 
               <div>
-                <p className="text-slate-400">Quantity</p>
-                <p className="text-white font-medium">
+                <p className="text-[#6B7280]">Quantity</p>
+                <p className="text-[#111827] font-medium">
                   {selectedRequest.quantity}
                 </p>
               </div>
 
               <div>
-                <p className="text-slate-400">Team</p>
-                <p className="text-white font-medium">
+                <p className="text-[#6B7280]">Team</p>
+                <p className="text-[#111827] font-medium">
                   {selectedRequest.team}
                 </p>
               </div>
 
               <div>
-                <p className="text-slate-400">Requested By</p>
-                <p className="text-white font-medium">
-                  {selectedRequest.requestedBy}
+                <p className="text-[#6B7280]">Requested By</p>
+                <p className="text-[#111827] font-medium">
+                  {selectedRequest.requested_by}
                 </p>
               </div>
 
               <div>
-                <p className="text-slate-400">Date</p>
-                <p className="text-white font-medium">
+                <p className="text-[#6B7280]">Date</p>
+                <p className="text-[#111827] font-medium">
                   {selectedRequest.date}
                 </p>
               </div>
 
               <div>
-                <p className="text-slate-400">Status</p>
+                <p className="text-[#6B7280]">Status</p>
                 <p
                   className={`font-medium ${
                     selectedRequest.status === "Approved"
-                      ? "text-green-400"
+                      ? "text-green-700"
                       : selectedRequest.status === "Rejected"
-                      ? "text-red-400"
-                      : "text-yellow-400"
+                      ? "text-red-700"
+                      : "text-amber-700"
                   }`}
                 >
                   {selectedRequest.status}
@@ -191,37 +174,18 @@ function ComponentsRequests() {
               </div>
 
               <div className="md:col-span-2">
-                <p className="text-slate-400">Purpose</p>
-                <p className="text-white font-medium">
+                <p className="text-[#6B7280]">Purpose</p>
+                <p className="text-[#111827] font-medium">
                   {selectedRequest.purpose}
                 </p>
               </div>
             </div>
 
-            {selectedRequest.status === "Pending" ? (
-              <div className="flex gap-3">
-                <ActionButton
-                  text="Approve"
-                  color="green"
-                  onClick={() => updateStatus(selectedRequest, "Approved")}
-                />
-                <ActionButton
-                  text="Reject"
-                  color="red"
-                  onClick={() => updateStatus(selectedRequest, "Rejected")}
-                />
-              </div>
-            ) : (
-              <p
-                className={`font-semibold ${
-                  selectedRequest.status === "Approved"
-                    ? "text-green-400"
-                    : "text-red-400"
-                }`}
-              >
-                Already {selectedRequest.status}
-              </p>
-            )}
+<div className="rounded-xl border border-[#E5E7EB] bg-[#F8FAFC] p-4">
+  <p className="text-sm font-medium text-[#4B5563]">
+    Component requests are reviewed and approved by Lab Staff.
+  </p>
+</div>
           </div>
         )}
       </div>

@@ -21,13 +21,14 @@ export default function TeamManagement() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-   useEffect(() => {
+  useEffect(() => {
     const fetchTeam = async () => {
       try {
         setLoading(true);
         setError("");
 
         const response = await getMyTeam();
+        console.log(response);
 
         setTeam(response);
       } catch (err) {
@@ -50,9 +51,9 @@ export default function TeamManagement() {
   if (loading) {
     return (
       <GroupLeaderLayout>
-        <div className="min-h-[80vh] flex items-center justify-center text-[#dae2fd]">
-          <div className="flex items-center gap-3 text-[#bbc9cd]">
-            <Loader2 className="animate-spin text-[#22d3ee]" size={22} />
+        <div className="min-h-[80vh] flex items-center justify-center text-[#4B5563]">
+          <div className="flex items-center gap-3 text-[#4B5563]">
+            <Loader2 className="animate-spin text-[#2563EB]" size={22} />
             Loading team workspace...
           </div>
         </div>
@@ -63,14 +64,14 @@ export default function TeamManagement() {
   if (error || !team) {
     return (
       <GroupLeaderLayout>
-        <div className="p-8 text-[#dae2fd]">
-          <div className="max-w-2xl bg-[#171f33] border border-red-500/30 rounded-xl p-6">
+        <div className="p-8 text-[#4B5563]">
+          <div className="max-w-2xl bg-red-50 border border-red-200 rounded-xl p-6">
             <div className="flex items-center gap-3 mb-3">
-              <AlertCircle className="text-red-400" size={22} />
-              <h1 className="text-xl font-semibold">Unable to Load Team</h1>
+              <AlertCircle className="text-red-600" size={22} />
+              <h1 className="text-xl font-semibold text-red-900">Unable to Load Team</h1>
             </div>
 
-            <p className="text-[#bbc9cd]">
+            <p className="text-red-700">
               {error || "No registered team was found."}
             </p>
           </div>
@@ -83,32 +84,34 @@ export default function TeamManagement() {
 
   return (
     <GroupLeaderLayout>
-      <div className="min-h-screen bg-[#0b1326] text-[#dae2fd] p-5 sm:p-8 font-sans">
+      <div className="min-h-screen bg-[#F8FAFC] text-[#4B5563] p-5 sm:p-8 font-sans">
         <div className="max-w-6xl mx-auto mb-8">
-          <p className="font-mono text-xs uppercase tracking-[0.18em] text-[#22d3ee] mb-2">
+          <p className="font-mono text-xs uppercase tracking-[0.18em] text-[#2563EB] mb-2">
             Team Management
           </p>
 
-          <h1 className="text-3xl font-bold text-white">
+          <h1 className="text-3xl font-bold text-[#111827]">
             {team.team_name}
           </h1>
 
-          <p className="text-[#bbc9cd] mt-2">
+          <p className="text-[#4B5563] mt-2">
             Your registered project team details are shown below.
           </p>
         </div>
 
         <div className="max-w-6xl mx-auto space-y-6">
-          <section className="bg-[#171f33] border border-[#3c494c] rounded-xl overflow-hidden">
-            <div className="px-6 py-5 border-b border-[#3c494c] flex items-center gap-3">
-              <FolderKanban className="text-[#22d3ee]" size={21} />
+          <section className="bg-[#FFFFFF] border border-[#E5E7EB] rounded-xl overflow-hidden shadow-[0_1px_3px_rgba(0,0,0,0.05)]">
+            <div className="px-6 py-5 border-b border-[#E5E7EB] flex items-center gap-3">
+              <div className="rounded-lg border border-[#2563EB]/20 bg-[#EFF6FF] p-2 text-[#2563EB]">
+                <FolderKanban size={20} />
+              </div>
 
               <div>
-                <h2 className="font-semibold text-lg text-white">
+                <h2 className="font-semibold text-lg text-[#111827]">
                   Project Details
                 </h2>
 
-                <p className="text-sm text-[#bbc9cd]">
+                <p className="text-sm text-[#6B7280]">
                   Registered project information
                 </p>
               </div>
@@ -116,99 +119,97 @@ export default function TeamManagement() {
 
             <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <p className="text-xs font-mono uppercase tracking-wider text-[#859397] mb-1">
+                <p className="text-xs font-mono uppercase tracking-wider text-slate-400 mb-1">
                   Project Title
                 </p>
 
-                <p className="text-base font-semibold text-white">
+                <p className="text-base font-semibold text-[#111827]">
                   {team.project_title || team.team_name}
                 </p>
               </div>
 
               <div>
-                <p className="text-xs font-mono uppercase tracking-wider text-[#859397] mb-1">
+                <p className="text-xs font-mono uppercase tracking-wider text-slate-400 mb-1">
                   Team ID
                 </p>
 
-                <p className="text-base font-mono text-[#22d3ee]">
+                <p className="text-base font-mono font-semibold text-[#2563EB]">
                   #{team.team_id}
                 </p>
               </div>
 
               <div className="md:col-span-2">
-                <p className="text-xs font-mono uppercase tracking-wider text-[#859397] mb-2">
+                <p className="text-xs font-mono uppercase tracking-wider text-slate-400 mb-2">
                   Project Description
                 </p>
 
-                <div className="bg-[#0b1326] border border-[#3c494c] rounded-lg p-4 text-sm leading-relaxed text-[#bbc9cd]">
+                <div className="bg-[#F8FAFC] border border-[#E5E7EB] rounded-lg p-4 text-sm leading-relaxed text-[#4B5563]">
                   {team.description || "No project description was provided."}
                 </div>
               </div>
             </div>
           </section>
 
-          <section className="bg-[#171f33] border border-[#3c494c] rounded-xl overflow-hidden">
-            <div className="px-6 py-5 border-b border-[#3c494c] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <section className="bg-[#FFFFFF] border border-[#E5E7EB] rounded-xl overflow-hidden shadow-[0_1px_3px_rgba(0,0,0,0.05)]">
+            <div className="px-6 py-5 border-b border-[#E5E7EB] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
               <div className="flex items-center gap-3">
-                <Users className="text-[#22d3ee]" size={21} />
+                <div className="rounded-lg border border-[#2563EB]/20 bg-[#EFF6FF] p-2 text-[#2563EB]">
+                  <Users size={20} />
+                </div>
 
                 <div>
-                  <h2 className="font-semibold text-lg text-white">
+                  <h2 className="font-semibold text-lg text-[#111827]">
                     Team Members
                   </h2>
 
-                  <p className="text-sm text-[#bbc9cd]">
+                  <p className="text-sm text-[#6B7280]">
                     {members.length} registered member
                     {members.length !== 1 ? "s" : ""}
                   </p>
                 </div>
               </div>
 
-              <span className="inline-flex w-fit items-center px-3 py-1 rounded-full text-xs font-semibold bg-[#00363e]/50 border border-[#22d3ee]/30 text-[#22d3ee]">
+              <span className="inline-flex w-fit items-center px-3 py-1 rounded-full text-xs font-semibold bg-[#EFF6FF] border border-[#BFDBFE] text-[#1E40AF]">
                 Registered Team
               </span>
             </div>
 
-            <div className="divide-y divide-[#3c494c]">
+            <div className="divide-y divide-[#E5E7EB]">
               {members.map((member, index) => {
                 const isLeader = member.project_role === "leader";
 
                 return (
                   <div
                     key={member.student_id || index}
-                    className="p-5 sm:p-6 grid grid-cols-1 lg:grid-cols-12 gap-5 items-center"
+                    className="p-5 sm:p-6 grid grid-cols-1 lg:grid-cols-12 gap-5 items-center bg-[#FFFFFF]"
                   >
                     <div className="lg:col-span-1">
-                      <div className="w-9 h-9 rounded-md bg-[#0b1326] border border-[#3c494c] flex items-center justify-center font-mono text-sm text-[#22d3ee]">
+                      <div className="w-9 h-9 rounded-md bg-[#F8FAFC] border border-[#E5E7EB] flex items-center justify-center font-mono text-sm text-slate-500">
                         {String(index + 1).padStart(2, "0")}
                       </div>
                     </div>
 
                     <div className="lg:col-span-3">
                       <div className="flex items-center gap-2">
-                        <p className="font-semibold text-white">
+                        <p className="font-semibold text-[#111827]">
                           {member.name}
                         </p>
-
-                        {/* {isLeader && (
-                          <Crown size={15} className="text-yellow-400" />
-                        )} */}
                       </div>
 
-                      <div className="flex items-center gap-1.5 text-xs text-[#859397] mt-1">
+                      <div className="flex items-center gap-1.5 text-xs text-slate-400 mt-1">
                         <Hash size={13} />
                         {member.enrollment_no}
                       </div>
                     </div>
 
                     <div className="lg:col-span-4 space-y-1.5">
-                      <div className="flex items-center gap-2 text-sm text-[#bbc9cd]">
-                        <Mail size={14} className="text-[#22d3ee]" />
+                      <div className="flex items-center gap-2 text-sm text-[#4B5563]">
+                        <Mail size={14} className="text-[#2563EB]" />
                         <span>{member.email || "Email unavailable"}</span>
                       </div>
 
-                      <div className="flex items-center gap-2 text-sm text-[#bbc9cd]">
-                        <Phone size={14} className="text-[#22d3ee]" />
+                      <div className="flex items-center gap-2 text-sm text-[#4B5563]">
+                        <Phone size={14} className="text-[#2563EB]" />
                         <span>{member.phone_no || "Phone unavailable"}</span>
                       </div>
                     </div>
@@ -217,8 +218,8 @@ export default function TeamManagement() {
                       <span
                         className={`inline-flex items-center px-3 py-1.5 rounded-md text-xs font-semibold border ${
                           isLeader
-                            ? "bg-yellow-400/10 border-yellow-400/30 text-yellow-300"
-                            : "bg-[#00363e]/40 border-[#22d3ee]/20 text-[#22d3ee]"
+                            ? "bg-amber-50 border-amber-200 text-amber-700"
+                            : "bg-slate-50 border-slate-200 text-slate-600"
                         }`}
                       >
                         {isLeader ? "Team Leader" : "Team Member"}
@@ -230,9 +231,9 @@ export default function TeamManagement() {
             </div>
           </section>
 
-          <div className="bg-[#11253e] border border-[#1e4273] rounded-xl p-4 text-sm text-[#bbc9cd]">
+          <div className="mt-6 rounded-xl border border-[#BFDBFE] bg-[#EFF6FF] p-4 text-sm text-[#1E40AF]">
             This team registration is currently read-only. Contact your faculty
-             if changes are required.
+            coordinator if changes are required.
           </div>
         </div>
       </div>

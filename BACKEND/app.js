@@ -12,10 +12,16 @@ import studentRequestRoutes from "./routes/studentRequestRoutes.js";
 import studentDashboardRoutes from "./routes/studentDashboardRoutes.js";
 import topbarRoutes from "./routes/topbarRoutes.js";
 import eventRoutes from "./routes/eventRoutes.js";
-
+import issueHistoryRoutes from "./routes/issueHistoryRoutes.js";
+import purchaseRequestRoutes from "./routes/purchaseRequestRoutes.js";
+import galleryRoutes from "./routes/galleryRoutes.js";
+import projectGalleryRoutes from "./routes/projectGalleryRoutes.js";
+import returnManagementRoutes from "./routes/returnManagementRoutes.js";
+import damageComponentsRoutes from "./routes/damageComponentsRoutes.js";
+import componentDemandRoutes from "./routes/componentDemandRoutes.js";
+import labStaffProfileRoutes from "./routes/labStaffProfileRoutes.js";
+import dashboardRoutes from "./routes/dashboardRoutes.js";
 const app = express();
-
-
 app.use(express.json());
 app.use(
   cors({
@@ -37,12 +43,20 @@ app.use("/api/student-requests", studentRequestRoutes);
 app.use("/api/student-dashboard", studentDashboardRoutes);
 app.use("/api/topbar", topbarRoutes);
 app.use("/api/events", eventRoutes);
+app.use("/api/issue-history", issueHistoryRoutes);
+app.use("/api/purchase-requests", purchaseRequestRoutes);
+app.use("/api/gallery", galleryRoutes);
+app.use("/api/project-gallery", projectGalleryRoutes);
 
 //labstaff routes
 app.use("/api/inventory", inventoryRoutes);
 app.use("/api/requests", componentRequestRoutes);
 app.use("/api/issued-components", issuedComponentsRoutes);
-
+app.use("/api/returns", returnManagementRoutes);
+app.use("/api/damage-components", damageComponentsRoutes);
+app.use("/api/component-demand", componentDemandRoutes);
+app.use("/api/lab-staff/profile", labStaffProfileRoutes);
+app.use("/api/lab-staff", dashboardRoutes);
 
 app.get("/", (_req, res) => {
   res.json({

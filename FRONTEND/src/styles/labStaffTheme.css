@@ -1,0 +1,114 @@
+@layer components {
+  /* Cards & Containers */
+  .ls-card {
+    @apply bg-white border border-slate-200 rounded-xl p-6 shadow-sm transition-all;
+  }
+  .ls-card-hover {
+    @apply hover:border-slate-300 hover:shadow-md;
+  }
+  .ls-stat-card {
+    @apply bg-white border border-slate-200 rounded-xl p-5 shadow-sm transition-all hover:border-slate-300;
+  }
+
+  /* Text Typography */
+  .ls-text-primary {
+    @apply text-slate-900;
+  }
+  .ls-text-secondary {
+    @apply text-slate-500;
+  }
+  .ls-text-accent {
+    @apply text-cyan-600;
+  }
+  .ls-title-main {
+    @apply text-3xl font-bold text-slate-900;
+  }
+  .ls-title-card {
+    @apply text-xl font-semibold text-slate-900;
+  }
+  .ls-stat-value {
+    @apply text-3xl font-bold mt-2;
+  }
+
+  /* Form Elements */
+  .ls-input {
+    @apply w-full bg-white border border-slate-300 rounded-lg py-2.5 px-3 text-slate-900 outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-shadow;
+  }
+  .ls-input-search {
+    @apply pl-10 pr-4 py-3;
+  }
+
+  /* Buttons */
+  .ls-btn-primary {
+    @apply bg-cyan-600 hover:bg-cyan-700 text-white px-4 py-2 rounded-lg font-medium transition-colors shadow-sm;
+  }
+  .ls-btn-secondary {
+    @apply bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-lg font-medium transition-colors border border-slate-200;
+  }
+  .ls-btn-danger {
+    @apply bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 px-4 py-2 rounded-lg font-medium transition-colors;
+  }
+  .ls-icon-btn {
+    @apply text-slate-400 hover:text-cyan-600 p-1.5 rounded-lg transition-colors cursor-pointer;
+  }
+
+  /* Tables */
+  .ls-table-container {
+    @apply bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm;
+  }
+  .ls-table-header {
+    @apply p-5 border-b border-slate-200;
+  }
+  .ls-table-th {
+    @apply text-left px-6 py-4 text-slate-600 font-medium text-sm border-b border-slate-200 bg-slate-50;
+  }
+  .ls-table-td {
+    @apply px-6 py-4 text-slate-700;
+  }
+  .ls-table-tr {
+    @apply border-b border-slate-100 hover:bg-slate-50 transition-colors last:border-0;
+  }
+
+  /* Status Badges */
+  .ls-badge-success {
+    @apply bg-green-50 text-green-600 border border-green-200 px-3 py-1 rounded-full text-sm font-medium;
+  }
+  .ls-badge-warning {
+    @apply bg-amber-50 text-amber-600 border border-amber-200 px-3 py-1 rounded-full text-sm font-medium;
+  }
+  .ls-badge-error {
+    @apply bg-red-50 text-red-600 border border-red-200 px-3 py-1 rounded-full text-sm font-medium;
+  }
+  .ls-badge-neutral {
+    @apply bg-slate-100 text-slate-600 border border-slate-200 px-3 py-1 rounded-full text-sm font-medium;
+  }
+  .ls-badge-accent {
+    @apply bg-cyan-50 text-cyan-600 border border-cyan-200 px-3 py-1 rounded-full text-sm font-medium;
+  }
+
+  /* Modals */
+  .ls-modal-overlay {
+    @apply fixed inset-0 bg-slate-900/40 flex items-center justify-center z-50 px-4 transition-opacity duration-200;
+  }
+  .ls-modal-content {
+    @apply bg-white border border-slate-200 rounded-xl w-full max-w-md p-6 shadow-xl transition-transform duration-200 scale-100 max-h-[90vh] overflow-y-auto;
+  }
+  .ls-modal-header {
+    @apply flex items-center justify-between mb-5 border-b border-slate-100 pb-4;
+  }
+  .ls-modal-title {
+    @apply text-xl font-semibold text-slate-900;
+  }
+  .ls-modal-close {
+    @apply text-slate-400 hover:text-slate-600 hover:bg-slate-100 p-1.5 rounded-lg transition-colors;
+  }
+  .ls-modal-field-row {
+    @apply flex justify-between gap-4 border-b border-slate-100 py-3 last:border-0 last:pb-0;
+  }
+  .ls-modal-field-label {
+    @apply text-slate-500 font-medium;
+  }
+  .ls-modal-field-value {
+    @apply text-right font-semibold text-slate-900;
+  }
+}

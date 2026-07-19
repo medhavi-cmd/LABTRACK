@@ -167,6 +167,10 @@ export const registerTeam = async (data) => {
       projectName,
       description,
       memberEnrollmentNumbers,
+      facultyIds,
+      department,
+      academicYear,
+      section,
     } = data;
 
     // Check whether leader has already joined/created a team
@@ -184,6 +188,8 @@ export const registerTeam = async (data) => {
     if (alreadyInTeam.rows.length > 0) {
       throw new Error("You are already part of a team");
     }
+
+
 
     // Fetch leader profile
     const leaderResult = await client.query(
@@ -281,11 +287,33 @@ export const registerTeam = async (data) => {
     // Create team
     const teamResult = await client.query(
       `
-      INSERT INTO teams (team_name, leader_id)
-      VALUES ($1, $2)
-      RETURNING *
-      `,
-      [projectName, leader.student_id]
+    INSERT INTO teams
+    (
+    team_name,
+    leader_id,
+    department,
+    academic_year,
+    section
+    )
+
+    VALUES
+    (
+    $1,
+    $2,
+    $3,
+    $4,
+    $5
+    )
+
+    RETURNING *
+    `,
+      [
+        projectName,
+        leader.student_id,
+        department,
+        academicYear,
+        section
+      ]
     );
 
     const team = teamResult.rows[0];
@@ -322,4 +350,17 @@ export const registerTeam = async (data) => {
   } finally {
     client.release();
   }
+};
+
+export const getAllFaculty = async () => {
+  const result = await pool.query(`
+    SELECT
+      faculty_id,
+      name,
+      department
+    FROM faculty
+    ORDER BY name
+  `);
+
+  return result.rows;
 };

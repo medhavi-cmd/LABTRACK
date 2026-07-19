@@ -162,7 +162,7 @@ projectDetails: {
     Team: (
       <button
         onClick={() => setSelectedTeam(team)}
-        className="text-cyan-300 font-semibold hover:underline"
+        className="text-[#2563EB] font-semibold hover:underline"
       >
         {team.Team}
       </button>
@@ -172,14 +172,14 @@ projectDetails: {
     CurrentStage: team.CurrentStage,
     Status: (
   <span
-    className={`font-semibold ${
+    className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border ${
       team.Status === "On Track"
-        ? "text-green-400"
+        ? "bg-green-50 border-green-200 text-green-700"
         : team.Status === "Review Required"
-        ? "text-yellow-400"
+        ? "bg-amber-50 border-amber-200 text-amber-700"
         : team.Status === "Excellent"
-        ? "text-cyan-400"
-        : "text-white"
+        ? "bg-[#EFF6FF] border-[#BFDBFE] text-[#1E40AF]"
+        : "bg-gray-50 border-[#E5E7EB] text-[#111827]"
     }`}
   >
     {team.Status}
@@ -224,54 +224,54 @@ projectDetails: {
           data={tableData}
         />
 
-        <div className="rounded-2xl border border-cyan-500/20 bg-[#081122] p-6 space-y-6">
+        <div className="rounded-2xl border border-[#E5E7EB] bg-white shadow-sm p-6 space-y-6">
           <div className="flex justify-between items-start">
             <div>
-              <h2 className="text-2xl font-bold text-white">
+              <h2 className="text-2xl font-bold text-[#111827]">
                 {selectedTeam.Team} Progress Dashboard
               </h2>
-              <p className="text-slate-400 mt-1">
+              <p className="text-[#6B7280] mt-1">
                 {selectedTeam.Project} • Guided by {selectedTeam.Guide}
               </p>
             </div>
 
             <div className="text-right">
-              <p className="text-4xl font-bold text-cyan-300">
+              <p className="text-4xl font-bold text-[#2563EB]">
                 {selectedTeam.Progress}
               </p>
-              <p className="text-slate-400 text-sm">Overall Progress</p>
+              <p className="text-[#6B7280] text-sm">Overall Progress</p>
             </div>
           </div>
 
-          <div className="w-full bg-[#050816] rounded-full h-4 border border-cyan-500/20">
+          <div className="w-full bg-[#F8FAFC] rounded-full h-4 border border-[#E5E7EB]">
             <div
-              className="bg-cyan-400 h-full rounded-full"
+              className="bg-[#2563EB] h-full rounded-full"
               style={{ width: selectedTeam.Progress }}
             />
           </div>
 
           <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-            <div className="rounded-xl border border-white/10 bg-[#050816] p-5">
-              <h3 className="text-white font-semibold mb-5">Progress Graph</h3>
+            <div className="rounded-xl border border-[#E5E7EB] bg-[#F8FAFC] p-5">
+              <h3 className="text-[#111827] font-semibold mb-5">Progress Graph</h3>
 
               <div className="h-72">
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={selectedTeam.graphData}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#1f2937" />
-                    <XAxis dataKey="stage" stroke="#94a3b8" />
-                    <YAxis stroke="#94a3b8" domain={[0, 100]} />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+                    <XAxis dataKey="stage" stroke="#6B7280" />
+                    <YAxis stroke="#6B7280" domain={[0, 100]} />
                     <Tooltip
                       contentStyle={{
-                        backgroundColor: "#081122",
-                        border: "1px solid rgba(34,211,238,0.2)",
+                        backgroundColor: "#FFFFFF",
+                        border: "1px solid #E5E7EB",
                         borderRadius: "10px",
-                        color: "#fff",
+                        color: "#111827",
                       }}
                     />
                     <Line
                       type="monotone"
                       dataKey="progress"
-                      stroke="#22d3ee"
+                      stroke="#2563EB"
                       strokeWidth={3}
                       dot={{ r: 5 }}
                       activeDot={{ r: 7 }}
@@ -281,8 +281,8 @@ projectDetails: {
               </div>
             </div>
 
-            <div className="rounded-xl border border-white/10 bg-[#050816] p-5">
-              <h3 className="text-white font-semibold mb-5">
+            <div className="rounded-xl border border-[#E5E7EB] bg-[#F8FAFC] p-5">
+              <h3 className="text-[#111827] font-semibold mb-5">
                 Completion Timeline
               </h3>
 
@@ -291,13 +291,13 @@ projectDetails: {
                   <div key={item.name} className="flex gap-4">
                     <div
                       className={`w-5 h-5 rounded-full mt-1 ${
-                        item.completed ? "bg-cyan-400" : "bg-slate-600"
+                        item.completed ? "bg-[#2563EB]" : "bg-gray-300"
                       }`}
                     />
 
                     <div>
-                      <p className="text-white font-medium">{item.name}</p>
-                      <p className="text-slate-400 text-sm">
+                      <p className="text-[#111827] font-medium">{item.name}</p>
+                      <p className="text-[#6B7280] text-sm">
                         {item.completed
                           ? `Completed on ${item.date}`
                           : "Pending"}
@@ -309,23 +309,23 @@ projectDetails: {
             </div>
           </div>
 
-          <div className="rounded-xl border border-white/10 bg-[#050816] p-5">
-            <h3 className="text-white font-semibold mb-5">Evaluation Scores</h3>
+          <div className="rounded-xl border border-[#E5E7EB] bg-[#F8FAFC] p-5">
+            <h3 className="text-[#111827] font-semibold mb-5">Evaluation Scores</h3>
 
-            <div className="overflow-hidden rounded-xl border border-white/10">
+            <div className="overflow-hidden rounded-xl border border-[#E5E7EB]">
               <table className="w-full text-left">
-                <thead className="bg-white/5 text-slate-300 text-sm">
+                <thead className="bg-white text-[#4B5563] text-sm">
                   <tr>
                     <th className="px-5 py-3 font-medium">Evaluation</th>
                     <th className="px-5 py-3 font-medium">Marks</th>
                   </tr>
                 </thead>
 
-                <tbody className="divide-y divide-white/10">
+                <tbody className="divide-y divide-[#E5E7EB]">
                   {selectedTeam.scores.map((score) => (
-                    <tr key={score.evaluation} className="text-sm text-slate-300">
+                    <tr key={score.evaluation} className="text-sm text-[#4B5563]">
                       <td className="px-5 py-3">{score.evaluation}</td>
-                      <td className="px-5 py-3 text-cyan-300 font-semibold">
+                      <td className="px-5 py-3 text-[#2563EB] font-semibold">
                         {score.marks}
                       </td>
                     </tr>
@@ -335,23 +335,23 @@ projectDetails: {
             </div>
           </div>
 
-          <div className="rounded-xl border border-white/10 bg-[#050816] p-5">
-            <h3 className="text-white font-semibold mb-5">Team Members</h3>
+          <div className="rounded-xl border border-[#E5E7EB] bg-[#F8FAFC] p-5">
+            <h3 className="text-[#111827] font-semibold mb-5">Team Members</h3>
 
-            <div className="overflow-hidden rounded-xl border border-white/10">
+            <div className="overflow-hidden rounded-xl border border-[#E5E7EB]">
               <table className="w-full text-left">
-                <thead className="bg-white/5 text-slate-300 text-sm">
+                <thead className="bg-white text-[#4B5563] text-sm">
                   <tr>
                     <th className="px-5 py-3 font-medium">Member Name</th>
                     <th className="px-5 py-3 font-medium">Role</th>
                   </tr>
                 </thead>
 
-                <tbody className="divide-y divide-white/10">
+                <tbody className="divide-y divide-[#E5E7EB]">
                   {selectedTeam.members.map((member) => (
-                    <tr key={member.name} className="text-sm text-slate-300">
-                      <td className="px-5 py-3 text-white">{member.name}</td>
-                      <td className="px-5 py-3 text-cyan-300">
+                    <tr key={member.name} className="text-sm text-[#4B5563]">
+                      <td className="px-5 py-3 text-[#111827]">{member.name}</td>
+                      <td className="px-5 py-3 text-[#2563EB]">
                         {member.role}
                       </td>
                     </tr>
@@ -361,52 +361,52 @@ projectDetails: {
             </div>
           </div>
 
-                      <div className="rounded-xl border border-white/10 bg-[#050816] p-5">
-  <h3 className="text-white font-semibold mb-5">
+                      <div className="rounded-xl border border-[#E5E7EB] bg-[#F8FAFC] p-5">
+  <h3 className="text-[#111827] font-semibold mb-5">
     Faculty Remarks
-    <div className="rounded-xl border border-white/10 bg-[#050816] p-5">
-  <h3 className="text-white font-semibold mb-5">
+    <div className="rounded-xl border border-[#E5E7EB] bg-[#F8FAFC] p-5">
+  <h3 className="text-[#111827] font-semibold mb-5">
     Project Details
   </h3>
 
   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-    
+
     <div>
-      <p className="text-slate-400">Domain</p>
-      <p className="text-white font-medium">
+      <p className="text-[#6B7280]">Domain</p>
+      <p className="text-[#111827] font-medium">
         {selectedTeam.projectDetails.domain}
       </p>
     </div>
 
     <div>
-      <p className="text-slate-400">Tech Stack</p>
-      <p className="text-cyan-300 font-medium">
+      <p className="text-[#6B7280]">Tech Stack</p>
+      <p className="text-[#2563EB] font-medium">
         {selectedTeam.projectDetails.techStack}
       </p>
     </div>
 
     <div>
-      <p className="text-slate-400">Start Date</p>
-      <p className="text-white">
+      <p className="text-[#6B7280]">Start Date</p>
+      <p className="text-[#111827]">
         {selectedTeam.projectDetails.startDate}
       </p>
     </div>
 
     <div>
-<p className="text-slate-400">Completion Date</p>
-<p className="text-white">
+<p className="text-[#6B7280]">Completion Date</p>
+<p className="text-[#111827]">
   {selectedTeam.projectDetails.endDate}
 </p>
     </div>
 
     <div className="md:col-span-2">
-      <p className="text-slate-400">Repository</p>
+      <p className="text-[#6B7280]">Repository</p>
 
       <a
         href={selectedTeam.projectDetails.repository}
         target="_blank"
         rel="noreferrer"
-        className="text-cyan-300 hover:underline"
+        className="text-[#2563EB] hover:underline"
       >
         View Repository
       </a>
@@ -420,9 +420,9 @@ projectDetails: {
     {selectedTeam.remarks.map((remark, index) => (
       <div
         key={index}
-        className="rounded-lg border border-white/10 bg-[#081122] p-4"
+        className="rounded-lg border border-[#E5E7EB] bg-white p-4"
       >
-        <p className="text-slate-300 text-sm">
+        <p className="text-[#4B5563] text-sm">
           {remark}
         </p>
       </div>
@@ -431,31 +431,31 @@ projectDetails: {
 </div>
 
 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="rounded-xl bg-[#050816] border border-white/10 p-4">
-              <p className="text-slate-400 text-sm">Completed Milestones</p>
-              <p className="text-2xl font-bold text-white">
+            <div className="rounded-xl bg-[#F8FAFC] border border-[#E5E7EB] p-4">
+              <p className="text-[#6B7280] text-sm">Completed Milestones</p>
+              <p className="text-2xl font-bold text-[#111827]">
                 {completedCount}/{selectedTeam.evaluations.length}
               </p>
             </div>
 
-            <div className="rounded-xl bg-[#050816] border border-white/10 p-4">
-              <p className="text-slate-400 text-sm">Current Stage</p>
-              <p className="text-2xl font-bold text-white">
+            <div className="rounded-xl bg-[#F8FAFC] border border-[#E5E7EB] p-4">
+              <p className="text-[#6B7280] text-sm">Current Stage</p>
+              <p className="text-2xl font-bold text-[#111827]">
                 {selectedTeam.CurrentStage}
               </p>
             </div>
 
-            <div className="rounded-xl bg-[#050816] border border-white/10 p-4">
-              <p className="text-slate-400 text-sm">Status</p>
+            <div className="rounded-xl bg-[#F8FAFC] border border-[#E5E7EB] p-4">
+              <p className="text-[#6B7280] text-sm">Status</p>
                 <p
                 className={`text-2xl font-bold ${
                     selectedTeam.Status === "On Track"
-                    ? "text-green-400"
+                    ? "text-green-700"
                     : selectedTeam.Status === "Review Required"
-                    ? "text-yellow-400"
+                    ? "text-amber-700"
                     : selectedTeam.Status === "Excellent"
-                    ? "text-cyan-400"
-                    : "text-white"
+                    ? "text-[#1E40AF]"
+                    : "text-[#111827]"
                 }`}
                 >
                 {selectedTeam.Status}

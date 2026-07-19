@@ -4,9 +4,9 @@ function ActionButton({
   onClick,
 }) {
   const styles = {
-    cyan: "bg-cyan-500 hover:bg-cyan-600",
-    green: "bg-green-500 hover:bg-green-600",
-    red: "bg-red-500 hover:bg-red-600",
+    cyan: "bg-[#2563EB] hover:bg-[#1d4ed8]",
+    green: "bg-green-600 hover:bg-green-700",
+    red: "bg-red-600 hover:bg-red-700",
   };
 
   return (

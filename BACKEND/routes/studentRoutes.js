@@ -8,15 +8,10 @@ from "../controllers/studentController.js";
 
 const router =
   express.Router();
+  
 
-router.post(
-  "/complete-profile",
-  completeProfile
-);
+router.post("/complete-profile", completeProfile);
 
-router.get(
-  "/profile/:userId",
-  fetchProfile
-);
+router.get("/profile/:userId", fetchProfile);
 
 export default router;

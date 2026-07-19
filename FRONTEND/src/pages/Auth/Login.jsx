@@ -1,60 +1,53 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import bgImage from "../../assets/login-bg.jpg";
+import { loginWithGoogle } from "../../services/authService";
 import { Link, useNavigate } from "react-router-dom";
-
-import { ArrowUpRight } from "lucide-react";
-
+import {
+  ArrowUpRight,
+  Mail,
+  Lock,
+  GraduationCap,
+  Presentation,
+  Microscope,
+  ArrowRight,
+} from "lucide-react";
 import { loginUser } from "../../services/authService";
-
-// Component Imports
 import { Button } from "../../components/ui/Button";
 import { Input } from "../../components/ui/Input";
 import { RoleSelector } from "../../components/ui/RoleSelector";
 import { getProfile } from "../../services/studentService";
 import logo from "../../assets/logo.png";
+import {toast} from "sonner";
 
-import {
-  GraduationCap,
-  Presentation,
-  Microscope,
-  Mail,
-  Lock,
-  FlaskConical,
-  ArrowRight,
-} from "lucide-react";
 
 export default function LoginPage() {
   const [accessRole, setAccessRole] = useState("student");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
-      const response = await loginUser({
-        email,
-        password,
-      });
+      const response = await loginUser({ email, password });
+
+      localStorage.setItem("token", response.token);
+      localStorage.setItem("user", JSON.stringify(response.user));
 
       if (response.user.role !== accessRole) {
-        alert(
+        toast.error(
           `This account belongs to ${response.user.role}. Please select the correct access role.`,
         );
         return;
       }
 
       localStorage.setItem("token", response.token);
-
       localStorage.setItem("user", JSON.stringify(response.user));
 
       if (response.user.role === "student") {
         try {
           const profile = await getProfile(response.user.user_id);
-
           if (profile && profile.student_id) {
             navigate("/student/student-dashboard");
           } else {
@@ -62,8 +55,7 @@ export default function LoginPage() {
           }
         } catch (err) {
           console.error("Profile fetch error:", err);
-
-          alert("Unable to fetch profile");
+          toast.error("Unable to fetch profile");
         }
       } else if (response.user.role === "faculty") {
         navigate("/faculty/dashboard");
@@ -71,89 +63,74 @@ export default function LoginPage() {
         navigate("/lab-staff/dashboard");
       }
     } catch (error) {
-      alert(error.response?.data?.message || "Login Failed");
+      toast.error(error.response?.data?.message || "Login Failed");
     }
   };
 
   return (
-    <div className="h-screen w-full flex bg-[#0b1326] text-[#dae2fd] font-sans antialiased selection:bg-[#22d3ee]/30 selection:text-[#22d3ee] overflow-hidden">
-      {/* LEFT SIDE */}
+    <div className="h-screen w-full flex bg-slate-50 text-slate-900 font-sans antialiased selection:bg-cyan-500/20 selection:text-cyan-600 overflow-hidden">
 
-      <div className="relative hidden lg:flex lg:w-1/2 flex-col justify-between p-12 overflow-hidden border-r border-[#3c494c]">
+      <div className="relative hidden lg:flex lg:w-1/2 flex-col justify-between p-16 overflow-hidden bg-slate-950 text-white">
         <div
-          className="absolute inset-0 pointer-events-none"
+          className="absolute inset-0 pointer-events-none opacity-40"
           style={{
-            backgroundImage: `linear-gradient(rgba(6,14,32,.65), rgba(6,14,32,.65)), url(${bgImage})`,
+            backgroundImage: `
+              linear-gradient(
+                to bottom,
+                rgba(15, 23, 42, 0.25),
+                rgba(15, 23, 42, 0.55)
+              ),
+              url(${bgImage})
+            `,
             backgroundSize: "cover",
             backgroundPosition: "center",
           }}
         />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(34,211,238,0.15),transparent_60%)] pointer-events-none" />
-        <div className="absolute inset-0 opacity-[0.03] bg-[linear-gradient(to_right,#859397_1px,transparent_1px),linear-gradient(to_bottom,#859397_1px,transparent_1px)] bg-[size:4rem_4rem]" />
 
-        {/* Header */}
-        <motion.div
-          className="relative flex items-center gap-3 z-10"
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          <div className="h-18 border-b border-[#222a3d] flex items-center justify-center px-4">
-            <img
-              src={logo}
-              alt="LABTRACK"
-              className="h-10 w-auto object-contain"
-            />
-          </div>
-        </motion.div>
+        <div className="relative z-10 flex items-center gap-3">
+          <img
+            src={logo}
+            alt="LABTRACK"
+            className="h-7 w-auto object-contain brightness-0 invert"
+          />
+        </div>
 
-        {/* tag line */}
-        <div className="relative max-w-2xl mx-auto my-auto py-5 text-left flex flex-col items-start justify-center z-10">
-          <motion.h1
-            className="text-5xl font-bold text-[#dae2fd] tracking-tight leading-[1.2] mb-4 text-left"
-            initial={{ opacity: 0, x: -30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-          >
+
+        <div className="relative max-w-xl my-auto py-5 text-left flex flex-col items-start justify-center z-10">
+          <h1 className="text-4xl font-bold tracking-tight leading-tight text-slate-100">
             Powering the next generation of discovery.
-          </motion.h1>
-          <motion.p
-            className="text-[#bbc9cd] text-xl leading-[1.6] text-left"
-            initial={{ opacity: 0, x: -30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
+          </h1>
+          <p className="text-slate-400 text-lg leading-relaxed mt-4">
             The unified operating system for academic research, inventory
             control, and collaborative project tracking.
-          </motion.p>
+          </p>
         </div>
 
         <div className="h-10 w-full pointer-events-none" />
       </div>
 
-      {/* RIGHT SIDE */}
-      <div className="flex-1 lg:w-1/2 flex items-center justify-center p-6 sm:p-12 lg:p-16 relative bg-[radial-gradient(circle_at_top_right,rgba(99,102,241,0.05),transparent_50%)]">
+      <div className="flex-1 lg:w-1/2 flex items-center justify-center p-6 sm:p-12 lg:p-16 bg-slate-50">
         <motion.div
-          className="w-full max-w-[460px] bg-[#171f33] border border-[#3c494c] rounded-lg p-8 sm:p-10 shadow-2xl relative"
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: "easeOut" }}
+          className="w-full max-w-[440px] bg-white border border-slate-200/80 rounded-2xl p-8 sm:p-10 shadow-xl shadow-slate-200/40 relative"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.2 }}
         >
-          <div className="mb-8">
-            <h2 className="text-[24px] font-semibold text-[#22d3ee] tracking-tight leading-[1.3] mb-1.5">
+          <div className="mb-6">
+            <h2 className="text-2xl font-bold text-slate-900 tracking-tight mb-1">
               Welcome back
             </h2>
-            <p className="text-sm text-[#bbc9cd]">
+            <p className="text-sm text-slate-500 font-medium">
               Sign in to your LabTrack EME workspace
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <div className="flex flex-col gap-2 mb-6">
-              <span className="font-mono text-[12px] font-semibold uppercase tracking-wider text-[#bbc9cd]">
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="flex flex-col gap-1.5 mb-4">
+              <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-slate-400">
                 Access Role
               </span>
-              <div className="flex gap-2.5">
+              <div className="flex gap-2">
                 <RoleSelector
                   label="Student"
                   icon={GraduationCap}
@@ -197,34 +174,31 @@ export default function LoginPage() {
               required
             />
 
-            <div className="flex items-center justify-between pt-1 pb-2">
-              <a
-                href="#forgot"
-                className="text-sm font-medium text-[#22d3ee] hover:text-[#8aebff] transition-colors"
+            <div className="flex items-center justify-between pt-1">
+              <Link
+                to="/forgot-password"
+                className="text-sm font-medium text-[#2563EB] hover:text-[#1d4ed8] transition-colors"
               >
                 Forgot password?
-              </a>
+              </Link>
             </div>
 
-            <Button variant="primary" type="submit" className="w-full mt-2">
+            <Button
+              variant="primary"
+              type="submit"
+              className="w-full h-10 bg-[#2563EB] hover:bg-[#1d4ed8] text-white font-medium text-sm rounded-lg shadow-xs transition-colors mt-3 flex items-center justify-center"
+            >
               Sign In
             </Button>
 
-            {/* <div className="relative flex py-3 items-center">
-              <div className="grow border-t border-[#3c494c]/60"></div>
-              <span className="shrink mx-4 font-mono text-[11px] font-bold tracking-widest text-[#bbc9cd]/60 uppercase">
-                OR SSO LOGIN
-              </span>
-              <div className="grow border-t border-[#3c494c]/60"></div>
-            </div> */}
-
-            {/* <Button
-              variant="sso"
+            <Button
               type="button"
-              onClick={() => console.log("Google login")}
+              variant="outline"
+              onClick={loginWithGoogle}
+              className="w-full h-10 border border-[#E5E7EB] bg-white text-[#4B5563] hover:bg-[#F8FAFC] hover:text-[#111827] font-medium text-sm rounded-lg shadow-xs transition-all mt-3 flex items-center justify-center gap-2"
             >
               <svg
-                className="w-4 h-4 mr-1"
+                className="w-4 h-4 shrink-0"
                 viewBox="0 0 24 24"
                 xmlns="http://www.w3.org/2000/svg"
               >
@@ -245,50 +219,28 @@ export default function LoginPage() {
                   fill="#EA4335"
                 />
               </svg>
-              Sign in using Google
-            </Button> */}
+              Continue with Google
+            </Button>
           </form>
 
-          {/* <div className="mt-8 text-center">
-            <p className="text-sm text-[#bbc9cd]">
-              Don't have an account?{" "}
-              <a
-                href="#request"
-                className="text-[#22d3ee] hover:text-[#8aebff] font-semibold inline-flex items-center gap-0.5 hover:underline transition-all"
-              >
-                Request access{" "}
-                <ArrowRight size={14} className="inline ml-0.5" />
-              </a>
-            </p>
-          </div> */}
-
-          <div className="mt-6 text-center border-t border-[#3c494c]/40 pt-4">
-            <p className="text-sm text-[#bbc9cd]">
+          <div className="mt-6 text-center border-t border-[#E5E7EB] pt-5">
+            <p className="text-sm text-[#6B7280]">
               Don't have an account?{" "}
               <Link
                 to="/signup"
-                className="text-[#22d3ee] hover:text-[#8aebff] font-semibold inline-flex items-center gap-0.5 hover:underline transition-all"
+                className="text-[#2563EB] hover:text-[#1d4ed8] font-semibold inline-flex items-center gap-0.5 hover:underline transition-colors"
               >
                 Sign Up <ArrowRight size={14} className="inline ml-0.5" />
               </Link>
             </p>
           </div>
-          {/* <div className="mt-6 flex justify-center">
-            <Link
-              to="/aboutlabtrack"
-              className="flex items-center gap-1 text-sm text-[#22d3ee] transition-colors"
-            >
-              About LABTRACK
-              <ArrowUpRight size={16} />
-            </Link>
-          </div> */}
-          <div className="mt-6 text-center">
+          <div className="mt-4 text-center">
             <Link
               to="/about-labtrack"
-              className="inline-flex items-center gap-1 text-sm text-[#22d3ee] hover:text-[#8aebff] transition"
+              className="inline-flex items-center gap-1 text-xs font-medium text-[#2563EB] hover:text-[#1d4ed8] transition"
             >
               About LABTRACK
-              <ArrowUpRight size={15} />
+              <ArrowUpRight size={13} />
             </Link>
           </div>
         </motion.div>

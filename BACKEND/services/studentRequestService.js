@@ -11,14 +11,29 @@ export const submitComponentRequest = async (
     await client.query("BEGIN");
 
     // Find student's team
-    const teamResult = await client.query(
-      `
-      SELECT team_id
-      FROM team_members
-      WHERE student_id = $1
-      `,
-      [studentId]
-    );
+    const studentResult = await client.query(
+`
+SELECT student_id
+FROM students
+WHERE user_id = $1
+`,
+[studentId]
+);
+
+if (studentResult.rows.length === 0) {
+    throw new Error("Student profile not found.");
+}
+
+const actualStudentId = studentResult.rows[0].student_id;
+
+const teamResult = await client.query(
+`
+SELECT team_id
+FROM team_members
+WHERE student_id = $1
+`,
+[actualStudentId]
+);
 
     if (teamResult.rows.length === 0) {
       throw new Error("You are not part of any team.");
