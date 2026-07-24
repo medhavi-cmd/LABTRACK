@@ -126,11 +126,6 @@ export const SIDEBAR_CONFIG = {
       path: "/lab-staff/demand"
     },
     {
-      label: "Notifications",
-      icon: ClipboardList,
-      path: "/lab-staff/notifications"
-    },
-    {
       label: "Settings",
       icon: Settings,
       path: "/lab-staff/settings"
