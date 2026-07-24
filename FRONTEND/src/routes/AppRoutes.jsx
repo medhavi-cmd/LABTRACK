@@ -2,7 +2,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import ProtectedRoute from "./ProtectedRoute";
 
 import ComponentDemand from "../pages/LabStaff/ComponentDemand";
-import Notifications from "../pages/LabStaff/Notifications";
+//import Notifications from "../pages/LabStaff/Notifications";
 import LabStaffLayout from "../layouts/LabStaffLayout";
 import LabStaffDashboard from "../pages/LabStaff/Dashboard";
 import LabStaffInventoryManagement from "../pages/LabStaff/InventoryManagement";
@@ -304,14 +304,7 @@ const AppRoutes = () => {
             </ProtectedRoute>
           }
         />
-        <Route
-          path="notifications"
-          element={
-            <ProtectedRoute allowedRoles="lab_staff">
-              <Notifications />
-            </ProtectedRoute>
-          }
-        />
+       
 
         <Route
           path="settings"
