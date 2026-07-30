@@ -306,7 +306,7 @@ const ComponentRequests = () => {
                   return (
                     <tr
                       key={request.request_id}
-                      className="border-t border-cyan-200 hover:bg-[#081222]"
+                      className="border-t border-cyan-200 transition-colors duration-200 hover:bg-slate-100"
                     >
                       <td className="ls-table-td">
                         <div className="flex items-center gap-2">
