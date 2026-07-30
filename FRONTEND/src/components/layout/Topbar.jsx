@@ -50,7 +50,7 @@ export default function Topbar({ onMenuClick }) {
 
       <div className="flex items-center gap-3 sm:gap-5 shrink-0">
         
-        <button
+        {/* <button
           onClick={() => navigate("/student/notifications")}
           className="relative p-2 rounded-lg bg-[#FFFFFF] border border-[#D1D5DB] hover:border-[#2563EB] hover:bg-[#F8FAFC] transition shrink-0"
         >
@@ -60,7 +60,7 @@ export default function Topbar({ onMenuClick }) {
               {user.unreadNotifications}
             </span>
           )}
-        </button>
+        </button> */}
 
         <div className="relative">
           <button

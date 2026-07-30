@@ -48,12 +48,12 @@ function ProjectApprovals() {
     Team: project.team,
     Status: (
       <span
-        className={`font-semibold ${
+        className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border ${
           project.status === "Approved"
-            ? "text-green-400"
+            ? "bg-green-50 border-green-200 text-green-700"
             : project.status === "Rejected"
-            ? "text-red-400"
-            : "text-yellow-400"
+            ? "bg-red-50 border-red-200 text-red-700"
+            : "bg-amber-50 border-amber-200 text-amber-700"
         }`}
       >
         {project.status}
@@ -90,39 +90,39 @@ function ProjectApprovals() {
         />
 
         {selectedProject && (
-          <div className="rounded-2xl border border-cyan-500/20 bg-[#081122] p-6 space-y-5">
+          <div className="rounded-2xl border border-[#E5E7EB] bg-white shadow-sm p-6 space-y-5">
             <div>
-              <h2 className="text-2xl font-bold text-white">Project Details</h2>
-              <p className="text-slate-400 mt-1">
+              <h2 className="text-2xl font-bold text-[#111827]">Project Details</h2>
+              <p className="text-[#6B7280] mt-1">
                 Review submitted project before approval
               </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
               <div>
-                <p className="text-slate-400">Project Title</p>
-                <p className="text-white font-medium">{selectedProject.title}</p>
+                <p className="text-[#6B7280]">Project Title</p>
+                <p className="text-[#111827] font-medium">{selectedProject.title}</p>
               </div>
 
               <div>
-                <p className="text-slate-400">Team</p>
-                <p className="text-white font-medium">{selectedProject.team}</p>
+                <p className="text-[#6B7280]">Team</p>
+                <p className="text-[#111827] font-medium">{selectedProject.team}</p>
               </div>
 
               <div>
-                <p className="text-slate-400">Guide</p>
-                <p className="text-white font-medium">{selectedProject.guide}</p>
+                <p className="text-[#6B7280]">Guide</p>
+                <p className="text-[#111827] font-medium">{selectedProject.guide}</p>
               </div>
 
               <div>
-                <p className="text-slate-400">Status</p>
+                <p className="text-[#6B7280]">Status</p>
                 <p
                   className={`font-medium ${
                     selectedProject.status === "Approved"
-                      ? "text-green-400"
+                      ? "text-green-700"
                       : selectedProject.status === "Rejected"
-                      ? "text-red-400"
-                      : "text-yellow-400"
+                      ? "text-red-700"
+                      : "text-amber-700"
                   }`}
                 >
                   {selectedProject.status}
@@ -147,8 +147,8 @@ function ProjectApprovals() {
               <p
                 className={`font-semibold ${
                   selectedProject.status === "Approved"
-                    ? "text-green-400"
-                    : "text-red-400"
+                    ? "text-green-700"
+                    : "text-red-700"
                 }`}
               >
                 Already {selectedProject.status}
