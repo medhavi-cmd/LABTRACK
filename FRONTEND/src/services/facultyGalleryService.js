@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API = "http://localhost:5001/api/faculty/gallery";
+const API = "http://localhost:5000/api/faculty/gallery";
 
 const getAuthHeaders = () => {
   const token = localStorage.getItem("token");
