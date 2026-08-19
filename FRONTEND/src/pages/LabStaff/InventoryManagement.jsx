@@ -11,7 +11,8 @@ import {
   FiCheckCircle,
 } from "react-icons/fi";
  
-const API_BASE = "http://localhost:5000/api/inventory";
+const API_BASE =
+  `${import.meta.env.VITE_API_URL}/inventory`;
  
 // ─── Status config ────────────────────────────────────────────────────────────
 const STATUS_CONFIG = {

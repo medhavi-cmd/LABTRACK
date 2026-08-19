@@ -3,7 +3,7 @@ import { FiEye, FiCheck, FiInfo, FiX, FiSearch, FiLoader } from "react-icons/fi"
 import { authFetch } from "../../services/api";
  
 // ─── Config ─────────────────────────────────────────────────────────────────
-const API_BASE = "http://localhost:5000/api/requests";
+const API_BASE = `${import.meta.env.VITE_API_URL}/requests`;
  
 // ─── Status config ─────────────────────────────────────────────────────────────
 const STATUS_CONFIG = {

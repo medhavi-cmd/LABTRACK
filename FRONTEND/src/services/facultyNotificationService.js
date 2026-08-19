@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API = "http://localhost:5000/api/faculty/notifications";
+const API = `${import.meta.env.VITE_API_URL}/faculty/notifications`;
 
 const getAuthHeaders = () => {
   const token = localStorage.getItem("token");

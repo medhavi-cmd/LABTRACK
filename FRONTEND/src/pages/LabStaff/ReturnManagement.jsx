@@ -215,7 +215,7 @@ const ReturnManagement = () => {
         setLoading(true);
         setError("");
  
-        const res = await authFetch("http://localhost:5000/api/returns");
+        const res = await authFetch(`${import.meta.env.VITE_API_URL}/returns`)
         const result = await res.json();
  
         if (!res.ok || !result?.success) {

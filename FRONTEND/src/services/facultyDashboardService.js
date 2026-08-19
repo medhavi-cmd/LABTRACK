@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API = "http://localhost:5000/api/faculty/dashboard";
+const API = `${import.meta.env.VITE_API_URL}/faculty/dashboard`;
 
 const getAuthHeaders = () => ({
   Authorization: `Bearer ${localStorage.getItem("token")}`,

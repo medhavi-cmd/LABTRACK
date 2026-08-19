@@ -2,7 +2,7 @@ import axios from "axios";
 import { supabase } from "../lib/supabase";
 
 const API =
-  "http://localhost:5000/api/auth";
+  `${import.meta.env.VITE_API_URL}/auth`;
 
 export const signupUser =
   async (data) => {

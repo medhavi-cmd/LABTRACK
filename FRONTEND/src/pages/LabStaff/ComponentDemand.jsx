@@ -34,7 +34,7 @@ const ComponentDemand = () => {
         setLoading(true);
         setError("");
 
-        const res = await authFetch("http://localhost:5000/api/component-demand");
+        const res = await authFetch(`${import.meta.env.VITE_API_URL}/component-demand`);
         const result = await res.json();
 
         if (!res.ok || !result?.success) {

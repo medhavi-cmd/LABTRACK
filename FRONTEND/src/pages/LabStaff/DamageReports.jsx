@@ -312,7 +312,7 @@ const DamageReports = () => {
     try {
       setLoading(true);
       setError("");
-      const res = await authFetch("http://localhost:5000/api/damage-components");
+      const res = await authFetch(`${import.meta.env.VITE_API_URL}/damage-components`);
       const result = await res.json();
       if (!res.ok || !result.success) {
         throw new Error(result.message || "Failed to load damage components.");
@@ -374,7 +374,7 @@ const DamageReports = () => {
     try {
       const report = reports.find(r => r.reportId === reportId);
       if (!report) return;
-      const res = await authFetch(`http://localhost:5000/api/damage-components/${report.issue_id}/resolve`, {
+      const res = await authFetch(`${import.meta.env.VITE_API_URL}/damage-components/${report.issue_id}/resolve`, {
         method: "PATCH",
       });
       const result = await res.json();

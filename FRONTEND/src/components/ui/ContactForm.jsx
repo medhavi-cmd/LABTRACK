@@ -47,7 +47,7 @@ const ContactForm = () => {
         <input
           type="hidden"
           name="redirect"
-          value="http://localhost:5173/about-labtrack"
+          value={`${window.location.origin}/about-labtrack`}
         />
 
         <input

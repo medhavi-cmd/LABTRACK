@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API =
-"http://localhost:5000/api/student";
+  `${import.meta.env.VITE_API_URL}/student`;
 
 export const completeProfile =
 async(data)=>{
