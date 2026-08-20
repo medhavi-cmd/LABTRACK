@@ -1,7 +1,7 @@
 import {
   getAllRequests,
   approveRequestService,
-} from "../services/componentRequestService.js";
+} from "../services/ComponentRequestService.js";
 
 // GET all component requests
 export const fetchRequests = async (req, res) => {
