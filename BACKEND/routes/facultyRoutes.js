@@ -15,7 +15,7 @@ import {
   getFacultyDashboard,
   archiveNotification,
 } from "../controllers/facultyController.js";
-import { requireAuth } from "../middleware/authmiddleware.js";
+import { requireAuth } from "../middleware/authMiddleware.js";
 import { requireRole } from "../middleware/roleMiddleware.js";
 
 const router = express.Router();
