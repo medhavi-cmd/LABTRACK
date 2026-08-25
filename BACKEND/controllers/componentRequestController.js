@@ -26,20 +26,23 @@ export const fetchRequests = async (req, res) => {
 export const approveRequest = async (req, res) => {
   try {
     const { id } = req.params;
-    const staffId = req.user?.id ?? 1;
 
-    await approveRequestService(id, staffId);
+    // req.user.id = users.user_id (bigint) set by requireAuth middleware
+    // The service resolves this to lab_staff.staff_id internally
+    const userId = req.user.id;
+
+    await approveRequestService(id, userId);
 
     res.status(200).json({
       success: true,
       message: "Request approved successfully",
     });
   } catch (err) {
-    console.error("Approval Error:", err);
+    console.error("Approval Error:", err.message);
 
     res.status(500).json({
       success: false,
       message: err.message || "Approval failed",
     });
   }
-};
+};

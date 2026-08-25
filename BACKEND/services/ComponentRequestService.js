@@ -41,21 +41,28 @@ export const getAllRequests = async () => {
   return result.rows;
 };
 
-export const approveRequestService = async (requestId, staffId) => {
+export const approveRequestService = async (requestId, userId) => {
   const client = await pool.connect();
 
   try {
     await client.query("BEGIN");
 
-  
+    // 1. Resolve lab_staff.staff_id from the authenticated users.user_id
+    //    The JWT carries users.user_id; approved_by and issued_by FK to lab_staff.staff_id
+    const staffResult = await client.query(
+      `SELECT staff_id FROM lab_staff WHERE user_id = $1`,
+      [userId]
+    );
 
-    // 2. Check request exists
+    if (staffResult.rows.length === 0) {
+      throw new Error("Lab staff profile not found for this account.");
+    }
+
+    const staffId = staffResult.rows[0].staff_id;
+
+    // 2. Check request exists and is still pending
     const requestResult = await client.query(
-      `
-      SELECT status
-      FROM component_requests
-      WHERE request_id = $1
-      `,
+      `SELECT status FROM component_requests WHERE request_id = $1`,
       [requestId]
     );
 
@@ -67,13 +74,14 @@ export const approveRequestService = async (requestId, staffId) => {
       throw new Error("Request already processed");
     }
 
-    // 3. Fetch requested items
+    // 3. Fetch requested items with current stock levels
     const itemsResult = await client.query(
       `
       SELECT
           ri.component_id,
           ri.quantity,
-          c.available_quantity
+          c.available_quantity,
+          c.component_name
       FROM request_items ri
       JOIN components c
           ON ri.component_id = c.component_id
@@ -82,66 +90,49 @@ export const approveRequestService = async (requestId, staffId) => {
       [requestId]
     );
 
-    // 4. Check stock
+    // 4. Check stock for every item before making any change
     for (const item of itemsResult.rows) {
       if (item.available_quantity < item.quantity) {
         throw new Error(
-          `Not enough stock for Component ID ${item.component_id}`
+          `Insufficient stock for "${item.component_name}" — available: ${item.available_quantity}, requested: ${item.quantity}`
         );
       }
     }
 
-    // 5. Approve request
+    // 5. Mark request as approved
     await client.query(
-      `
-      UPDATE component_requests
-      SET
-          status = 'approved',
-          approved_by = $1
-      WHERE request_id = $2
-      `,
+      `UPDATE component_requests
+       SET status = 'approved', approved_by = $1
+       WHERE request_id = $2`,
       [staffId, requestId]
     );
 
-    // 6. Reduce inventory
+    // 6. Reduce available inventory for each component
     for (const item of itemsResult.rows) {
       await client.query(
-  `
-  UPDATE components
-  SET
-    available_quantity = available_quantity - $1,
-    status = CASE
-      WHEN available_quantity - $1 <= 0 THEN 'out_of_stock'::component_status_type
-      WHEN available_quantity - $1 <= 10 THEN 'low_stock'::component_status_type
-      ELSE 'available'::component_status_type
-    END
-  WHERE component_id = $2
-  `,
-  [item.quantity, item.component_id]
-);
+        `
+        UPDATE components
+        SET
+          available_quantity = available_quantity - $1,
+          status = CASE
+            WHEN available_quantity - $1 <= 0  THEN 'out_of_stock'::component_status_type
+            WHEN available_quantity - $1 <= 10 THEN 'low_stock'::component_status_type
+            ELSE 'available'::component_status_type
+          END
+        WHERE component_id = $2
+        `,
+        [item.quantity, item.component_id]
+      );
     }
 
-    // 7. Create issue record
+    // 7. Create a single issue record for this request
     await client.query(
       `
       INSERT INTO issue_records
-      (
-          request_id,
-          issued_by,
-          issue_date,
-          expected_return_date,
-          return_status,
-          component_condition
-      )
+        (request_id, issued_by, issue_date, expected_return_date, return_status, component_condition)
       VALUES
-      (
-          $1,
-          $2,
-          CURRENT_DATE,
-          CURRENT_DATE + INTERVAL '7 days',
-          'pending'::return_status_type,
-          'good'::component_condition_type
-      )
+        ($1, $2, CURRENT_DATE, CURRENT_DATE + INTERVAL '7 days',
+         'pending'::return_status_type, 'good'::component_condition_type)
       `,
       [requestId, staffId]
     );
@@ -153,4 +144,4 @@ export const approveRequestService = async (requestId, staffId) => {
   } finally {
     client.release();
   }
-};
+};

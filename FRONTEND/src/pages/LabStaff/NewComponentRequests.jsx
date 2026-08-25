@@ -9,7 +9,7 @@ import {
   FiEye
 } from "react-icons/fi";
 
-const API_BASE = "http://localhost:5000/api/purchase-requests";
+const API_BASE = `${import.meta.env.VITE_API_URL}/purchase-requests`;
 
 const STATUS_CONFIG = {
   pending: {

@@ -393,7 +393,7 @@ const DamageReports = () => {
  
   const handleAddReport = async (form) => {
     try {
-      const res = await authFetch("http://localhost:5000/api/damage-components", {
+      const res = await authFetch(`${import.meta.env.VITE_API_URL}/damage-components`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form)
