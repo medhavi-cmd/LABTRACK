@@ -11,6 +11,7 @@ import LabStaffIssuedComponents from "../pages/LabStaff/IssuedComponents";
 import LabStaffReturnManagement from "../pages/LabStaff/ReturnManagement";
 import LabStaffDamageReports from "../pages/LabStaff/DamageReports";
 import LabStaffSettings from "../pages/LabStaff/Settings";
+import LabStaffNewComponentRequests from "../pages/LabStaff/NewComponentRequests";
 
 import FacultyDashboard from "../pages/Faculty/FacultyDashboard";
 import FacultyProjectApprovals from "../pages/Faculty/ProjectApprovals";
@@ -304,7 +305,14 @@ const AppRoutes = () => {
             </ProtectedRoute>
           }
         />
-       
+        <Route
+          path="new-requests"
+          element={
+            <ProtectedRoute allowedRoles="lab_staff">
+              <LabStaffNewComponentRequests />
+            </ProtectedRoute>
+          }
+        />
 
         <Route
           path="settings"
