@@ -7,11 +7,17 @@ export const getAllRequests = async () => {
       cr.request_date,
       cr.status,
       cr.purpose,
-      c.component_name,
-      ri.quantity,
       t.team_name,
-      s.name AS student_name,
-      s.enrollment_no
+      s.name         AS student_name,
+      s.enrollment_no,
+      json_agg(
+        json_build_object(
+          'component_id',   c.component_id,
+          'component_name', c.component_name,
+          'quantity',       ri.quantity
+        )
+        ORDER BY c.component_name
+      ) AS components
     FROM component_requests cr
     JOIN request_items ri
       ON cr.request_id = ri.request_id
@@ -21,6 +27,14 @@ export const getAllRequests = async () => {
       ON cr.team_id = t.team_id
     JOIN students s
       ON t.leader_id = s.student_id
+    GROUP BY
+      cr.request_id,
+      cr.request_date,
+      cr.status,
+      cr.purpose,
+      t.team_name,
+      s.name,
+      s.enrollment_no
     ORDER BY cr.request_date DESC;
   `);
 

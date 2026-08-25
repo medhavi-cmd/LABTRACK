@@ -26,9 +26,7 @@ export const fetchRequests = async (req, res) => {
 export const approveRequest = async (req, res) => {
   try {
     const { id } = req.params;
-
-    // Temporary until JWT authentication is implemented
-    const staffId = 1;
+    const staffId = req.user?.id ?? 1;
 
     await approveRequestService(id, staffId);
 
