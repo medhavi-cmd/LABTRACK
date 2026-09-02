@@ -1,5 +1,6 @@
 import {
   getAllComponents,
+  getInventoryStats,
   getComponentById as getComponentByIdService,
   addComponent,
   updateComponent as updateComponentService,
@@ -40,11 +41,16 @@ const validateComponentFields = ({ component_name, category, total_quantity, ava
 // ─── GET ALL ─────────────────────────────────────────────────────────────────
 export const fetchComponents = async (req, res) => {
   try {
-    const data = await getAllComponents();
+    const { search, status, sortField, sortDir } = req.query;
+    const [data, stats] = await Promise.all([
+      getAllComponents({ search, status, sortField, sortDir }),
+      getInventoryStats(),
+    ]);
 
     res.status(200).json({
       success: true,
       data,
+      stats,
     });
   } catch (error) {
     console.error("Inventory Error:", error);

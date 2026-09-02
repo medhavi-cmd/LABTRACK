@@ -1,5 +1,36 @@
 import { pool } from "../config/db.js";
-export const getFacultyNotifications = async (userId) => {
+import {
+  buildSearchClause,
+  buildFilterClause,
+  combineClauses,
+  buildOrderBy,
+} from "../utils/listQuery.js";
+
+const NOTIFICATION_SORTS = {
+  title: "n.title",
+  createdAt: "n.created_at",
+  sourceType: "n.source_type",
+  recipientCount: "COUNT(nr.recipient_id)",
+};
+
+export const getFacultyNotifications = async (
+  userId,
+  { search, archived, sortField, sortDir } = {}
+) => {
+  const values = [userId];
+
+  // The base query already filters on created_by, so these append with AND.
+  const extra = combineClauses(
+    [
+      buildSearchClause(search, ["n.title", "n.message", "n.source_type"], values),
+      buildFilterClause(archived, "n.is_archived", values, {
+        allowedValues: ["true", "false"],
+        cast: "text",
+      }),
+    ],
+    true
+  );
+
   const result = await pool.query(
     `
     SELECT
@@ -15,6 +46,7 @@ export const getFacultyNotifications = async (userId) => {
     LEFT JOIN public.notification_recipients nr
       ON nr.notification_id = n.notification_id
     WHERE n.created_by = $1
+    ${extra}
     GROUP BY
       n.notification_id,
       n.title,
@@ -23,9 +55,9 @@ export const getFacultyNotifications = async (userId) => {
       n.source_id,
       n.created_at,
       n.is_archived
-    ORDER BY n.created_at DESC
+    ${buildOrderBy(sortField, sortDir, NOTIFICATION_SORTS, "n.created_at")}
     `,
-    [userId]
+    values
   );
 
   return result.rows;

@@ -7,12 +7,14 @@ import {
 // GET ALL GALLERY PROJECTS
 export const fetchGalleryProjects = async (req, res) => {
   try {
-    const { search, branch, faculty } = req.query;
+    const { search, branch, faculty, sortField, sortDir } = req.query;
 
     const projects = await getGalleryProjects({
       search,
       branch,
       faculty,
+      sortField,
+      sortDir,
     });
 
     return res.status(200).json(projects);

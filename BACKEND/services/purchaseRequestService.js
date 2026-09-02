@@ -1,4 +1,19 @@
 import { pool } from "../config/db.js";
+import {
+  buildSearchClause,
+  buildFilterClause,
+  combineClauses,
+  buildOrderBy,
+} from "../utils/listQuery.js";
+
+const PURCHASE_SORTS = {
+  component_name: "cpr.component_name",
+  category: "cpr.category",
+  quantity_required: "cpr.quantity_required",
+  status: "cpr.status",
+  request_date: "cpr.request_date",
+  team_name: "t.team_name",
+};
 
 
 //  GET TEAM DETAILS OF LOGGED-IN STUDENT
@@ -115,7 +130,13 @@ export const createPurchaseRequest = async (userId, data) => {
 
 
 //    GET ALL PURCHASE REQUESTS OF MY TEAM
-export const getPurchaseRequestsByTeam = async (userId) => {
+export const getPurchaseRequestsByTeam = async (userId, { search, status, sortField, sortDir } = {}) => {
+    const values = [userId];
+    // Base query already filters by team, so these append with AND.
+    const extra = combineClauses([
+        buildSearchClause(search, ["cpr.component_name", "cpr.category", "cpr.remarks"], values),
+        buildFilterClause(status, "cpr.status", values, { cast: "text" }),
+    ], true);
     const result = await pool.query(
         `
     SELECT
@@ -140,17 +161,22 @@ export const getPurchaseRequestsByTeam = async (userId) => {
         WHERE s.user_id = $1
         LIMIT 1
     )
-
-    ORDER BY cpr.request_date DESC
+    ${extra}
+    ${buildOrderBy(sortField, sortDir, PURCHASE_SORTS, "cpr.request_date")}
     `,
-        [userId]
+        values
     );
 
     return result.rows;
 };
 
 // GET ALL PURCHASE REQUESTS (LAB STAFF)
-export const getAllPurchaseRequests = async () => {
+export const getAllPurchaseRequests = async ({ search, status, sortField, sortDir } = {}) => {
+    const values = [];
+    const where = combineClauses([
+        buildSearchClause(search, ["cpr.component_name", "cpr.category", "t.team_name", "cpr.reason"], values),
+        buildFilterClause(status, "cpr.status", values, { cast: "text" }),
+    ]);
     const result = await pool.query(
         `
         SELECT
@@ -167,8 +193,10 @@ export const getAllPurchaseRequests = async () => {
         FROM component_purchase_requests cpr
         LEFT JOIN teams t ON t.team_id = cpr.team_id
         LEFT JOIN projects p ON p.team_id = t.team_id
-        ORDER BY cpr.request_date DESC
-        `
+        ${where}
+        ${buildOrderBy(sortField, sortDir, PURCHASE_SORTS, "cpr.request_date")}
+        `,
+        values
     );
     return result.rows;
 };

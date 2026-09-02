@@ -1,6 +1,62 @@
 import { pool } from "../config/db.js";
+import {
+  buildFilterClause,
+  combineClauses,
+  buildOrderBy,
+} from "../utils/listQuery.js";
 
-export const getAllRequests = async () => {
+const REQUEST_SORTS = {
+  request_id: "cr.request_id",
+  request_date: "cr.request_date",
+  status: "cr.status",
+  purpose: "cr.purpose",
+  team_name: "t.team_name",
+  student_name: "s.name",
+  enrollment_no: "s.enrollment_no",
+};
+
+// Counts cover every request, independent of the active filter.
+export const getRequestStats = async () => {
+  const result = await pool.query(`
+    SELECT
+      COUNT(*)::int AS total,
+      COUNT(*) FILTER (WHERE LOWER(status::text) = 'pending')::int AS pending,
+      COUNT(*) FILTER (WHERE LOWER(status::text) = 'approved')::int AS approved,
+      COUNT(*) FILTER (WHERE LOWER(status::text) = 'issued')::int AS issued
+    FROM component_requests
+  `);
+  return result.rows[0];
+};
+
+export const getAllRequests = async ({ search, status, sortField, sortDir } = {}) => {
+  const values = [];
+
+  // Component matches go through EXISTS so a matching request still returns its
+  // full component list, rather than only the components that matched.
+  const term = typeof search === "string" ? search.trim() : "";
+  let searchClause = "";
+  if (term) {
+    values.push(`%${term}%`);
+    const i = values.length;
+    searchClause = `(
+      LOWER(COALESCE(t.team_name::text, '')) LIKE LOWER($${i})
+      OR LOWER(COALESCE(s.name::text, '')) LIKE LOWER($${i})
+      OR LOWER(COALESCE(s.enrollment_no::text, '')) LIKE LOWER($${i})
+      OR LOWER(COALESCE(cr.purpose::text, '')) LIKE LOWER($${i})
+      OR EXISTS (
+        SELECT 1 FROM request_items ri2
+        JOIN components c2 ON c2.component_id = ri2.component_id
+        WHERE ri2.request_id = cr.request_id
+          AND LOWER(COALESCE(c2.component_name::text, '')) LIKE LOWER($${i})
+      )
+    )`;
+  }
+
+  const where = combineClauses([
+    searchClause,
+    buildFilterClause(status, "cr.status", values, { cast: "text" }),
+  ]);
+
   const result = await pool.query(`
     SELECT
       cr.request_id,
@@ -27,6 +83,7 @@ export const getAllRequests = async () => {
       ON cr.team_id = t.team_id
     JOIN students s
       ON t.leader_id = s.student_id
+    ${where}
     GROUP BY
       cr.request_id,
       cr.request_date,
@@ -35,8 +92,8 @@ export const getAllRequests = async () => {
       t.team_name,
       s.name,
       s.enrollment_no
-    ORDER BY cr.request_date DESC;
-  `);
+    ${buildOrderBy(sortField, sortDir, REQUEST_SORTS, "cr.request_date")}
+  `, values);
 
   return result.rows;
 };

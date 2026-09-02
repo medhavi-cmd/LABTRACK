@@ -1,3 +1,4 @@
+import { toQueryString } from "../hooks/useListQuery";
 import { request } from "./teamApi";
 
 
@@ -16,5 +17,6 @@ export const submitPurchaseRequest = (payload) =>
 
 //  GET ALL MY PURCHASE REQUESTS
 
-export const getMyPurchaseRequests = () =>
-  request("/purchase-requests/my-requests");
+// Search, filter and sort are resolved by the API (purchaseRequestService.js).
+export const getMyPurchaseRequests = (params = {}, signal) =>
+  request(`/purchase-requests/my-requests${toQueryString(params)}`, { signal });

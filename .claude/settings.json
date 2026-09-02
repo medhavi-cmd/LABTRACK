@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(kill 31223)",
+      "Bash(node server.js)",
+      "Bash(curl -s -m 3 http://localhost:5050/)",
+      "Bash(curl -s -m 3 -o /dev/null -w \"%{http_code}\\\\n\" \"http://localhost:5050/api/comments?entity_type=gallery&entity_id=1\")",
+      "Bash(curl -s -m 3 -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:5175/)",
+      "Bash(node -e ' *)",
+      "Bash(curl -s -m 5 -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjE0Iiwicm9sZSI6ImZhY3VsdHkiLCJpYXQiOjE3ODgyODY0MDAsImV4cCI6MTc4ODI4NjcwMH0.UCvHCl0jSS4LQQpWOfHQnRwcfxYR5kztomQNQAXYwkY' 'http://localhost:5050/api/comments?entity_type=gallery&entity_id=1')",
+      "Bash(curl -s -m 5 -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjE0Iiwicm9sZSI6ImZhY3VsdHkiLCJpYXQiOjE3ODgyODY0MDAsImV4cCI6MTc4ODI4NjcwMH0.UCvHCl0jSS4LQQpWOfHQnRwcfxYR5kztomQNQAXYwkY' 'http://localhost:5050/api/comments?entity_type=nonsense&entity_id=1')",
+      "Bash(curl -s -m 5 -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjE0Iiwicm9sZSI6ImZhY3VsdHkiLCJpYXQiOjE3ODgyODY0MDAsImV4cCI6MTc4ODI4NjcwMH0.UCvHCl0jSS4LQQpWOfHQnRwcfxYR5kztomQNQAXYwkY' http://localhost:5050/api/faculty/gallery)",
+      "Bash(curl -s -o /dev/null -w 'location=%{redirect_url}\\\\n' -m 15 'https://nwjwkjkdryygilprrlqg.supabase.co/auth/v1/verify?token=invalidprobe&type=signup&redirect_to=http%3A%2F%2Flocalhost%3A5175%2Fauth%2Fcallback')",
+      "Bash(curl -s -o /dev/null -w 'location=%{redirect_url}\\\\n' -m 15 'https://nwjwkjkdryygilprrlqg.supabase.co/auth/v1/verify?token=invalidprobe&type=signup')",
+      "Bash(curl -s -o /dev/null -w 'location=%{redirect_url}\\\\n' -m 15 'https://nwjwkjkdryygilprrlqg.supabase.co/auth/v1/verify?token=invalidprobe&type=signup&redirect_to=https%3A%2F%2Fexample.com%2Fx')"
+    ]
+  }
+}

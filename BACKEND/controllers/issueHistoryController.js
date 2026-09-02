@@ -1,4 +1,5 @@
 import { pool } from "../config/db.js";
+import { buildFilterClause, combineClauses } from "../utils/listQuery.js";
 
 export const getIssueHistory = async (req, res) => {
   try {
@@ -25,6 +26,33 @@ export const getIssueHistory = async (req, res) => {
     const teamId = teamResult.rows[0].team_id;
 
     // Fetch all requests
+
+    const { search, status } = req.query;
+    const values = [teamId];
+
+    // Component matches use EXISTS so a matching request keeps its full
+    // component list. The base query already filters by team, so AND.
+    const term = typeof search === "string" ? search.trim() : "";
+    let searchClause = "";
+    if (term) {
+      values.push(`%${term}%`);
+      const i = values.length;
+      searchClause = `(
+        LOWER(COALESCE(cr.purpose::text, '')) LIKE LOWER($${i})
+        OR cr.request_id::text LIKE $${i}
+        OR EXISTS (
+          SELECT 1 FROM request_items ri2
+          JOIN components c2 ON c2.component_id = ri2.component_id
+          WHERE ri2.request_id = cr.request_id
+            AND LOWER(COALESCE(c2.component_name::text, '')) LIKE LOWER($${i})
+        )
+      )`;
+    }
+
+    const extra = combineClauses([
+      searchClause,
+      buildFilterClause(status, "cr.status", values, { cast: "text" }),
+    ], true);
 
     const result = await pool.query(
       `
@@ -55,10 +83,10 @@ export const getIssueHistory = async (req, res) => {
       ON ir.request_id = cr.request_id
 
       WHERE cr.team_id = $1
-
+      ${extra}
       ORDER BY cr.request_date DESC
       `,
-      [teamId]
+      values
     );
 
     const grouped = {};

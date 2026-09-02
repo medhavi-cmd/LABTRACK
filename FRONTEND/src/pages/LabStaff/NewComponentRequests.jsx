@@ -1,12 +1,16 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { authFetch } from "../../services/api";
+import CommentsSection from "../../components/ui/CommentsSection";
 import {
   FiSearch,
   FiAlertCircle,
   FiClipboard,
   FiX,
   FiCheckCircle,
-  FiEye
+  FiEye,
+  FiChevronUp,
+  FiChevronDown,
+  FiFilter,
 } from "react-icons/fi";
 
 const API_BASE = `${import.meta.env.VITE_API_URL}/purchase-requests`;
@@ -65,6 +69,9 @@ const NewComponentRequests = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [filterStatus, setFilterStatus] = useState("all");
+  const [sortField, setSortField] = useState("request_date");
+  const [sortDir, setSortDir] = useState("desc");
 
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [remarks, setRemarks] = useState("");
@@ -93,12 +100,26 @@ const NewComponentRequests = () => {
 
   const filteredRequests = useMemo(() => {
     const term = searchTerm.toLowerCase().trim();
-    if (!term) return requests;
-    return requests.filter((r) =>
+    let list = filterStatus === "all" ? [...requests] : requests.filter((r) => r.status === filterStatus);
+    if (term) list = list.filter((r) =>
       [r.component_name, r.team_name, r.project_title, r.category]
         .some((val) => val?.toLowerCase().includes(term))
     );
-  }, [requests, searchTerm]);
+    list.sort((a, b) => {
+      let av = a[sortField] ?? ""; let bv = b[sortField] ?? "";
+      if (sortField.includes("date")) { av = new Date(av || 0); bv = new Date(bv || 0); }
+      else { if (typeof av === "string") av = av.toLowerCase(); if (typeof bv === "string") bv = bv.toLowerCase(); }
+      if (av < bv) return sortDir === "asc" ? -1 : 1;
+      if (av > bv) return sortDir === "asc" ? 1 : -1;
+      return 0;
+    });
+    return list;
+  }, [requests, searchTerm, filterStatus, sortField, sortDir]);
+
+  const handleSort = (field) => {
+    if (sortField === field) setSortDir((d) => d === "asc" ? "desc" : "asc");
+    else { setSortField(field); setSortDir("asc"); }
+  };
 
   const stats = useMemo(() => {
     return {
@@ -161,15 +182,26 @@ const NewComponentRequests = () => {
         </div>
       </div>
 
-      <div className="relative mb-8">
-        <FiSearch className="absolute left-4 top-3.5 ls-text-secondary" />
-        <input
-          type="text"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          placeholder="Search by component, category, or team..."
-          className="ls-input ls-input-search"
-        />
+      <div className="flex flex-col sm:flex-row gap-3 mb-8">
+        <div className="relative flex-1">
+          <FiSearch className="absolute left-4 top-3.5 ls-text-secondary" />
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Search by component, category, or team..."
+            className="ls-input ls-input-search"
+          />
+        </div>
+        <div className="flex items-center gap-2 bg-white border border-slate-200 rounded-lg px-3 py-2.5">
+          <FiFilter className="text-slate-400 shrink-0" />
+          <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)} className="outline-none text-sm text-slate-700 bg-transparent cursor-pointer">
+            <option value="all">All Status</option>
+            <option value="pending">Pending</option>
+            <option value="approved">Approved</option>
+            <option value="rejected">Rejected</option>
+          </select>
+        </div>
       </div>
 
       <div className="ls-table-container">
@@ -203,12 +235,52 @@ const NewComponentRequests = () => {
             <table className="w-full">
               <thead>
                 <tr>
-                  <th className="ls-table-th">Component</th>
-                  <th className="ls-table-th">Category</th>
+                  <th className="ls-table-th">
+                    <button onClick={() => handleSort("component_name")} className="flex items-center gap-1 group hover:text-cyan-600">
+                      Component
+                      <span className="flex flex-col opacity-50 group-hover:opacity-100">
+                        <FiChevronUp className={`w-3 h-3 -mb-0.5 ${sortField === "component_name" && sortDir === "asc" ? "text-cyan-500 opacity-100" : ""}`} />
+                        <FiChevronDown className={`w-3 h-3 ${sortField === "component_name" && sortDir === "desc" ? "text-cyan-500 opacity-100" : ""}`} />
+                      </span>
+                    </button>
+                  </th>
+                  <th className="ls-table-th">
+                    <button onClick={() => handleSort("category")} className="flex items-center gap-1 group hover:text-cyan-600">
+                      Category
+                      <span className="flex flex-col opacity-50 group-hover:opacity-100">
+                        <FiChevronUp className={`w-3 h-3 -mb-0.5 ${sortField === "category" && sortDir === "asc" ? "text-cyan-500 opacity-100" : ""}`} />
+                        <FiChevronDown className={`w-3 h-3 ${sortField === "category" && sortDir === "desc" ? "text-cyan-500 opacity-100" : ""}`} />
+                      </span>
+                    </button>
+                  </th>
                   <th className="ls-table-th">Qty</th>
-                  <th className="ls-table-th">Team</th>
-                  <th className="ls-table-th">Date</th>
-                  <th className="ls-table-th">Status</th>
+                  <th className="ls-table-th">
+                    <button onClick={() => handleSort("team_name")} className="flex items-center gap-1 group hover:text-cyan-600">
+                      Team
+                      <span className="flex flex-col opacity-50 group-hover:opacity-100">
+                        <FiChevronUp className={`w-3 h-3 -mb-0.5 ${sortField === "team_name" && sortDir === "asc" ? "text-cyan-500 opacity-100" : ""}`} />
+                        <FiChevronDown className={`w-3 h-3 ${sortField === "team_name" && sortDir === "desc" ? "text-cyan-500 opacity-100" : ""}`} />
+                      </span>
+                    </button>
+                  </th>
+                  <th className="ls-table-th">
+                    <button onClick={() => handleSort("request_date")} className="flex items-center gap-1 group hover:text-cyan-600">
+                      Date
+                      <span className="flex flex-col opacity-50 group-hover:opacity-100">
+                        <FiChevronUp className={`w-3 h-3 -mb-0.5 ${sortField === "request_date" && sortDir === "asc" ? "text-cyan-500 opacity-100" : ""}`} />
+                        <FiChevronDown className={`w-3 h-3 ${sortField === "request_date" && sortDir === "desc" ? "text-cyan-500 opacity-100" : ""}`} />
+                      </span>
+                    </button>
+                  </th>
+                  <th className="ls-table-th">
+                    <button onClick={() => handleSort("status")} className="flex items-center gap-1 group hover:text-cyan-600">
+                      Status
+                      <span className="flex flex-col opacity-50 group-hover:opacity-100">
+                        <FiChevronUp className={`w-3 h-3 -mb-0.5 ${sortField === "status" && sortDir === "asc" ? "text-cyan-500 opacity-100" : ""}`} />
+                        <FiChevronDown className={`w-3 h-3 ${sortField === "status" && sortDir === "desc" ? "text-cyan-500 opacity-100" : ""}`} />
+                      </span>
+                    </button>
+                  </th>
                   <th className="ls-table-th">Actions</th>
                 </tr>
               </thead>
@@ -313,6 +385,8 @@ const NewComponentRequests = () => {
               />
             </div>
           )}
+
+          <CommentsSection entityType="purchase_request" entityId={selectedRequest.purchase_request_id} />
 
           {apiError && (
             <div className="mb-4 text-red-600 text-sm flex items-start gap-2">

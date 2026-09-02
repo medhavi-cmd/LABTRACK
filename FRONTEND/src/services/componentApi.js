@@ -1,5 +1,5 @@
 const API_URL =
-  import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+  import.meta.env.VITE_API_URL || "http://localhost:5050/api";
 
 const getToken = () => localStorage.getItem("token");
 
@@ -22,4 +22,8 @@ const request = async (url, options = {}) => {
   return data;
 };
 
-export const getAllComponents = () => request("/components");
+import { toQueryString } from "../hooks/useListQuery";
+
+// Search, filter and sort are resolved by the API (componentService.js).
+export const getAllComponents = (params = {}, signal) =>
+  request(`/components${toQueryString(params)}`, { signal });

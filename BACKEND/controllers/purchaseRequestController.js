@@ -51,7 +51,10 @@ export const submitPurchaseRequest = async (req, res) => {
   //  GET MY PURCHASE REQUESTS
 export const fetchMyPurchaseRequests = async (req, res) => {
   try {
-    const requests = await getPurchaseRequestsByTeam(req.user.id);
+    const { search, status, sortField, sortDir } = req.query;
+    const requests = await getPurchaseRequestsByTeam(req.user.id, {
+      search, status, sortField, sortDir,
+    });
 
     return res.status(200).json(requests);
   } catch (error) {
@@ -66,7 +69,8 @@ export const fetchMyPurchaseRequests = async (req, res) => {
   // GET ALL PURCHASE REQUESTS (LAB STAFF)
 export const fetchAllPurchaseRequests = async (req, res) => {
   try {
-    const requests = await getAllPurchaseRequests();
+    const { search, status, sortField, sortDir } = req.query;
+    const requests = await getAllPurchaseRequests({ search, status, sortField, sortDir });
     return res.status(200).json(requests);
   } catch (error) {
     console.error(error);

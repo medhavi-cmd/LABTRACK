@@ -1,56 +1,68 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { useListQuery } from "../../hooks/useListQuery";
 import GroupLeaderLayout from "../../layouts/GroupLeaderLayout";
 import IssueHistoryCard from "../../components/ui/IssueHistoryCard";
+import IssueDetailModal from "../../components/ui/IssueDetailModal";
 import { getIssueHistory } from "../../services/issueHistoryApi";
-import { Loader2, History } from "lucide-react";
+import {
+  Loader2,
+  History,
+  Search,
+  Filter,
+  ArrowUp,
+  ArrowDown,
+} from "lucide-react";
 
 const ITEMS_PER_PAGE = 10;
 
-export default function IssueHistory() {
-  const [requests, setRequests] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [expandedRequest, setExpandedRequest] = useState(null);
+// Search and filter are resolved by the API (issueHistoryController.js).
+// Sorting stays client-side: the endpoint groups rows in JS before returning.
+const fetchIssueHistoryPage = async (params, signal) => {
+  const { sortField, sortDir, ...serverParams } = params;
+  const data = await getIssueHistory(serverParams, signal);
+  const list = Array.isArray(data) ? [...data] : [];
 
-  useEffect(() => {
-    loadData();
-  }, []);
-
-  async function loadData() {
-    try {
-      const data = await getIssueHistory();
-      if (Array.isArray(data)) {
-        setRequests(data);
-      } else {
-        setRequests([]);
-      }
-    } catch (error) {
-      console.error(error);
-      setRequests([]);
-    } finally {
-      setLoading(false);
+  list.sort((a, b) => {
+    let av = a[sortField] ?? "";
+    let bv = b[sortField] ?? "";
+    if (sortField === "requestDate") {
+      av = av ? new Date(av).getTime() : 0;
+      bv = bv ? new Date(bv).getTime() : 0;
+    } else {
+      if (typeof av === "string") av = av.toLowerCase();
+      if (typeof bv === "string") bv = bv.toLowerCase();
     }
-  }
+    if (av < bv) return sortDir === "asc" ? -1 : 1;
+    if (av > bv) return sortDir === "asc" ? 1 : -1;
+    return 0;
+  });
 
-  const filteredRequests = useMemo(() => {
-    if (!search.trim()) return requests;
-    const value = search.toLowerCase();
+  return list;
+};
 
-    return requests.filter((request) => {
-      const requestId = String(request.requestId);
-      const purpose = request.purpose?.toLowerCase() || "";
-      const componentMatch = request.components?.some((component) =>
-        component.componentName.toLowerCase().includes(value)
-      );
+export default function IssueHistory() {
+  const {
+    data: filteredRequests,
+    loading,
+    search,
+    setSearch,
+    filters,
+    setFilter,
+    sortField,
+    setSortField,
+    sortDir,
+    setSortDir,
+  } = useListQuery(fetchIssueHistoryPage, {
+    initialFilters: { status: "all" },
+    initialSortField: "requestDate",
+    initialSortDir: "desc",
+  });
 
-      return (
-        requestId.includes(value) ||
-        purpose.includes(value) ||
-        componentMatch
-      );
-    });
-  }, [requests, search]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [selectedRequest, setSelectedRequest] = useState(null);
+
+  const filterStatus = filters.status;
+  const setFilterStatus = useCallback((value) => setFilter("status", value), [setFilter]);
 
   const totalPages = Math.ceil(filteredRequests.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
@@ -61,7 +73,7 @@ export default function IssueHistory() {
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [search]);
+  }, [search, filterStatus, sortField, sortDir]);
 
   return (
     <GroupLeaderLayout>
@@ -82,14 +94,55 @@ export default function IssueHistory() {
         </div>
 
         <div className="max-w-6xl mx-auto space-y-6">
-          <div className="w-full max-w-md">
-            <input
-              type="text"
-              placeholder="Search by Request ID, purpose, or component..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full rounded-xl border border-[#E5E7EB] bg-[#FFFFFF] px-4 py-2.5 sm:px-5 sm:py-3 text-xs sm:text-sm text-[#111827] placeholder:text-slate-400 outline-none focus:border-[#2563EB] transition-all shadow-[0_1px_2px_rgba(0,0,0,0.05)]"
-            />
+          <div className="flex flex-col sm:flex-row gap-3">
+            <div className="relative flex-1 sm:max-w-md">
+              <Search
+                size={16}
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+              />
+              <input
+                type="text"
+                placeholder="Search by Request ID, purpose, or component..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-full rounded-xl border border-[#E5E7EB] bg-[#FFFFFF] pl-10 pr-4 py-2.5 sm:py-3 text-xs sm:text-sm text-[#111827] placeholder:text-slate-400 outline-none focus:border-[#2563EB] transition-all shadow-[0_1px_2px_rgba(0,0,0,0.05)]"
+              />
+            </div>
+
+            <div className="flex items-center gap-2 bg-white border border-[#E5E7EB] rounded-xl px-3 py-2.5 shadow-[0_1px_2px_rgba(0,0,0,0.05)]">
+              <Filter size={16} className="text-slate-400 shrink-0" />
+              <select
+                value={filterStatus}
+                onChange={(e) => setFilterStatus(e.target.value)}
+                className="outline-none text-xs sm:text-sm text-[#4B5563] bg-transparent cursor-pointer"
+              >
+                <option value="all">All Status</option>
+                <option value="pending">Pending</option>
+                <option value="approved">Approved</option>
+                <option value="issued">Issued</option>
+                <option value="returned">Returned</option>
+                <option value="rejected">Rejected</option>
+              </select>
+            </div>
+
+            <div className="flex items-center gap-2 bg-white border border-[#E5E7EB] rounded-xl px-3 py-2.5 shadow-[0_1px_2px_rgba(0,0,0,0.05)]">
+              <select
+                value={sortField}
+                onChange={(e) => setSortField(e.target.value)}
+                className="outline-none text-xs sm:text-sm text-[#4B5563] bg-transparent cursor-pointer"
+              >
+                <option value="requestDate">Sort: Request Date</option>
+                <option value="requestId">Sort: Request ID</option>
+                <option value="status">Sort: Status</option>
+              </select>
+              <button
+                onClick={() => setSortDir((d) => (d === "asc" ? "desc" : "asc"))}
+                className="text-slate-400 hover:text-[#2563EB] transition-colors"
+                title={sortDir === "asc" ? "Ascending" : "Descending"}
+              >
+                {sortDir === "asc" ? <ArrowUp size={15} /> : <ArrowDown size={15} />}
+              </button>
+            </div>
           </div>
 
           {loading && (
@@ -116,12 +169,7 @@ export default function IssueHistory() {
                 <IssueHistoryCard
                   key={request.requestId}
                   request={request}
-                  expanded={expandedRequest === request.requestId}
-                  onToggle={() =>
-                    setExpandedRequest((prev) =>
-                      prev === request.requestId ? null : request.requestId
-                    )
-                  }
+                  onView={() => setSelectedRequest(request)}
                 />
               ))}
             </div>
@@ -162,6 +210,13 @@ export default function IssueHistory() {
           )}
         </div>
       </div>
+
+      {selectedRequest && (
+        <IssueDetailModal
+          request={selectedRequest}
+          onClose={() => setSelectedRequest(null)}
+        />
+      )}
     </GroupLeaderLayout>
   );
 }

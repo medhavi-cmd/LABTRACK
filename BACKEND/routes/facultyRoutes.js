@@ -12,6 +12,7 @@ import {
   getGalleryItems,
   updateGalleryStatus,
   getStudentProgress,
+  getTeamDetail,
   getFacultyDashboard,
   archiveNotification,
 } from "../controllers/facultyController.js";
@@ -45,5 +46,6 @@ router.get("/gallery", getGalleryItems);
 router.patch("/gallery/:id/status", updateGalleryStatus);
 
 router.get("/progress", getStudentProgress);
+router.get("/progress/:teamId", getTeamDetail);
 
 export default router;

@@ -1,9 +1,11 @@
 import {
   getAllProjects,
+  getProjectStats,
   updateProjectApprovalStatus,
 } from "../services/projectApprovalService.js";
 import {
   getFacultyComponentRequests,
+  getFacultyComponentRequestStats,
 } from "../services/facultyComponentService.js";
 import {
   getFacultyDashboardData,
@@ -25,6 +27,11 @@ import {
   archiveFacultyNotification,
   deleteFacultyNotification,
 } from "../services/facultyNotificationService.js";
+import {
+  getAllTeamProgress,
+  getTeamProgressDetail,
+  getStudentProgressStats,
+} from "../services/studentProgressService.js";
 /* =========================================================
    FACULTY DASHBOARD — CONNECTED TO POSTGRES/SUPABASE
 ========================================================= */
@@ -53,9 +60,13 @@ export const getFacultyDashboard = async (req, res) => {
 
 export const getProjects = async (req, res) => {
   try {
-    const projects = await getAllProjects();
+    const { search, status, sortField, sortDir } = req.query;
+    const [projects, stats] = await Promise.all([
+      getAllProjects({ search, status, sortField, sortDir }),
+      getProjectStats(),
+    ]);
 
-    return res.status(200).json(projects);
+    return res.status(200).json({ data: projects, stats });
   } catch (error) {
     console.error("Error fetching faculty projects:", error);
 
@@ -155,9 +166,13 @@ export const updateProjectStatus = async (req, res) => {
 
 export const getComponentRequests = async (req, res) => {
   try {
-    const requests = await getFacultyComponentRequests();
+    const { search, status, sortField, sortDir } = req.query;
+    const [requests, stats] = await Promise.all([
+      getFacultyComponentRequests({ search, status, sortField, sortDir }),
+      getFacultyComponentRequestStats(),
+    ]);
 
-    return res.status(200).json(requests);
+    return res.status(200).json({ data: requests, stats });
   } catch (error) {
     console.error(
       "Error fetching faculty component requests:",
@@ -179,7 +194,8 @@ export const getComponentRequests = async (req, res) => {
 
 export const getEvents = async (req, res) => {
   try {
-    const events = await getFacultyEvents();
+    const { search, sortField, sortDir } = req.query;
+    const events = await getFacultyEvents({ search, sortField, sortDir });
 
     return res.status(200).json(events);
   } catch (error) {
@@ -307,7 +323,7 @@ export const getNotifications = async (req, res) => {
     }
 
     const [notifications, stats] = await Promise.all([
-      getFacultyNotifications(userId),
+      getFacultyNotifications(userId, req.query),
       getFacultyNotificationStats(userId),
     ]);
 
@@ -494,7 +510,13 @@ export const getGalleryItems = async (req, res) => {
   console.log("Authenticated user:", req.user);
 
   try {
-    const galleryRequests = await getFacultyGalleryRequests();
+    const { search, status, sortField, sortDir } = req.query;
+    const galleryRequests = await getFacultyGalleryRequests({
+      search,
+      status,
+      sortField,
+      sortDir,
+    });
 
     return res.status(200).json(galleryRequests);
   } catch (error) {
@@ -601,39 +623,44 @@ export const updateGalleryStatus = async (req, res) => {
 };
 
 /* =========================================================
-   STUDENT PROGRESS — TEMPORARY MOCK DATA
+   STUDENT PROGRESS — DYNAMIC FROM DB
 ========================================================= */
 
-const studentProgress = [
-  {
-    id: 1,
-    student: "Rahul Kumar",
-    team: "Team Alpha",
-    project: "Smart Attendance",
-    completion: 75,
-    attendance: 92,
-    status: "On Track",
-  },
-  {
-    id: 2,
-    student: "Aryan Mehta",
-    team: "Team Beta",
-    project: "AI Lab Assistant",
-    completion: 45,
-    attendance: 80,
-    status: "Needs Attention",
-  },
-  {
-    id: 3,
-    student: "Aman Gupta",
-    team: "Team Gamma",
-    project: "Inventory Detection",
-    completion: 90,
-    attendance: 96,
-    status: "Excellent",
-  },
-];
-
 export const getStudentProgress = async (req, res) => {
-  return res.status(200).json(studentProgress);
+  try {
+    const { search, progressStatus, sortField, sortDir } = req.query;
+    const [teams, stats] = await Promise.all([
+      getAllTeamProgress({ search, progressStatus, sortField, sortDir }),
+      getStudentProgressStats(),
+    ]);
+    return res.status(200).json({ success: true, data: { teams, stats } });
+  } catch (error) {
+    console.error("Error fetching student progress:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch student progress",
+      ...(process.env.NODE_ENV === "development" && { error: error.message }),
+    });
+  }
+};
+
+export const getTeamDetail = async (req, res) => {
+  try {
+    const teamId = Number(req.params.teamId);
+    if (!Number.isInteger(teamId) || teamId <= 0) {
+      return res.status(400).json({ success: false, message: "Invalid team ID." });
+    }
+    const detail = await getTeamProgressDetail(teamId);
+    if (!detail) {
+      return res.status(404).json({ success: false, message: "Team not found." });
+    }
+    return res.status(200).json({ success: true, data: detail });
+  } catch (error) {
+    console.error("Error fetching team detail:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch team detail",
+      ...(process.env.NODE_ENV === "development" && { error: error.message }),
+    });
+  }
 };

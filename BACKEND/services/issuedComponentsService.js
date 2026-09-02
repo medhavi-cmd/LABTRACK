@@ -1,7 +1,55 @@
 import { pool } from "../config/db.js";
 import { calculateStatus } from "./inventoryService.js";
+import {
+  buildSearchClause,
+  buildFilterClause,
+  combineClauses,
+  buildOrderBy,
+} from "../utils/listQuery.js";
 
-export const getAllIssuedComponents = async () => {
+const ISSUED_SORTS = {
+  issue_id: "ir.issue_id",
+  component_name: "c.component_name",
+  quantity: "ri.quantity",
+  leader_name: "s.name",
+  team_name: "t.team_name",
+  issue_date: "ir.issue_date",
+  expected_return_date: "ir.expected_return_date",
+  return_status: "ir.return_status",
+};
+
+// Counts cover every issue record, independent of the active filter.
+export const getIssuedStats = async () => {
+  const result = await pool.query(`
+    SELECT
+      COUNT(*)::int AS total,
+      COUNT(*) FILTER (WHERE LOWER(ir.return_status::text) = 'pending')::int AS pending,
+      COUNT(*) FILTER (WHERE LOWER(ir.return_status::text) = 'returned')::int AS returned,
+      COUNT(*) FILTER (WHERE LOWER(ir.return_status::text) = 'overdue')::int AS overdue
+    FROM issue_records ir
+    JOIN component_requests cr ON ir.request_id = cr.request_id
+    JOIN request_items ri ON cr.request_id = ri.request_id
+  `);
+  return result.rows[0];
+};
+
+export const getAllIssuedComponents = async ({
+  search,
+  returnStatus,
+  sortField,
+  sortDir,
+} = {}) => {
+  const values = [];
+
+  const where = combineClauses([
+    buildSearchClause(
+      search,
+      ["c.component_name", "s.name", "s.enrollment_no", "t.team_name"],
+      values
+    ),
+    buildFilterClause(returnStatus, "ir.return_status", values, { cast: "text" }),
+  ]);
+
   const result = await pool.query(`
     SELECT
         ir.issue_id,
@@ -37,9 +85,9 @@ export const getAllIssuedComponents = async () => {
 
     JOIN students s
         ON t.leader_id = s.student_id
-
-    ORDER BY ir.issue_date DESC;
-  `);
+    ${where}
+    ${buildOrderBy(sortField, sortDir, ISSUED_SORTS, "ir.issue_date")}
+  `, values);
 
   return result.rows;
 };

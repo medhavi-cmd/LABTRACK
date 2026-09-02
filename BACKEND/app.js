@@ -21,6 +21,7 @@ import damageComponentsRoutes from "./routes/damageComponentsRoutes.js";
 import componentDemandRoutes from "./routes/componentDemandRoutes.js";
 import labStaffProfileRoutes from "./routes/labStaffProfileRoutes.js";
 import dashboardRoutes from "./routes/dashboardRoutes.js";
+import commentsRoutes from "./routes/commentsRoutes.js";
 const app = express();
 app.use(express.json());
 app.use(
@@ -57,6 +58,7 @@ app.use("/api/damage-components", damageComponentsRoutes);
 app.use("/api/component-demand", componentDemandRoutes);
 app.use("/api/lab-staff/profile", labStaffProfileRoutes);
 app.use("/api/lab-staff", dashboardRoutes);
+app.use("/api/comments", commentsRoutes);
 
 app.get("/", (_req, res) => {
   res.json({

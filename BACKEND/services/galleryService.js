@@ -1,8 +1,16 @@
 import { pool } from "../config/db.js";
+import { buildOrderBy } from "../utils/listQuery.js";
+
+const GALLERY_PROJECT_SORTS = {
+  project_title: "p.project_title",
+  team_name: "t.team_name",
+  branch: "t.department",
+  created_at: "p.created_at",
+};
 
 // GET ALL APPROVED PROJECTS
 export const getGalleryProjects = async (filters = {}) => {
-  const { search, branch, faculty } = filters;
+  const { search, branch, faculty, sortField, sortDir } = filters;
 
   let query = `
     SELECT
@@ -61,10 +69,10 @@ export const getGalleryProjects = async (filters = {}) => {
       p.description,
       p.cover_image,
       t.department,
-      t.academic_year
+      t.academic_year,
+      p.created_at
 
-    ORDER BY
-      p.created_at DESC
+    ${buildOrderBy(sortField, sortDir, GALLERY_PROJECT_SORTS, "p.created_at")}
   `;
 
   const result = await pool.query(query, values);

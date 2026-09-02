@@ -1,9 +1,13 @@
-import { getDamageComponents, resolveDamage, addDamageReport } from "../services/damageComponentsService.js";
+import { getDamageComponents, getDamageStats, resolveDamage, addDamageReport } from "../services/damageComponentsService.js";
 
 export const fetchDamageComponents = async (req, res) => {
   try {
-    const components = await getDamageComponents();
-    res.status(200).json({ success: true, data: components });
+    const { search, severity, status, sortField, sortDir } = req.query;
+    const [components, stats] = await Promise.all([
+      getDamageComponents({ search, severity, status, sortField, sortDir }),
+      getDamageStats(),
+    ]);
+    res.status(200).json({ success: true, data: components, stats });
   } catch (error) {
     console.error("Damage Components Error:", error);
     res.status(500).json({ success: false, message: "Failed to fetch damage components" });

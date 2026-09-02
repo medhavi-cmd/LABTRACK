@@ -1,14 +1,11 @@
+import { toQueryString } from "../hooks/useListQuery";
 import { request } from "./teamApi";
 
 // GET ALL GALLERY PROJECTS
 
-export const getGalleryProjects = (params = {}) => {
-  const query = new URLSearchParams(params).toString();
-
-  return request(
-    `/gallery${query ? `?${query}` : ""}`
-  );
-};
+// Search, filter and sort are resolved by the API (galleryService.js).
+export const getGalleryProjects = (params = {}, signal) =>
+  request(`/gallery${toQueryString(params)}`, { signal });
 
 
 //  GALLERY STATISTICS

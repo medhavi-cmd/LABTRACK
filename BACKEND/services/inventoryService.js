@@ -1,6 +1,35 @@
 import { pool } from "../config/db.js";
+import {
+  buildSearchClause,
+  buildFilterClause,
+  combineClauses,
+  buildOrderBy,
+} from "../utils/listQuery.js";
 
-export const getAllComponents = async () => {
+const INVENTORY_SORTS = {
+  component_name: "component_name",
+  category: "category",
+  total_quantity: "total_quantity",
+  available_quantity: "available_quantity",
+  status: "status",
+};
+
+export const getAllComponents = async ({
+  search,
+  status,
+  sortField,
+  sortDir,
+} = {}) => {
+  const values = [];
+
+  const where = combineClauses([
+    buildSearchClause(search, ["component_name", "category", "description"], values),
+    buildFilterClause(status, "status", values, {
+      allowedValues: ["available", "low_stock", "out_of_stock"],
+      cast: "text",
+    }),
+  ]);
+
   const query = `
     SELECT
       component_id,
@@ -12,11 +41,25 @@ export const getAllComponents = async () => {
       component_image,
       description
     FROM components
-    ORDER BY component_name;
+    ${where}
+    ${buildOrderBy(sortField, sortDir, INVENTORY_SORTS, "component_name")}
   `;
 
-  const result = await pool.query(query);
+  const result = await pool.query(query, values);
   return result.rows;
+};
+
+// Stats always reflect the whole inventory, never the current filter.
+export const getInventoryStats = async () => {
+  const result = await pool.query(`
+    SELECT
+      COUNT(*)::int AS total,
+      COUNT(*) FILTER (WHERE status = 'available')::int AS available,
+      COUNT(*) FILTER (WHERE status = 'low_stock')::int AS "lowStock",
+      COUNT(*) FILTER (WHERE status = 'out_of_stock')::int AS "outOfStock"
+    FROM components
+  `);
+  return result.rows[0];
 };
 
 export const calculateStatus = (availableQuantity) => {

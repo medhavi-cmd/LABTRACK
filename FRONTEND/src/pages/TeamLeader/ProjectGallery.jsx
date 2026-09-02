@@ -1,5 +1,15 @@
-import { useEffect, useMemo, useState } from "react";
-import { Plus, Search, FolderGit2, Users, Loader2 } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
+import { useListQuery } from "../../hooks/useListQuery";
+import {
+  Plus,
+  Search,
+  FolderGit2,
+  Users,
+  Loader2,
+  Filter,
+  ArrowUp,
+  ArrowDown,
+} from "lucide-react";
 
 import GroupLeaderLayout from "../../layouts/GroupLeaderLayout";
 import GalleryCard from "../../components/ui/GalleryCard";
@@ -14,8 +24,13 @@ import {
 
 const ITEMS_PER_PAGE = 9;
 
+// Search, filter and sort are resolved by the API (galleryService.js).
+const fetchGalleryPage = async (params, signal) => {
+  const data = await getGalleryProjects(params, signal);
+  return Array.isArray(data) ? data : [];
+};
+
 const ProjectGallery = () => {
-  const [projects, setProjects] = useState([]);
   const [statistics, setStatistics] = useState({
     total_projects: 0,
     total_teams: 0,
@@ -26,46 +41,63 @@ const ProjectGallery = () => {
   const [selectedProject, setSelectedProject] = useState(null);
   const [detailsLoading, setDetailsLoading] = useState(false);
 
-  const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [allBranches, setAllBranches] = useState([]);
+
+  const {
+    data: filteredProjects,
+    loading: listLoading,
+    search,
+    setSearch,
+    filters,
+    setFilter,
+    sortField,
+    setSortField,
+    sortDir,
+    setSortDir,
+    reload: reloadList,
+  } = useListQuery(fetchGalleryPage, {
+    initialFilters: { branch: "all" },
+    initialSortField: "project_title",
+    initialSortDir: "asc",
+  });
+
+  const filterBranch = filters.branch;
+  const setFilterBranch = useCallback((value) => setFilter("branch", value), [setFilter]);
+  const branches = allBranches;
 
   useEffect(() => {
-    loadGallery();
+    (async () => {
+      try {
+        const [stats, all] = await Promise.all([
+          getGalleryStatistics(),
+          getGalleryProjects(),
+        ]);
+        setStatistics(stats);
+        // Branch options come from the full set, not the filtered view.
+        setAllBranches(
+          [...new Set((all ?? []).map((p) => p.branch).filter(Boolean))].sort((a, b) =>
+            a.localeCompare(b)
+          )
+        );
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    })();
   }, []);
 
-  const loadGallery = async () => {
-    try {
-      setLoading(true);
-      const [galleryData, stats] = await Promise.all([
-        getGalleryProjects(),
-        getGalleryStatistics(),
-      ]);
-      setProjects(galleryData);
-      setStatistics(stats);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const filteredProjects = useMemo(() => {
-    return projects.filter((project) => {
-      return (
-        project.project_title?.toLowerCase().includes(search.toLowerCase()) ||
-        project.team_name?.toLowerCase().includes(search.toLowerCase())
-      );
-    });
-  }, [projects, search]);
+  const loadGallery = useCallback(() => {
+    reloadList();
+  }, [reloadList]);
 
   const totalPages = Math.ceil(filteredProjects.length / ITEMS_PER_PAGE);
 
-  const paginatedProjects = useMemo(() => {
-    return filteredProjects.slice(
-      (currentPage - 1) * ITEMS_PER_PAGE,
-      currentPage * ITEMS_PER_PAGE,
-    );
-  }, [filteredProjects, currentPage]);
+  const paginatedProjects = filteredProjects.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE,
+  );
 
   const handleCardClick = async (project) => {
     try {
@@ -138,24 +170,70 @@ const ProjectGallery = () => {
           </div>
         </div>
 
-        <div className="relative w-full max-w-md">
-          <Search
-            size={16}
-            className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"
-          />
-          <input
-            type="text"
-            placeholder="Search projects..."
-            value={search}
-            onChange={(e) => {
-              setSearch(e.target.value);
-              setCurrentPage(1);
-            }}
-            className="w-full rounded-md border border-slate-200 bg-white py-2.5 pl-10 pr-4 text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 outline-none focus:border-cyan-500 transition-all shadow-sm"
-          />
+        <div className="flex flex-col sm:flex-row gap-3">
+          <div className="relative flex-1 sm:max-w-md">
+            <Search
+              size={16}
+              className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"
+            />
+            <input
+              type="text"
+              placeholder="Search projects..."
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setCurrentPage(1);
+              }}
+              className="w-full rounded-md border border-slate-200 bg-white py-2.5 pl-10 pr-4 text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 outline-none focus:border-cyan-500 transition-all shadow-sm"
+            />
+          </div>
+
+          <div className="flex items-center gap-2 rounded-md border border-slate-200 bg-white px-3 py-2.5 shadow-sm">
+            <Filter size={16} className="text-slate-400 shrink-0" />
+            <select
+              value={filterBranch}
+              onChange={(e) => {
+                setFilterBranch(e.target.value);
+                setCurrentPage(1);
+              }}
+              className="outline-none text-xs sm:text-sm text-slate-700 bg-transparent cursor-pointer max-w-[150px]"
+            >
+              <option value="all">All Branches</option>
+              {branches.map((branch) => (
+                <option key={branch} value={branch}>
+                  {branch}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="flex items-center gap-2 rounded-md border border-slate-200 bg-white px-3 py-2.5 shadow-sm">
+            <select
+              value={sortField}
+              onChange={(e) => {
+                setSortField(e.target.value);
+                setCurrentPage(1);
+              }}
+              className="outline-none text-xs sm:text-sm text-slate-700 bg-transparent cursor-pointer"
+            >
+              <option value="project_title">Sort: Title</option>
+              <option value="team_name">Sort: Team</option>
+              <option value="branch">Sort: Branch</option>
+            </select>
+            <button
+              onClick={() => {
+                setSortDir((d) => (d === "asc" ? "desc" : "asc"));
+                setCurrentPage(1);
+              }}
+              className="text-slate-400 hover:text-cyan-600 transition-colors"
+              title={sortDir === "asc" ? "Ascending" : "Descending"}
+            >
+              {sortDir === "asc" ? <ArrowUp size={15} /> : <ArrowDown size={15} />}
+            </button>
+          </div>
         </div>
 
-        {loading ? (
+        {(loading || listLoading) ? (
           <div className="flex flex-col items-center justify-center py-20 space-y-3">
             <Loader2 className="h-7 w-7 animate-spin text-cyan-600" />
             <p className="text-xs sm:text-sm text-slate-400 font-medium">
@@ -213,16 +291,6 @@ const ProjectGallery = () => {
               </div>
             )}
           </>
-        )}
-
-        {showModal && (
-          <AddProjectModal
-            open={showModal}
-            onClose={() => {
-              setShowModal(false);
-              loadGallery();
-            }}
-          />
         )}
 
         {showModal && (

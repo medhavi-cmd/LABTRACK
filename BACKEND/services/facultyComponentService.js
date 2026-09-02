@@ -1,6 +1,51 @@
 import { pool } from "../config/db.js";
+import {
+  buildSearchClause,
+  buildFilterClause,
+  combineClauses,
+  buildOrderBy,
+} from "../utils/listQuery.js";
 
-export const getFacultyComponentRequests = async () => {
+const FACULTY_REQUEST_SORTS = {
+  component: "c.component_name",
+  quantity: "ri.quantity",
+  team: "t.team_name",
+  requested_by: "s.name",
+  date: "cr.request_date",
+  status: "cr.status",
+};
+
+// Counts cover every request, independent of the active filter.
+export const getFacultyComponentRequestStats = async () => {
+  const result = await pool.query(`
+    SELECT
+      COUNT(*)::int AS total,
+      COUNT(*) FILTER (WHERE LOWER(cr.status::text) = 'pending')::int AS pending,
+      COUNT(*) FILTER (WHERE LOWER(cr.status::text) = 'approved')::int AS approved,
+      COUNT(*) FILTER (WHERE LOWER(cr.status::text) = 'rejected')::int AS rejected
+    FROM public.component_requests cr
+    INNER JOIN public.request_items ri ON ri.request_id = cr.request_id
+  `);
+  return result.rows[0];
+};
+
+export const getFacultyComponentRequests = async ({
+  search,
+  status,
+  sortField,
+  sortDir,
+} = {}) => {
+  const values = [];
+
+  const where = combineClauses([
+    buildSearchClause(
+      search,
+      ["c.component_name", "t.team_name", "s.name", "cr.purpose"],
+      values
+    ),
+    buildFilterClause(status, "cr.status", values, { cast: "text" }),
+  ]);
+
   const query = `
     SELECT
       cr.request_id AS id,
@@ -20,10 +65,11 @@ export const getFacultyComponentRequests = async () => {
       ON t.team_id = cr.team_id
     LEFT JOIN public.students s
       ON s.student_id = t.leader_id
-    ORDER BY cr.request_date DESC, cr.request_id DESC
+    ${where}
+    ${buildOrderBy(sortField, sortDir, FACULTY_REQUEST_SORTS, "cr.request_date")}
   `;
 
-  const result = await pool.query(query);
+  const result = await pool.query(query, values);
 
   return result.rows;
 };

@@ -1,6 +1,39 @@
-import { useEffect, useMemo, useState } from "react";
-import { FiSearch, FiAlertTriangle } from "react-icons/fi";
+import { useCallback } from "react";
+import { useListQuery, toQueryString } from "../../hooks/useListQuery";
+import {
+  FiSearch,
+  FiAlertTriangle,
+  FiChevronUp,
+  FiChevronDown,
+  FiFilter,
+} from "react-icons/fi";
 import { authFetch } from "../../services/api";
+
+const SortTh = ({ label, field, sortField, sortDir, onSort }) => {
+  const active = sortField === field;
+  return (
+    <th className="ls-table-th select-none">
+      <button
+        onClick={() => onSort(field)}
+        className="flex items-center gap-1 group hover:text-cyan-600 transition-colors"
+      >
+        {label}
+        <span className="flex flex-col opacity-50 group-hover:opacity-100">
+          <FiChevronUp
+            className={`w-3 h-3 -mb-0.5 ${
+              active && sortDir === "asc" ? "text-cyan-500 opacity-100" : ""
+            }`}
+          />
+          <FiChevronDown
+            className={`w-3 h-3 ${
+              active && sortDir === "desc" ? "text-cyan-500 opacity-100" : ""
+            }`}
+          />
+        </span>
+      </button>
+    </th>
+  );
+};
 
 const getDemandStyle = (status) => {
   const normalized = status?.toLowerCase();
@@ -19,83 +52,50 @@ const getDemandStyle = (status) => {
   return "bg-slate-100 ls-text-secondary border border-slate-200";
 };
 
+// Search, filter and sort are resolved by the API (componentDemandService.js).
+const fetchDemandPage = async (params, signal) => {
+  const res = await authFetch(
+    `${import.meta.env.VITE_API_URL}/component-demand${toQueryString(params)}`,
+    { signal }
+  );
+  const result = await res.json();
+  if (!res.ok || !result?.success) {
+    throw new Error(result?.message || "Failed to load component demand.");
+  }
+  return { data: result.data ?? [], stats: result.stats ?? null };
+};
+
 const ComponentDemand = () => {
-  const [demandData, setDemandData] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [searchTerm, setSearchTerm] = useState("");
+  const {
+    data: filteredData,
+    extra,
+    loading,
+    error,
+    search: searchTerm,
+    setSearch: setSearchTerm,
+    filters,
+    setFilter,
+    sortField,
+    sortDir,
+    handleSort,
+  } = useListQuery(fetchDemandPage, {
+    initialFilters: { demandStatus: "all" },
+    initialSortField: "componentName",
+    initialSortDir: "asc",
+  });
 
-  // ── Fetch ──────────────────────────────────────────────────────────────────
-  useEffect(() => {
-    let isMounted = true;
+  const filterDemand = filters.demandStatus;
+  const setFilterDemand = useCallback((value) => setFilter("demandStatus", value), [setFilter]);
 
-    const loadDemand = async () => {
-      try {
-        setLoading(true);
-        setError("");
-
-        const res = await authFetch(`${import.meta.env.VITE_API_URL}/component-demand`);
-        const result = await res.json();
-
-        if (!res.ok || !result?.success) {
-          throw new Error(result?.message || "Failed to load component demand.");
-        }
-
-        if (isMounted) {
-          setDemandData(result.data || []);
-        }
-      } catch (err) {
-        if (isMounted) {
-          setError(err?.message || "Failed to load component demand.");
-          setDemandData([]);
-        }
-      } finally {
-        if (isMounted) {
-          setLoading(false);
-        }
-      }
-    };
-
-    loadDemand();
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
-
-  // ── Stats ──────────────────────────────────────────────────────────────────
-  const stats = useMemo(() => {
-    const total = demandData.length;
-    const critical = demandData.filter((r) => r.demandStatus === "Critical").length;
-    const high = demandData.filter((r) => r.demandStatus === "High").length;
-    const medium = demandData.filter((r) => r.demandStatus === "Medium").length;
-    const low = demandData.filter((r) => r.demandStatus === "Low").length;
-
-    const percentOf = (count) => (total > 0 ? Math.round((count / total) * 100) : 0);
-
-    return {
-      total,
-      critical,
-      high,
-      medium,
-      low,
-      criticalPercent: percentOf(critical),
-      highPercent: percentOf(high),
-      mediumPercent: percentOf(medium),
-      lowPercent: percentOf(low),
-    };
-  }, [demandData]);
-
-  // ── Search ─────────────────────────────────────────────────────────────────
-  const filteredData = useMemo(() => {
-    const term = searchTerm.toLowerCase().trim();
-    if (!term) return demandData;
-    return demandData.filter((item) =>
-      [item?.componentId, item?.componentName, item?.category].some(
-        (field) => field?.toLowerCase().includes(term)
-      )
-    );
-  }, [demandData, searchTerm]);
+  const raw = extra?.stats ?? { total: 0, critical: 0, high: 0, medium: 0, low: 0 };
+  const percentOf = (count) => (raw.total > 0 ? Math.round((count / raw.total) * 100) : 0);
+  const stats = {
+    ...raw,
+    criticalPercent: percentOf(raw.critical),
+    highPercent: percentOf(raw.high),
+    mediumPercent: percentOf(raw.medium),
+    lowPercent: percentOf(raw.low),
+  };
 
   // ── Render ─────────────────────────────────────────────────────────────────
   return (
@@ -195,16 +195,32 @@ const ComponentDemand = () => {
         </div>
       </div>
 
-      {/* Search */}
-      <div className="relative mb-6">
-        <FiSearch className="absolute left-4 top-3.5 ls-text-secondary" />
-        <input
-          type="text"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          placeholder="Search by Component ID, Name, or Category..."
-          className="ls-input ls-input-search"
-        />
+      {/* Search + Filter */}
+      <div className="flex flex-col sm:flex-row gap-3 mb-6">
+        <div className="relative flex-1">
+          <FiSearch className="absolute left-4 top-3.5 ls-text-secondary" />
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Search by Component ID, Name, or Category..."
+            className="ls-input ls-input-search"
+          />
+        </div>
+        <div className="flex items-center gap-2 bg-white border border-slate-200 rounded-lg px-3 py-2.5">
+          <FiFilter className="text-slate-400 shrink-0" />
+          <select
+            value={filterDemand}
+            onChange={(e) => setFilterDemand(e.target.value)}
+            className="outline-none text-sm text-slate-700 bg-transparent cursor-pointer"
+          >
+            <option value="all">All Demand</option>
+            <option value="Critical">Critical</option>
+            <option value="High">High</option>
+            <option value="Medium">Medium</option>
+            <option value="Low">Low</option>
+          </select>
+        </div>
       </div>
 
       {/* Table */}
@@ -217,13 +233,13 @@ const ComponentDemand = () => {
           <table className="w-full">
             <thead>
               <tr>
-                <th className="ls-table-th">Component ID</th>
-                <th className="ls-table-th">Component</th>
-                <th className="ls-table-th">Category</th>
-                <th className="ls-table-th">Total Stock</th>
-                <th className="ls-table-th">Available Stock</th>
-                <th className="ls-table-th">Total Requested (All Time)</th>
-                <th className="ls-table-th">Demand Status</th>
+                <SortTh label="Component ID" field="componentId" sortField={sortField} sortDir={sortDir} onSort={handleSort} />
+                <SortTh label="Component" field="componentName" sortField={sortField} sortDir={sortDir} onSort={handleSort} />
+                <SortTh label="Category" field="category" sortField={sortField} sortDir={sortDir} onSort={handleSort} />
+                <SortTh label="Total Stock" field="totalStock" sortField={sortField} sortDir={sortDir} onSort={handleSort} />
+                <SortTh label="Available Stock" field="availableStock" sortField={sortField} sortDir={sortDir} onSort={handleSort} />
+                <SortTh label="Total Requested (All Time)" field="totalRequested" sortField={sortField} sortDir={sortDir} onSort={handleSort} />
+                <SortTh label="Demand Status" field="demandStatus" sortField={sortField} sortDir={sortDir} onSort={handleSort} />
               </tr>
             </thead>
 

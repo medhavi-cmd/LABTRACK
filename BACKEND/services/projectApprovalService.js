@@ -1,6 +1,51 @@
 import { pool } from "../config/db.js";
+import {
+  buildSearchClause,
+  buildFilterClause,
+  combineClauses,
+  buildOrderBy,
+} from "../utils/listQuery.js";
 
-export const getAllProjects = async () => {
+// Guides are aggregated in a subquery: joining team_faculty directly would
+// repeat a project once per assigned guide.
+const GUIDE_SQL = `
+  COALESCE((
+    SELECT STRING_AGG(DISTINCT f.name, ', ')
+    FROM public.team_faculty tf
+    JOIN public.faculty f ON f.faculty_id = tf.faculty_id
+    WHERE tf.team_id = t.team_id
+  ), 'Not Assigned')
+`;
+
+const PROJECT_SORTS = {
+  title: "p.project_title",
+  team: "t.team_name",
+  status: "p.approval_status",
+  guide: GUIDE_SQL,
+  created_at: "p.created_at",
+};
+
+// Counts cover every project, independent of the active filter.
+export const getProjectStats = async () => {
+  const result = await pool.query(`
+    SELECT
+      COUNT(*)::int AS total,
+      COUNT(*) FILTER (WHERE LOWER(approval_status::text) = 'pending')::int AS pending,
+      COUNT(*) FILTER (WHERE LOWER(approval_status::text) = 'approved')::int AS approved,
+      COUNT(*) FILTER (WHERE LOWER(approval_status::text) = 'rejected')::int AS rejected
+    FROM public.projects
+  `);
+  return result.rows[0];
+};
+
+export const getAllProjects = async ({ search, status, sortField, sortDir } = {}) => {
+  const values = [];
+
+  const where = combineClauses([
+    buildSearchClause(search, ["p.project_title", "t.team_name", GUIDE_SQL], values),
+    buildFilterClause(status, "p.approval_status", values, { cast: "text" }),
+  ]);
+
   const query = `
     SELECT
       p.project_id AS id,
@@ -18,26 +63,17 @@ export const getAllProjects = async () => {
       t.team_id,
       t.team_name AS team,
 
-      f.faculty_id,
-      COALESCE(f.name, 'Not Assigned') AS guide
+      ${GUIDE_SQL} AS guide
 
     FROM public.projects p
 
     INNER JOIN public.teams t
       ON t.team_id = p.team_id
-
-    LEFT JOIN public.team_faculty tf
-      ON tf.team_id = t.team_id
-
-    LEFT JOIN public.faculty f
-      ON f.faculty_id = tf.faculty_id
-
-    ORDER BY
-      p.created_at DESC,
-      p.project_id DESC
+    ${where}
+    ${buildOrderBy(sortField, sortDir, PROJECT_SORTS, "p.created_at")}
   `;
 
-  const result = await pool.query(query);
+  const result = await pool.query(query, values);
 
   return result.rows;
 };

@@ -1,8 +1,18 @@
-import { useEffect, useState } from "react";
+import { useCallback, useState } from "react";
+import { useListQuery } from "../../hooks/useListQuery";
 import GroupLeaderLayout from "../../layouts/GroupLeaderLayout";
 import { getMyPurchaseRequests } from "../../services/purchaseRequestApi";
 import PurchaseRequestForm from "./PurchaseRequestForm";
-import { X, Plus, Loader2, ShoppingBag } from "lucide-react";
+import {
+  X,
+  Plus,
+  Loader2,
+  ShoppingBag,
+  Search,
+  Filter,
+  ChevronUp,
+  ChevronDown,
+} from "lucide-react";
 
 const statusColors = {
   pending: "bg-amber-50 border border-amber-200 text-amber-700",
@@ -10,25 +20,65 @@ const statusColors = {
   rejected: "bg-red-50 border border-red-200 text-red-700",
 };
 
+const SortTh = ({ label, field, sortField, sortDir, onSort }) => {
+  const active = sortField === field;
+  return (
+    <th className="px-6 py-4 select-none">
+      <button
+        onClick={() => onSort(field)}
+        className="flex items-center gap-1 group hover:text-[#2563EB] transition-colors uppercase"
+      >
+        {label}
+        <span className="flex flex-col opacity-50 group-hover:opacity-100">
+          <ChevronUp
+            size={11}
+            className={`-mb-0.5 ${
+              active && sortDir === "asc" ? "text-[#2563EB] opacity-100" : ""
+            }`}
+          />
+          <ChevronDown
+            size={11}
+            className={active && sortDir === "desc" ? "text-[#2563EB] opacity-100" : ""}
+          />
+        </span>
+      </button>
+    </th>
+  );
+};
+
+// Search, filter and sort are resolved by the API (purchaseRequestService.js).
+const fetchMyRequestsPage = async (params, signal) => {
+  const data = await getMyPurchaseRequests(params, signal);
+  return Array.isArray(data) ? data : [];
+};
+
 const NewRequests = () => {
-  const [requests, setRequests] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const {
+    data: visibleRequests,
+    loading,
+    search,
+    setSearch,
+    filters,
+    setFilter,
+    sortField,
+    sortDir,
+    handleSort,
+    reload: loadRequests,
+  } = useListQuery(fetchMyRequestsPage, {
+    initialFilters: { status: "all" },
+    initialSortField: "request_date",
+    initialSortDir: "desc",
+  });
+
   const [showForm, setShowForm] = useState(false);
 
-  useEffect(() => {
-    loadRequests();
-  }, []);
+  const filterStatus = filters.status;
+  const setFilterStatus = useCallback((value) => setFilter("status", value), [setFilter]);
 
-  const loadRequests = async () => {
-    try {
-      const data = await getMyPurchaseRequests();
-      setRequests(data);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  // The search/filter bar is hidden only when the team has no requests at all,
+  // which is true exactly when an unfiltered list comes back empty.
+  const hasAnyRequests =
+    visibleRequests.length > 0 || search.trim() !== "" || filterStatus !== "all";
 
   return (
     <GroupLeaderLayout>
@@ -62,13 +112,44 @@ const NewRequests = () => {
         </div>
 
         <div className="max-w-6xl mx-auto space-y-6">
+          {!loading && hasAnyRequests && (
+            <div className="flex flex-col sm:flex-row gap-3">
+              <div className="relative flex-1">
+                <Search
+                  size={16}
+                  className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+                />
+                <input
+                  type="text"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder="Search by component, category, or remarks..."
+                  className="w-full rounded-xl border border-[#E5E7EB] bg-white pl-10 pr-4 py-2.5 sm:py-3 text-xs sm:text-sm text-[#111827] placeholder:text-slate-400 outline-none focus:border-[#2563EB] transition-all shadow-[0_1px_2px_rgba(0,0,0,0.05)]"
+                />
+              </div>
+              <div className="flex items-center gap-2 bg-white border border-[#E5E7EB] rounded-xl px-3 py-2.5 shadow-[0_1px_2px_rgba(0,0,0,0.05)]">
+                <Filter size={16} className="text-slate-400 shrink-0" />
+                <select
+                  value={filterStatus}
+                  onChange={(e) => setFilterStatus(e.target.value)}
+                  className="outline-none text-xs sm:text-sm text-[#4B5563] bg-transparent cursor-pointer"
+                >
+                  <option value="all">All Status</option>
+                  <option value="pending">Pending</option>
+                  <option value="approved">Approved</option>
+                  <option value="rejected">Rejected</option>
+                </select>
+              </div>
+            </div>
+          )}
+
           <div className="bg-[#FFFFFF] border border-[#E5E7EB] rounded-xl overflow-hidden shadow-[0_1px_3px_rgba(0,0,0,0.05)]">
             {loading ? (
               <div className="flex flex-col items-center justify-center py-16 space-y-3 text-[#4B5563]">
                 <Loader2 className="h-7 w-7 animate-spin text-[#2563EB]" />
                 <p className="text-xs sm:text-sm">Loading request profiles...</p>
               </div>
-            ) : requests.length === 0 ? (
+            ) : !hasAnyRequests ? (
               <div className="text-center py-14 px-4">
                 <p className="text-[#6B7280] text-sm sm:text-base max-w-xs mx-auto">
                   No purchase requests submitted yet.
@@ -80,21 +161,27 @@ const NewRequests = () => {
                   Create First Request
                 </button>
               </div>
+            ) : visibleRequests.length === 0 ? (
+              <div className="text-center py-14 px-4">
+                <p className="text-[#6B7280] text-sm sm:text-base max-w-xs mx-auto">
+                  No purchase requests match your search or filter.
+                </p>
+              </div>
             ) : (
               <>
                 <table className="w-full hidden md:table border-collapse text-left">
                   <thead className="bg-[#F8FAFC]">
-                    <tr className="text-[#4B5563] text-xs font-semibold tracking-wider uppercase border-b border-[#E5E7EB]">
-                      <th className="px-6 py-4">Component</th>
-                      <th className="px-6 py-4">Category</th>
-                      <th className="px-6 py-4">Quantity</th>
-                      <th className="px-6 py-4">Status</th>
-                      <th className="px-6 py-4">Request Date</th>
-                      <th className="px-6 py-4">Remarks</th>
+                    <tr className="text-[#4B5563] text-xs font-semibold tracking-wider border-b border-[#E5E7EB]">
+                      <SortTh label="Component" field="component_name" sortField={sortField} sortDir={sortDir} onSort={handleSort} />
+                      <SortTh label="Category" field="category" sortField={sortField} sortDir={sortDir} onSort={handleSort} />
+                      <SortTh label="Quantity" field="quantity_required" sortField={sortField} sortDir={sortDir} onSort={handleSort} />
+                      <SortTh label="Status" field="status" sortField={sortField} sortDir={sortDir} onSort={handleSort} />
+                      <SortTh label="Request Date" field="request_date" sortField={sortField} sortDir={sortDir} onSort={handleSort} />
+                      <th className="px-6 py-4 uppercase">Remarks</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-[#E5E7EB]">
-                    {requests.map((request) => (
+                    {visibleRequests.map((request) => (
                       <tr
                         key={request.purchase_request_id}
                         className="hover:bg-slate-50/80 transition text-sm text-[#4B5563]"
@@ -125,7 +212,7 @@ const NewRequests = () => {
                 </table>
 
                 <div className="block md:hidden divide-y divide-[#E5E7EB]">
-                  {requests.map((request) => (
+                  {visibleRequests.map((request) => (
                     <div
                       key={request.purchase_request_id}
                       className="p-4 space-y-3 hover:bg-slate-50/50 transition"

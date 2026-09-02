@@ -1,41 +1,52 @@
-import { useEffect, useState, useMemo } from "react";
-import { Package, Search, Loader2, AlertCircle, ShoppingCart } from "lucide-react";
+import { useCallback, useState } from "react";
+import { useListQuery } from "../../hooks/useListQuery";
+import {
+  Package,
+  Search,
+  Loader2,
+  AlertCircle,
+  ShoppingCart,
+  Filter,
+  ArrowUp,
+  ArrowDown,
+} from "lucide-react";
 import { addToCart, getCartCount } from "../../utils/cartUtils";
 import { useNavigate } from "react-router-dom";
 import GroupLeaderLayout from "../../layouts/GroupLeaderLayout";
 import { getAllComponents } from "../../services/componentApi";
 
+// Search, filter and sort are resolved by the API (componentService.js).
+const fetchComponentsPage = async (params, signal) => {
+  const body = await getAllComponents(params, signal);
+  return { data: body?.data ?? [], categories: body?.categories ?? [] };
+};
+
 export default function ComponentInventory() {
   const navigate = useNavigate();
-  const [cartCount, setCartCount] = useState(0);
-  const [components, setComponents] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [search, setSearch] = useState("");
+  const [cartCount, setCartCount] = useState(getCartCount());
 
-  useEffect(() => {
-    fetchComponents();
-  }, []);
+  const {
+    data: filteredComponents,
+    extra,
+    loading,
+    error,
+    search,
+    setSearch,
+    filters,
+    setFilter,
+    sortField,
+    setSortField,
+    sortDir,
+    setSortDir,
+  } = useListQuery(fetchComponentsPage, {
+    initialFilters: { category: "all" },
+    initialSortField: "component_name",
+    initialSortDir: "asc",
+  });
 
-  const fetchComponents = async () => {
-    try {
-      setLoading(true);
-      setError("");
-      const data = await getAllComponents();
-      setComponents(data);
-      setCartCount(getCartCount());
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const filteredComponents = useMemo(() => {
-    return components.filter((component) =>
-      component.component_name.toLowerCase().includes(search.toLowerCase())
-    );
-  }, [search, components]);
+  const categories = extra?.categories ?? [];
+  const filterCategory = filters.category;
+  const setFilterCategory = useCallback((value) => setFilter("category", value), [setFilter]);
 
   if (loading) {
     return (
@@ -93,14 +104,51 @@ export default function ComponentInventory() {
           </button>
         </div>
 
-        <div className="relative mb-6 sm:mb-8 w-full max-w-md">
-          <Search size={16} className="absolute left-4 top-3.5 text-slate-400 pointer-events-none" />
-          <input
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search components..."
-            className="w-full h-11 rounded-xl bg-white border border-slate-200 pl-10 pr-4 text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 outline-none focus:border-cyan-500 transition-all shadow-sm"
-          />
+        <div className="mb-6 sm:mb-8 flex flex-col sm:flex-row gap-3">
+          <div className="relative flex-1 sm:max-w-md">
+            <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+            <input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search components..."
+              className="w-full h-11 rounded-xl bg-white border border-slate-200 pl-10 pr-4 text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 outline-none focus:border-cyan-500 transition-all shadow-sm"
+            />
+          </div>
+
+          <div className="flex items-center gap-2 h-11 bg-white border border-slate-200 rounded-xl px-3 shadow-sm">
+            <Filter size={16} className="text-slate-400 shrink-0" />
+            <select
+              value={filterCategory}
+              onChange={(e) => setFilterCategory(e.target.value)}
+              className="outline-none text-xs sm:text-sm text-slate-700 bg-transparent cursor-pointer max-w-[140px]"
+            >
+              <option value="all">All Categories</option>
+              {categories.map((category) => (
+                <option key={category} value={category}>
+                  {category}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="flex items-center gap-2 h-11 bg-white border border-slate-200 rounded-xl px-3 shadow-sm">
+            <select
+              value={sortField}
+              onChange={(e) => setSortField(e.target.value)}
+              className="outline-none text-xs sm:text-sm text-slate-700 bg-transparent cursor-pointer"
+            >
+              <option value="component_name">Sort: Name</option>
+              <option value="category">Sort: Category</option>
+              <option value="available_quantity">Sort: Available Qty</option>
+            </select>
+            <button
+              onClick={() => setSortDir((d) => (d === "asc" ? "desc" : "asc"))}
+              className="text-slate-400 hover:text-cyan-600 transition-colors"
+              title={sortDir === "asc" ? "Ascending" : "Descending"}
+            >
+              {sortDir === "asc" ? <ArrowUp size={15} /> : <ArrowDown size={15} />}
+            </button>
+          </div>
         </div>
 
         {filteredComponents.length === 0 ? (

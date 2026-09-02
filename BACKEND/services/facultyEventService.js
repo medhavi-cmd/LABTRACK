@@ -1,6 +1,28 @@
 import { pool } from "../config/db.js";
+import {
+  buildSearchClause,
+  combineClauses,
+  buildOrderBy,
+} from "../utils/listQuery.js";
 
-export const getFacultyEvents = async () => {
+const EVENT_SORTS = {
+  title: "e.event_name",
+  date: "e.event_datetime",
+  event_datetime: "e.event_datetime",
+  created_by_name: "f.name",
+};
+
+export const getFacultyEvents = async ({ search, sortField, sortDir } = {}) => {
+  const values = [];
+
+  const where = combineClauses([
+    buildSearchClause(
+      search,
+      ["e.event_name", "e.event_description", "f.name"],
+      values
+    ),
+  ]);
+
   const query = `
     SELECT
       e.event_id AS id,
@@ -14,10 +36,11 @@ export const getFacultyEvents = async () => {
     FROM public.events e
     LEFT JOIN public.faculty f
       ON f.faculty_id = e.created_by
-    ORDER BY e.event_datetime ASC, e.event_id ASC
+    ${where}
+    ${buildOrderBy(sortField, sortDir, EVENT_SORTS, "e.event_datetime")}
   `;
 
-  const result = await pool.query(query);
+  const result = await pool.query(query, values);
   return result.rows;
 };
 

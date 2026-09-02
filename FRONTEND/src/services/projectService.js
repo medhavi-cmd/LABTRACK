@@ -1,4 +1,5 @@
 import axios from "axios";
+import { toQueryString } from "../hooks/useListQuery";
 
 const API = `${import.meta.env.VITE_API_URL}/faculty/projects`;
 
@@ -10,9 +11,11 @@ const getAuthHeaders = () => {
   };
 };
 
-export const getProjects = () =>
-  axios.get(API, {
+// Search, filter and sort are resolved by the API (projectApprovalService.js).
+export const getProjects = (params = {}, signal) =>
+  axios.get(`${API}${toQueryString(params)}`, {
     headers: getAuthHeaders(),
+    signal,
   });
 
 export const updateProjectStatus = (id, status, remarks = null) =>

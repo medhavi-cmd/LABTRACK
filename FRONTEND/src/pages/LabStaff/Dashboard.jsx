@@ -50,29 +50,29 @@ const Dashboard = () => {
         </p>
       </div>
 
-      <div className="grid md:grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <div className="ls-stat-card">
-          <p className="ls-text-secondary font-medium">Total Components</p>
+          <p className="ls-text-secondary font-medium text-sm">Total Components</p>
           <h2 className="ls-stat-value">{dashboardData?.stats?.totalComponents ?? 0}</h2>
         </div>
 
         <div className="ls-stat-card">
-          <p className="ls-text-secondary font-medium">Pending Requests</p>
+          <p className="ls-text-secondary font-medium text-sm">Pending Requests</p>
           <h2 className="ls-stat-value text-amber-500">{dashboardData?.stats?.pendingRequests ?? 0}</h2>
         </div>
 
         <div className="ls-stat-card">
-          <p className="ls-text-secondary font-medium">Issued Components</p>
+          <p className="ls-text-secondary font-medium text-sm">Issued Components</p>
           <h2 className="ls-stat-value text-cyan-600">{dashboardData?.stats?.issuedComponents ?? 0}</h2>
         </div>
 
         <div className="ls-stat-card">
-          <p className="ls-text-secondary font-medium">Damage Components</p>
+          <p className="ls-text-secondary font-medium text-sm">Damage Components</p>
           <h2 className="ls-stat-value text-red-600">{dashboardData?.stats?.damagedComponents ?? 0}</h2>
         </div>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="ls-card ls-card-hover">
           <h2 className="ls-title-card mb-4">
             Recent Component Requests

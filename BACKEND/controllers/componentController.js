@@ -1,10 +1,14 @@
-import { getAllComponents } from "../services/componentService.js";
+import { getAllComponents, getComponentCategories } from "../services/componentService.js";
 
 export const fetchAllComponents = async (req, res) => {
   try {
-    const components = await getAllComponents();
+    const { search, category, sortField, sortDir } = req.query;
+    const [components, categories] = await Promise.all([
+      getAllComponents({ search, category, sortField, sortDir }),
+      getComponentCategories(),
+    ]);
 
-    return res.status(200).json(components);
+    return res.status(200).json({ data: components, categories });
   } catch (error) {
     console.error("fetchAllComponents:", error);
 

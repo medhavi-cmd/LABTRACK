@@ -1,16 +1,22 @@
 import {
   getAllRequests,
+  getRequestStats,
   approveRequestService,
 } from "../services/ComponentRequestService.js";
 
 // GET all component requests
 export const fetchRequests = async (req, res) => {
   try {
-    const requests = await getAllRequests();
+    const { search, status, sortField, sortDir } = req.query;
+    const [requests, stats] = await Promise.all([
+      getAllRequests({ search, status, sortField, sortDir }),
+      getRequestStats(),
+    ]);
 
     res.status(200).json({
       success: true,
       data: requests,
+      stats,
     });
   } catch (error) {
     console.error("Component Request Error:", error);

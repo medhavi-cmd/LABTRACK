@@ -1,4 +1,10 @@
 import { pool } from "../config/db.js";
+import {
+  buildSearchClause,
+  buildFilterClause,
+  combineClauses,
+  buildOrderBy,
+} from "../utils/listQuery.js";
 
 /* =========================================================
    SHARED SELECT — GALLERY REQUEST WITH PROJECT/TEAM/UPLOADER
@@ -37,15 +43,34 @@ const GALLERY_REQUEST_SELECT = `
   ) pi ON TRUE
 `;
 
-export const getFacultyGalleryRequests = async () => {
+const GALLERY_SORTS = {
+  title: "p.project_title",
+  team: "t.team_name",
+  uploadedBy: "s.name",
+  requestDate: "gr.request_date",
+  status: "gr.status",
+};
+
+export const getFacultyGalleryRequests = async ({
+  search,
+  status,
+  sortField,
+  sortDir,
+} = {}) => {
+  const values = [];
+
+  const where = combineClauses([
+    buildSearchClause(search, ["p.project_title", "t.team_name", "s.name"], values),
+    buildFilterClause(status, "gr.status", values, { cast: "text" }),
+  ]);
+
   const query = `
     ${GALLERY_REQUEST_SELECT}
-    ORDER BY
-      gr.request_date DESC,
-      gr.request_id DESC
+    ${where}
+    ${buildOrderBy(sortField, sortDir, GALLERY_SORTS, "gr.request_date")}
   `;
 
-  const result = await pool.query(query);
+  const result = await pool.query(query, values);
 
   return result.rows;
 };
